@@ -2,7 +2,7 @@
 #define PUMP_TASK_H_
 
 #include "board_config.h"
-#include "ComFunc/function.h"
+#include "function.h"
 
 #if(boardWATER_PUMP_EN)
 

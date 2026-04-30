@@ -2,12 +2,13 @@
 *                                                                                                                *
  *                                         Disp显示任务                                                          *
 *                                                                                                                *
-******************************************************************************************************************/
+ ******************************************************************************************************************/
 #include "MD_Display/md_display_task.h"
 
 #if(boardDISPLAY_EN)
 #include "MD_Display/md_display_api.h"
 #include "MD_Display/md_display_iface.h"
+#include "MD_Display/md_display_queue_task.h"
 #include "Sys/sys_task.h"
 #include "Print/print_task.h"
 
@@ -30,28 +31,10 @@
 #include "MD_Light/md_light_task.h"
 #endif  //boardLIGHT_EN
 
-#if(boardDISPLAY_EN)
-#include "MD_Display/md_display_task.h"
-#endif  //boardDISPLAY_EN
-
 #if(boardBUZ_EN)
 #include "Buz/buz_task.h"
 #endif  //boardBUZ_EN
 
-#if(boardBMS_EN)
-#include "MD_Bms/md_bms_rec_task.h"
-#include "MD_Bms/md_bms_task.h"
-#endif  //boardBMS_EN
-
-#if(boardMPPT_EN)
-#include "MD_Mppt/md_mppt_rec_task.h"
-#include "MD_Mppt/md_mppt_task.h"
-#endif  //boardMPPT_EN
-
-#if(boardDCAC_EN)
-#include "MD_Dcac/md_dcac_task.h"
-#include "MD_Dcac/md_dcac_rec_task.h"
-#endif  //DCAC使能
 
 #if(boardUPDATA)
 #include "Sys/sys_queue_task_updata.h"
@@ -66,48 +49,49 @@
 #if(boardUSE_OS)
 #define			dispTASK_PRIO                   2       //任务优先级 
 #define			dispTASK_STK_SIZE               256     //任务堆栈  实际字节数 *4
-TaskHandle_t	tDispTaskHandler = NULL; 
+TaskHandle_t tDispTaskHandler = NULL; 
 void vDisp_Task(void *pvParameters);
 #endif  //boardUSE_OS
 
 //****************************************************参数初始化**************************************************//
-Disp_T   tDisp; 
-static bool S_bDispPageDirty = true;
+Disp_T tDisp; 
+u8g2_t u8g2;  // 显示器初始化结构体
+bool g_bDispPageDirty = true;   //页面脏标志
 
 //****************************************************局部函数定义************************************************//
-static void v_disp_init(void);
-static void v_disp_closing(void);
-static void v_disp_shut_down(void);
-static void v_disp_booting(void);
-static void v_disp_work(void);
+static void v_disp_param_init(void);
 
 /***********************************************************************************************************************
------函数功能    参数初始化
------说明(备注)  none
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
+ -----函数功能    参数初始化
+ -----说明(备注)  none
+ -----传入参数    none
+ -----输出参数    none
+ -----返回值      none
+ ************************************************************************************************************************/
 static void v_disp_param_init(void)
 {
 	memset(&tDisp, 0, sizeof(tDisp));
 	
+	tDisp.eDevState = DS_INIT;
 	tDisp.usAutoOffTime = boardDISP_OFF_TIME;
 	tDisp.bSleepShow =true;//待机强制打开亮屏
 }
 
 /***********************************************************************************************************************
------函数功能    Disp显示任务初始化
------说明(备注)  none
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
+ -----函数功能    Disp显示任务初始化
+ -----说明(备注)  none
+ -----传入参数    none
+ -----输出参数    none
+ -----返回值      none
+ ************************************************************************************************************************/
 bool bDisp_TaskInit(void)
 {
     v_disp_param_init();
 
-	vDisp_OledIfaceInit(); // 初始化OLED硬件接口
+	vDisp_IfaceInit(); // 初始化OLED硬件接口
+	
+	if(bDisp_QueueInit() == false)
+		return false;
 
     #if(boardUSE_OS)
     xTaskCreate((TaskFunction_t )vDisp_Task,            // 任务函数
@@ -122,197 +106,114 @@ bool bDisp_TaskInit(void)
 }
 
 /***********************************************************************************************************************
------函数功能    tDisp显示任务
------说明(备注)  none
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
+ -----函数功能    设置显示设备运行状态
+ -----说明(备注)  none
+ -----传入参数    state: 设备状态
+ -----输出参数    none
+ -----返回值      true:操作成功   false:操作失败
+ ************************************************************************************************************************/
+bool bDisp_SetDevState(DevState_E state)
+{
+	if(tDisp.eDevState != state)
+	{
+		tDisp.eDevState = state;
+		if(tDisp.eDevState == DS_INIT)  //初始化
+		{
+			if(uPrint.tFlag.bDispTask || uPrint.tFlag.bImportant)
+				sMyPrint("bDispTask:显示任务状态为初始化\r\n");
+		}
+		else if(tDisp.eDevState == DS_CLOSING)  //关闭中
+		{
+			if(uPrint.tFlag.bDispTask || uPrint.tFlag.bImportant)
+				sMyPrint("bDispTask:显示任务状态为关闭中\r\n");
+		}
+		else if(tDisp.eDevState == DS_SHUT_DOWN)  //关闭
+		{
+			if(uPrint.tFlag.bDispTask || uPrint.tFlag.bImportant)
+				sMyPrint("bDispTask:显示任务状态为关闭\r\n");
+		}
+		else if(tDisp.eDevState == DS_ERR)  //错误
+		{
+			if(uPrint.tFlag.bDispTask || uPrint.tFlag.bImportant)
+				sMyPrint("bDispTask:显示任务状态为错误\r\n");
+		}
+		else if(tDisp.eDevState == DS_BOOTING)    //启动中
+		{
+			if(uPrint.tFlag.bDispTask || uPrint.tFlag.bImportant)
+				sMyPrint("bDispTask:显示任务状态为启动中\r\n");
+		}
+		else if(tDisp.eDevState == DS_WORK)    //工作
+		{
+			if(uPrint.tFlag.bDispTask || uPrint.tFlag.bImportant)
+				sMyPrint("bDispTask:显示任务状态为工作\r\n");
+		}
+		#if(boardENG_MODE_EN)
+		else if(tDisp.eDevState == DS_ENG_MODE)  //工程模式
+		{
+			if(uPrint.tFlag.bDispTask || uPrint.tFlag.bImportant)
+				sMyPrint("bDispTask:显示任务状态为工程模式\r\n");
+		}
+		#endif //boardENG_MODE_EN
+		else if(tDisp.eDevState == DS_UPDATA_MODE)    //升级模式
+		{
+			if(uPrint.tFlag.bDispTask || uPrint.tFlag.bImportant)
+				sMyPrint("bDispTask:显示任务状态为升级模式\r\n");
+		}
+	}
+	
+	return true;
+}
+
+/***********************************************************************************************************************
+ -----函数功能    tDisp显示任务
+ -----说明(备注)  none
+ -----传入参数    none
+ -----输出参数    none
+ -----返回值      none
+ ************************************************************************************************************************/
 void vDisp_Task(void *pvParameters)
 {
-	static bool flag = false;
-	static DevState_E next_state;
+	static Task_T *tp_task = NULL;
 	
 	#if(boardUSE_OS)
 	for(;;)
 	#endif  //boardUSE_OS
 	{
-		if(next_state != tSysInfo.eDevState)
+		if(tp_task == NULL)
 		{
-			flag = false;
-			S_bDispPageDirty = true;
-			next_state = tSysInfo.eDevState;
+			if(tpDispTask != NULL)
+				tp_task = tpDispTask;
+			
+			#if(boardUSE_OS)
+			vTaskDelay(100);
+			continue;
+			#else
+			return;
+			#endif  //boardUSE_OS
 		}
 		
-		switch(tSysInfo.eDevState)
+		if(tp_task->vp_func != NULL && tp_task->bNowRun == false)
+			tp_task->vp_func(tp_task);
+		else if(tp_task->vp_func == NULL || tp_task->bNowRun == true)
 		{
-			//--------------------------初始化----------------------------------
-			case DS_INIT:
-			{	
-				if(flag ==false)
-				{
-					flag = true;
-					v_disp_init();
-				}
-			}
-			break;
+			#if(boardUSE_OS)
+			if(lwrb_get_full(&tp_task->tQueueBuff) == 0)
+				ulTaskNotifyTake(pdFALSE, boardDISP_REFRESH_TMIE);
+			#endif  //boardUSE_OS
 			
-			//---------------------------关闭中---------------------------------
-			case DS_CLOSING:
-			{
-//				if(flag ==false)
-				{
-					flag = true;
-					v_disp_closing();
-				}
-			}
-			break;
-			
-			//---------------------------关闭----------------------------------
-			case DS_SHUT_DOWN:
-			{
-				if(bKey_PowerIsPress() == false)
-					v_disp_shut_down();
-			}
-			break;
-			//----------------------------装载中---------------------------------
-			case DS_BOOTING:
-			{
-				v_disp_booting();
-			}
-			break;
-			
-			//----------------------------工作中---------------------------------
-			//---------------------------错误------------------------------------
-			case DS_ERR: 
-			case DS_WORK:
-			{
-				if(flag ==false)
-				{
-					flag = true;
-					vDisp_OledReInit();
-				}
-				v_disp_work();
-			}
-			break;
-			
-			//----------------------------升级模式---------------------------------
-			case DS_UPDATA_MODE:
-			{
-				#if(boardUPDATA)
-				bDisp_Switch(ST_ON, true);         
-				#endif  //boardUPDATA     
-			}
-			break;
-			
-			#if(boardENG_MODE_EN)
-			//----------------------------工程模式---------------------------------
-			case DS_ENG_MODE:
-			{
-				bDisp_Switch(ST_ON, true);
-				
-				vDisp_EnginModeDis();
-				vTaskDelay(200);
-			}
-			break;
-			#endif	
-				
-			default:
-				vTaskDelay(boardDISP_REFRESH_TMIE);
-				break;
+			if(tp_task->bp_task_manage_func != NULL)
+				tp_task->bp_task_manage_func(tp_task);
 		}
-		
-		#if(boardUSE_OS)
-		vTaskDelay(boardDISP_REFRESH_TMIE);
-		#endif  //boardUSE_OS
 	}
 }
 
 /***********************************************************************************************************************
------函数功能    初始化显示
------说明(备注)  none
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-__STATIC_INLINE void v_disp_init(void)
-{
-	bDisp_Switch(ST_OFF, false);
-}
-
-
-/***********************************************************************************************************************
------函数功能    关闭中显示
------说明(备注)  none
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-__STATIC_INLINE void v_disp_closing(void)
-{
-	bDisp_Switch(ST_ON, false);
-}
-
-/***********************************************************************************************************************
------函数功能    关闭显示
------说明(备注)  none
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-__STATIC_INLINE void v_disp_shut_down(void)
-{
-	bDisp_Switch(ST_OFF, false);
-}
-
-/***********************************************************************************************************************
------函数功能    开启显示
------说明(备注)  none
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-__STATIC_INLINE void v_disp_booting(void)
-{
-	bDisp_Switch(ST_ON, false);
-	if(S_bDispPageDirty)
-	{
-		vDisp_ShowHelloWorldTestPage();
-		S_bDispPageDirty = false;
-	}
-}
-
-/***********************************************************************************************************************
------函数功能    LCD工作显示函数
------说明(备注)  none
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-__STATIC_INLINE void v_disp_work(void)
-{
-	//息屏
-	if(tDisp.bLight == false) 
-	{
-		S_bDispPageDirty = true;
-		return;
-	}
-	
-	if(S_bDispPageDirty)
-	{
-		vDisp_ShowHelloWorldTestPage();
-		S_bDispPageDirty = false;
-	}
-}
-
-
-/***********************************************************************************************************************
------函数功能    显示开关
------说明(备注)  none
------传入参数    type:类型   fore_en:强制打开
------输出参数    none
------返回值      none
-************************************************************************************************************************/
+ -----函数功能    显示开关
+ -----说明(备注)  none
+ -----传入参数    type:类型   fore_en:强制打开
+ -----输出参数    none
+ -----返回值      none
+ ************************************************************************************************************************/
 bool bDisp_Switch(SwitchType_E type, bool fore_en)
 {
 	switch(type)
@@ -330,8 +231,8 @@ bool bDisp_Switch(SwitchType_E type, bool fore_en)
 				LoopOn:
 				if(tDisp.bLight == false)
 				{
-					vDisp_OledSetPower(true);
-					S_bDispPageDirty = true;
+					vDisp_SetPower(true);
+					g_bDispPageDirty = true;
 				}
 				tDisp.bLight = true;
 				
@@ -348,13 +249,13 @@ bool bDisp_Switch(SwitchType_E type, bool fore_en)
 				LoopOff:
 				if(tDisp.bLight)
 				{
-					vDisp_OledClearBuffer();
-					vDisp_OledRefresh();
-					vDisp_OledSetPower(false);
+					vDisp_ClearBuffer();
+					vDisp_Refresh();
+					vDisp_SetPower(false);
 				}
 				v_disp_param_init();
 				tDisp.bLight = false;
-				S_bDispPageDirty = true;
+				g_bDispPageDirty = true;
 			}
 		}
 		break;
@@ -364,12 +265,12 @@ bool bDisp_Switch(SwitchType_E type, bool fore_en)
 }
 
 /***********************************************************************************************************************
------函数功能    背光自动关闭计时
------说明(备注)  none
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
+ -----函数功能    背光自动关闭计时
+ -----说明(备注)  none
+ -----传入参数    none
+ -----输出参数    none
+ -----返回值      none
+ ************************************************************************************************************************/
 void vDisp_TickTimer(void) 
 {
 	//非工作状态下退出
@@ -388,7 +289,7 @@ void vDisp_TickTimer(void)
 			tDisp.usAutoOffCnt--;
 			if(tDisp.usAutoOffCnt == 0)
 			{
-				v_disp_shut_down();
+				bDisp_Switch(ST_OFF, false);
 				if(uPrint.tFlag.bDispTask|| uPrint.tFlag.bImportant)
 					sMyPrint("Lcd_Task:倒计时结束,进入息屏 时间 = %dS\r\n",tDisp.usAutoOffTime);
 			}
@@ -397,12 +298,12 @@ void vDisp_TickTimer(void)
 }
 
 /*****************************************************************************************************************
------函数功能    初始化参数
------说明(备注)  none
------传入参数    p_disp_mem : disp记忆参数结构体
------输出参数    none
------返回值      true:设置成功  反之失败
-*****************************************************************************************************************/
+ -----函数功能    初始化参数
+ -----说明(备注)  none
+ -----传入参数    p_disp_mem : disp记忆参数结构体
+ -----输出参数    none
+ -----返回值      true:设置成功  反之失败
+ *****************************************************************************************************************/
 bool bDisp_MemParamInit(DispMemParam_T* p_disp_mem)
 {
 	p_disp_mem->ucHighLightValue = boardDISP_HIGH_LIGHT_VALUE;
@@ -413,12 +314,12 @@ bool bDisp_MemParamInit(DispMemParam_T* p_disp_mem)
 
 #if(boardLOW_POWER)
 /*****************************************************************************************************************
------函数功能    检查系统的输入电源:外接电池
------说明(备注)  none
------传入参数    none
------输出参数    none
------返回值      none
-*****************************************************************************************************************/
+ -----函数功能    检查系统的输入电源:外接电池
+ -----说明(备注)  none
+ -----传入参数    none
+ -----输出参数    none
+ -----返回值      none
+ *****************************************************************************************************************/
 void v_dis_power_select( void )
 {
 	if(tDisp.bLight)
@@ -442,35 +343,28 @@ void v_dis_power_select( void )
 
 
 /*****************************************************************************************************************
------函数功能    进入低功耗
------说明(备注)  none
------传入参数    none
------输出参数    none
------返回值      none
-*****************************************************************************************************************/
+ -----函数功能    进入低功耗
+ -----说明(备注)  none
+ -----传入参数    none
+ -----输出参数    none
+ -----返回值      none
+ *****************************************************************************************************************/
 void vLcd_EnterLowPower(void)
 {
-//	vLcd_IoEnterLowPower();
-//	bAtti_EnterLowPower();
-//	vExRTC_EnterLowPower();
 	vTaskSuspend(tDispTaskHandler);
 }
 
 /*****************************************************************************************************************
------函数功能    退出低功耗
------说明(备注)  none
------传入参数    none
------输出参数    none
------返回值      none
-*****************************************************************************************************************/
+ -----函数功能    退出低功耗
+ -----说明(备注)  none
+ -----传入参数    none
+ -----输出参数    none
+ -----返回值      none
+ *****************************************************************************************************************/
 void vLcd_ExitLowPower(void)
 {
-//	vExRTC_ExitLowPower();
 	vTaskResume(tDispTaskHandler);
 }
 #endif //boardLOW_POWER
 
 #endif //boardDISPLAY_EN
-
-
-

@@ -4,45 +4,21 @@
 #include "board_config.h"
 
 #if(boardLED_EN)
-#define 		ledTIMER                           		TIMER7
-#define 		ledTIMER_RCU                       		RCU_TIMER7
-#define 		ledTIMER_CH                        		TIMER_CH_0
+#define 		ledTIMER                           		TIMER1
+#define 		ledTIMER_RCU                       		RCU_TIMER1
+#define 		ledTIMER_CH                        		TIMER_CH_3
 
-#define 		ledPWR_SW_PWM_SET(x)                  	TIMER_CH0CV(ledTIMER) = ((uint32_t)x)
-#define 		ledPWM_MAX_VALUE     					1000
-#define 		ledPWM_PSC           					32
+#define 		ledPWR_SW_PWM_SET(x)                  	TIMER_CH3CV(ledTIMER) = ((uint32_t)x)
+#define 		ledPWM_MAX_VALUE     					999
+#define 		ledPWM_PSC           					60
 
-#define     	ledPWR_SW_RCU      						RCU_GPIOC
-#define     	ledPWR_SW_PORT     						GPIOC
-#define     	ledPWR_SW_PIN      						GPIO_PIN_6
-#define     	ledPWR_SW_ON()     						ledPWR_SW_PWM_SET(1000)
+#define     	ledPWR_SW_RCU      						RCU_GPIOB
+#define     	ledPWR_SW_PORT     						GPIOB
+#define     	ledPWR_SW_PIN      						GPIO_PIN_11
+#define     	ledPWR_SW_ON()     						ledPWR_SW_PWM_SET(ledPWM_MAX_VALUE)
 #define     	ledPWR_SW_OFF()    						ledPWR_SW_PWM_SET(0)
 //#define     	ledPWR_SW_ON()     						GPIO_BOP(ledPWR_SW_PORT) = ledPWR_SW_PIN
 //#define     	ledPWR_SW_OFF()    						GPIO_BC(ledPWR_SW_PORT)  = ledPWR_SW_PIN
-
-#define     	ledAC_SW_RCU      						RCU_GPIOB
-#define     	ledAC_SW_PORT      						GPIOB
-#define     	ledAC_SW_PIN      						GPIO_PIN_15
-#define     	ledAC_SW_ON()      						GPIO_BOP(ledAC_SW_PORT) = ledAC_SW_PIN
-#define     	ledAC_SW_OFF()     						GPIO_BC(ledAC_SW_PORT)  = ledAC_SW_PIN
-
-#define     	ledUSB_SW_RCU      						RCU_GPIOC
-#define     	ledUSB_SW_PORT     						GPIOC
-#define     	ledUSB_SW_PIN      						GPIO_PIN_7
-#define     	ledUSB_SW_ON()    						GPIO_BOP(ledUSB_SW_PORT) = ledUSB_SW_PIN
-#define     	ledUSB_SW_OFF()    						GPIO_BC(ledUSB_SW_PORT)  = ledUSB_SW_PIN
-
-#define     	ledLight_SW_RCU    						RCU_GPIOB
-#define     	ledLight_SW_PORT   						GPIOB
-#define     	ledLight_SW_PIN    						GPIO_PIN_9
-#define     	ledLight_SW_ON()   						GPIO_BOP(ledLight_SW_PORT) = ledLight_SW_PIN
-#define     	ledLight_SW_OFF()  						GPIO_BC(ledLight_SW_PORT)  = ledLight_SW_PIN
-
-#define     	ledDC_SW_RCU      						RCU_GPIOD
-#define     	ledDC_SW_PORT      						GPIOD
-#define     	ledDC_SW_PIN      						GPIO_PIN_2
-#define     	ledDC_SW_ON()     						GPIO_BOP(ledDC_SW_PORT) = ledDC_SW_PIN
-#define     	ledDC_SW_OFF()     						GPIO_BC(ledDC_SW_PORT)  = ledDC_SW_PIN
 
 void vLed_IfaceInit(void);
 

@@ -16,9 +16,9 @@
 #define     	keyADD_SPACE_TIME                 		20  //长按累加间隔
 
 
-//#define     	keyGPIO_POWER_RCU       				RCU_GPIOC
-//#define     	keyGPIO_POWER_PORT      				GPIOC
-//#define     	keyGPIO_POWER_PIN       				GPIO_PIN_4
+#define     	keyGPIO_POWER_RCU       				RCU_GPIOC
+#define     	keyGPIO_POWER_PORT      				GPIOC
+#define     	keyGPIO_POWER_PIN       				GPIO_PIN_13
 
 #define     	keyGPIO_AC_RCU          				RCU_GPIOB
 #define     	keyGPIO_AC_PORT         				GPIOB
@@ -41,20 +41,20 @@
 //#define     	keyGPIO_WP_PIN          				GPIO_PIN_0
 
 
-//__STATIC_INLINE bool bKey_PowerIsPress(void)          
-//{    
-//    if((GPIO_ISTAT(keyGPIO_POWER_PORT)&(keyGPIO_POWER_PIN)) == 0)//读取按键
-//        return false;
-//    else
-//        return true;
-//}
 __STATIC_INLINE bool bKey_PowerIsPress(void)          
 {    
-    if(usAdc_GetChannelValue(adcKEY_POWER) > 200)//读取按键
-        return true;
-    else
-        return false;
+   if((GPIO_ISTAT(keyGPIO_POWER_PORT)&(keyGPIO_POWER_PIN)) == 0)//读取按键
+       return false;
+   else
+       return true;
 }
+// __STATIC_INLINE bool bKey_PowerIsPress(void)          
+// {    
+//     if(usAdc_GetChannelValue(adcKEY_POWER) > 200)//读取按键
+//         return true;
+//     else
+//         return false;
+// }
 
 __STATIC_INLINE bool bKey_AcIsPress(void)
 {

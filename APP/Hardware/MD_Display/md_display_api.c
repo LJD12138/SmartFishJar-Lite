@@ -1,24 +1,567 @@
-/***********************************************************************************************************************
- * OLED display API implementation for Lite hardware.
- **********************************************************************************************************************/
+/*******************************************************************************************************************************
+ * Project : ProjectTeam
+ * Module  : G:\2-User_Projects\3-SmartFishJar\1.software\SmartFishJar\APP\Hardware\MD_Display
+ * File    : md_display_api.c
+ * Date    : 2026-04-28 15:59:09
+ * Author  : LJD(291483914@qq.com)
+ * Desc    : description
+ * -------------------------------------------------------
+ * todo    :
+ * 1.驱动IC为SSD1106，使用SPI接口，分辨率128x64，单色显示。需要实现基本的像素点控制、字符显示、图形绘制等功能。
+ * 2.优化显示性能，减少刷新时间，提升用户体验。
+ * -------------------------------------------------------
+ * Copyright (c) 2026 -inc
+*******************************************************************************************************************************/
+
+
+//****************************************************Includes******************************************************************//
 #include "MD_Display/md_display_api.h"
 
 #if(boardDISPLAY_EN)
+#include "MD_Display/md_display_iface.h"
+#include "MD_Display/md_display_task.h"
 
 #include <string.h>
-#include "MD_Display/md_display_iface.h"
 
-#define DISP_TEST_PAGE_WIDTH          128U
-#define DISP_TEST_PAGE_HEIGHT          64U
-#define DISP_TEST_TEXT_X               31U
-#define DISP_TEST_TEXT_Y               28U
+#if(boardUSE_OS)
+#include "freertos.h"
+#include "task.h"
+#endif  //boardUSE_OS
 
-static void v_disp_draw_test_frame(void)
+
+//****************************************************Macros*******************************************************************//
+
+
+
+//****************************************************Parameter Initialization************************************************//
+#if(dispUSE_U8G2 == 0)
+static u8 s_oled_gram[OLED_PAGE_COUNT][OLED_WIDTH_PIXELS];
+#else
+static unsigned char u8g_logo_bits[] = {
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x20, 0x04, 0x08, 0x06, 0x00, 0x00, 0x00, 0x80, 0xFF, 0x0F, 0x7C, 0xDF, 0x07, 0x00, 0x00, 0x00,
+    0xA0, 0xFF, 0x08, 0x01, 0x00, 0x00, 0x00, 0x40, 0x00, 0x10, 0x04, 0x51, 0x04, 0x00, 0x00, 0x00, 0x90, 0x00, 0x88,
+    0x1F, 0x00, 0x00, 0x00, 0x40, 0xDB, 0x16, 0x04, 0x51, 0x00, 0x00, 0x00, 0x00, 0x98, 0x04, 0xBF, 0x10, 0x00, 0x00,
+    0x00, 0x40, 0xDB, 0x76, 0x64, 0x9F, 0x03, 0x00, 0x00, 0x00, 0x98, 0x24, 0x88, 0x10, 0x00, 0x00, 0x00, 0x40, 0xDB,
+    0x76, 0x44, 0x01, 0x04, 0x00, 0x00, 0x00, 0x94, 0x22, 0x88, 0x10, 0x00, 0x00, 0x00, 0x40, 0xDB, 0x76, 0x44, 0x41,
+    0x04, 0x00, 0x00, 0x00, 0x90, 0xFE, 0x98, 0x10, 0x00, 0x00, 0x00, 0x40, 0xDB, 0x76, 0x7C, 0xC1, 0x07, 0x00, 0x00,
+    0x00, 0x90, 0x23, 0x88, 0x17, 0x00, 0x00, 0x00, 0x40, 0xDB, 0x16, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x90, 0x2A,
+    0x8C, 0x10, 0x00, 0x00, 0x00, 0x40, 0x00, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x90, 0x2A, 0x8A, 0x10, 0x00,
+    0x00, 0x00, 0x80, 0xFF, 0x0F, 0xFC, 0xFF, 0x0F, 0x00, 0x00, 0x00, 0x50, 0x22, 0x8B, 0x10, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x50, 0x22, 0x88, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x30, 0x22, 0x88, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x10, 0x32, 0x8E, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0xF0, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0xF0, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFC, 0xFF, 0xFF,
+    0x1F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFC, 0xFF, 0xFF, 0x1F, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFC, 0xFF, 0xFF, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC0, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0xE0, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x03, 0x60, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x07, 0x70, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC0, 0x01,
+    0xC0, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0E, 0x38, 0x00, 0x00, 0x00, 0x00, 0x00, 0x70, 0x00, 0x00, 0x07, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x1C, 0x1C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x18, 0x00, 0x00, 0x0C, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x38, 0x0E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x70, 0x0E,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x70, 0x1C, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x38, 0x38, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1C, 0x70, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x0E, 0xE0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x07, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC0, 0xFF, 0xFF, 0xFF, 0xFF, 0x01, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x63, 0x8C, 0x31, 0xC6, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0xC0, 0x18, 0x63, 0x8C, 0x31, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x30, 0x81, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0xE2, 0x01, 0x00, 0xFC, 0x27, 0x9F, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x13, 0x00, 0x00, 0x40, 0xF8, 0xE0, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x12, 0x0C,
+    0x00, 0x40, 0x20, 0x5F, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x12, 0xB8, 0x01, 0xE0, 0xE1,
+    0xF4, 0x3F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xE2, 0x48, 0x02, 0x50, 0xA3, 0x84, 0x04, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x49, 0x02, 0x48, 0x96, 0x9E, 0x39, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x49, 0x02, 0x44, 0x90, 0xE6, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x02, 0x49, 0x02, 0x40, 0x48, 0x82, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0xF7,
+    0x48, 0x02, 0x40, 0x68, 0x9D, 0x38, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC0, 0xFF,
+    0x3F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC0, 0xFF, 0xF3, 0xFF, 0xFC, 0x3F, 0xFF, 0xCF, 0xFF, 0x3F, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+#endif  //dispUSE_U8G2 == 1
+
+//****************************************************Function Declaration****************************************************//
+
+/***********************************************************************************************************************
+-----函数功能
+-----传入参数   cmd
+-----作者       LJD
+-----日期       2026-04-29
+************************************************************************************************************************/
+#if(dispUSE_U8G2 == 0)
+static void oled_write_cmd(u8 cmd)
 {
-	vDisp_OledDrawHLine(0U, 0U, DISP_TEST_PAGE_WIDTH, true);
-	vDisp_OledDrawHLine(0U, (u8)(DISP_TEST_PAGE_HEIGHT - 1U), DISP_TEST_PAGE_WIDTH, true);
-	vDisp_OledDrawVLine(0U, 0U, DISP_TEST_PAGE_HEIGHT, true);
-	vDisp_OledDrawVLine((u8)(DISP_TEST_PAGE_WIDTH - 1U), 0U, DISP_TEST_PAGE_HEIGHT, true);
+    vDisp_OledWriteByte(&cmd, 1U, OLED_CMD);
+}
+
+/***********************************************************************************************************************
+-----函数功能
+-----传入参数   c
+-----返回值     const u8*
+-----作者       LJD
+-----日期       2026-04-29
+************************************************************************************************************************/
+static const u8 *oled_font_5x7(char c)
+{
+    static const u8 f_space[5] = {0x00,0x00,0x00,0x00,0x00};
+    static const u8 f_percent[5] = {0x62,0x64,0x08,0x13,0x23};
+    static const u8 f_minus[5] = {0x08,0x08,0x08,0x08,0x08};
+    static const u8 f_colon[5] = {0x00,0x36,0x36,0x00,0x00};
+    static const u8 f_slash[5] = {0x20,0x10,0x08,0x04,0x02};
+
+    static const u8 d0[5] = {0x3E,0x51,0x49,0x45,0x3E};
+    static const u8 d1[5] = {0x00,0x42,0x7F,0x40,0x00};
+    static const u8 d2[5] = {0x62,0x51,0x49,0x49,0x46};
+    static const u8 d3[5] = {0x22,0x41,0x49,0x49,0x36};
+    static const u8 d4[5] = {0x18,0x14,0x12,0x7F,0x10};
+    static const u8 d5[5] = {0x2F,0x49,0x49,0x49,0x31};
+    static const u8 d6[5] = {0x3E,0x49,0x49,0x49,0x32};
+    static const u8 d7[5] = {0x01,0x71,0x09,0x05,0x03};
+    static const u8 d8[5] = {0x36,0x49,0x49,0x49,0x36};
+    static const u8 d9[5] = {0x26,0x49,0x49,0x49,0x3E};
+
+    static const u8 A[5] = {0x7E,0x11,0x11,0x11,0x7E};
+    static const u8 B[5] = {0x7F,0x49,0x49,0x49,0x36};
+    static const u8 C[5] = {0x3E,0x41,0x41,0x41,0x22};
+    static const u8 D[5] = {0x7F,0x41,0x41,0x22,0x1C};
+    static const u8 E[5] = {0x7F,0x49,0x49,0x49,0x41};
+    static const u8 F[5] = {0x7F,0x09,0x09,0x09,0x01};
+    static const u8 G[5] = {0x3E,0x41,0x49,0x49,0x3A};
+    static const u8 H[5] = {0x7F,0x08,0x08,0x08,0x7F};
+    static const u8 I[5] = {0x00,0x41,0x7F,0x41,0x00};
+    static const u8 K[5] = {0x7F,0x08,0x14,0x22,0x41};
+    static const u8 L[5] = {0x7F,0x40,0x40,0x40,0x40};
+    static const u8 M[5] = {0x7F,0x02,0x0C,0x02,0x7F};
+    static const u8 N[5] = {0x7F,0x04,0x08,0x10,0x7F};
+    static const u8 O[5] = {0x3E,0x41,0x41,0x41,0x3E};
+    static const u8 P[5] = {0x7F,0x09,0x09,0x09,0x06};
+    static const u8 R[5] = {0x7F,0x09,0x19,0x29,0x46};
+    static const u8 S[5] = {0x46,0x49,0x49,0x49,0x31};
+    static const u8 T[5] = {0x01,0x01,0x7F,0x01,0x01};
+    static const u8 U[5] = {0x3F,0x40,0x40,0x40,0x3F};
+    static const u8 V[5] = {0x1F,0x20,0x40,0x20,0x1F};
+    static const u8 W[5] = {0x7F,0x20,0x18,0x20,0x7F};
+    static const u8 Y[5] = {0x07,0x08,0x70,0x08,0x07};
+
+    switch(c)
+    {
+        case '0': return d0;
+        case '1': return d1;
+        case '2': return d2;
+        case '3': return d3;
+        case '4': return d4;
+        case '5': return d5;
+        case '6': return d6;
+        case '7': return d7;
+        case '8': return d8;
+        case '9': return d9;
+        case 'A': return A;
+        case 'B': return B;
+        case 'C': return C;
+        case 'D': return D;
+        case 'E': return E;
+        case 'F': return F;
+        case 'G': return G;
+        case 'H': return H;
+        case 'I': return I;
+        case 'K': return K;
+        case 'L': return L;
+        case 'M': return M;
+        case 'N': return N;
+        case 'O': return O;
+        case 'P': return P;
+        case 'R': return R;
+        case 'S': return S;
+        case 'T': return T;
+        case 'U': return U;
+        case 'V': return V;
+        case 'W': return W;
+        case 'Y': return Y;
+        case '%': return f_percent;
+        case '-': return f_minus;
+        case ':': return f_colon;
+        case '/': return f_slash;
+        case ' ': return f_space;
+        default:  return f_space;
+    }
+}
+#else
+/***********************************************************************************************************************
+-----函数功能
+-----传入参数   u8x8
+-----传入参数   msg
+-----传入参数   arg_int
+-----传入参数   arg_ptr
+-----返回值     uint8_t
+-----作者       LJD
+-----日期       2026-04-29
+************************************************************************************************************************/
+uint8_t u8x8_byte_4wire_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr)
+{
+    switch (msg)
+	{
+		/*通过SPI发送arg_int个字节数据*/
+		case U8X8_MSG_BYTE_SEND:
+		{
+			vDisp_SpiSendByte((const u8 *)arg_ptr, arg_int);
+		}
+		break;
+
+		/*初始化函数*/
+		case U8X8_MSG_BYTE_INIT:
+		break;
+
+		/*设置DC引脚,表明发送的是数据还是命令*/
+		case U8X8_MSG_BYTE_SET_DC:
+		{
+			if (arg_int) {
+				dispOLED_DC_H();
+			} else {
+				dispOLED_DC_L();
+			}
+		}
+		break;
+
+		case U8X8_MSG_BYTE_START_TRANSFER:
+			u8x8_gpio_SetCS(u8x8, u8x8->display_info->chip_enable_level);
+			u8x8->gpio_and_delay_cb(u8x8, U8X8_MSG_DELAY_NANO, u8x8->display_info->post_chip_enable_wait_ns, NULL);
+			break;
+		case U8X8_MSG_BYTE_END_TRANSFER:
+			u8x8->gpio_and_delay_cb(u8x8, U8X8_MSG_DELAY_NANO, u8x8->display_info->pre_chip_disable_wait_ns, NULL);
+			u8x8_gpio_SetCS(u8x8, u8x8->display_info->chip_disable_level);
+			break;
+		default:
+			return 0;
+    }
+    return 1;
+}
+
+/***********************************************************************************************************************
+-----函数功能
+-----传入参数   u8x8
+-----传入参数   msg
+-----传入参数   arg_int
+-----传入参数   arg_ptr
+-----返回值     uint8_t
+-----作者       LJD
+-----日期       2026-04-29
+************************************************************************************************************************/
+uint8_t u8x8_stm32_gpio_and_delay(U8X8_UNUSED u8x8_t *u8x8, U8X8_UNUSED uint8_t msg, U8X8_UNUSED uint8_t arg_int,
+                                  U8X8_UNUSED void *arg_ptr)
+{
+    switch (msg)
+	{
+		/*delay和GPIO的初始化，在main中已经初始化完成了*/
+		case U8X8_MSG_GPIO_AND_DELAY_INIT:
+			break;
+
+			/*延时函数*/
+		case U8X8_MSG_DELAY_MILLI:
+			vTaskDelay(arg_int);    // 调用谁mcu系统延时函数
+			break;
+
+		/*片选信号*/  // 由于只有一个SPI设备，所以片选信号在初始化时已经设置为常有效
+		case U8X8_MSG_GPIO_CS:
+		{
+			if (arg_int) {
+				dispOLED_NSS_H();
+			} else {
+				dispOLED_NSS_L();
+			}
+		}
+		break;
+
+		/*设置DC引脚,表明发送的是数据还是命令*/
+		case U8X8_MSG_GPIO_DC:
+		{
+			if (arg_int) {
+				dispOLED_DC_H();
+			} else {
+				dispOLED_DC_L();
+			}
+		}
+		break;
+
+		/*复位信号*/
+		case U8X8_MSG_GPIO_RESET:
+		{
+			if (arg_int) {
+				dispOLED_RES_H();
+			} else {
+				dispOLED_RES_L();
+			}
+		}
+		break;
+    }
+    return 1;
+}
+
+/***********************************************************************************************************************
+-----函数功能   OLED显示器初始化
+-----传入参数   u8g2
+-----作者       LJD
+-----日期       2026-04-29
+************************************************************************************************************************/
+void v_disp_u8g2_init(u8g2_t *u8g2)
+{
+    uint8_t tile_buf_height;
+    uint8_t *buf;
+
+    u8g2_SetupDisplay(u8g2, u8x8_d_sh1106_128x64_noname, u8x8_cad_001,
+                      u8x8_byte_4wire_hw_spi, u8x8_stm32_gpio_and_delay);
+    buf = u8g2_m_16_8_f(&tile_buf_height);
+    u8g2_SetupBuffer(u8g2, buf, tile_buf_height, u8g2_ll_hvline_vertical_top_lsb, U8G2_R0);
+    u8g2_InitDisplay(u8g2);
+    u8g2_SetPowerSave(u8g2, 0);
+}
+#endif  //dispUSE_U8G2
+
+
+
+
+
+
+/***********************************************************************************************************************
+-----函数功能    设置单个OLED像素点
+-----说明(备注)  根据坐标写入像素状态，越界坐标直接忽略。
+-----传入参数    x:列坐标  y:行坐标  on:像素状态
+-----输出参数    none
+-----返回值      none
+************************************************************************************************************************/
+#if(dispUSE_U8G2 == 0)
+void vDisp_OledDrawPixel(u8 x, u8 y, bool on)
+{
+    u8 page;
+    u8 bit;
+
+    if(x >= OLED_WIDTH_PIXELS || y >= OLED_HEIGHT_PIXELS)
+        return;
+
+    page = (u8)(y >> 3);
+    bit = (u8)(1U << (y & 0x07U));
+
+    if(on)
+        s_oled_gram[page][x] |= bit;
+    else
+        s_oled_gram[page][x] &= (u8)(~bit);
+}
+
+/***********************************************************************************************************************
+-----函数功能    绘制OLED水平线
+-----说明(备注)  从起始坐标开始，连续绘制指定长度的水平线。
+-----传入参数    x:起点列坐标  y:行坐标  len:线长  on:像素状态
+-----输出参数    none
+-----返回值      none
+************************************************************************************************************************/
+void vDisp_OledDrawHLine(u8 x, u8 y, u8 len, bool on)
+{
+    u8 i;
+    for(i = 0; i < len; i++)
+        vDisp_OledDrawPixel((u8)(x + i), y, on);
+}
+
+/***********************************************************************************************************************
+-----函数功能    绘制OLED竖直线
+-----说明(备注)  从起始坐标开始，连续绘制指定长度的竖直线。
+-----传入参数    x:列坐标  y:起点行坐标  len:线长  on:像素状态
+-----输出参数    none
+-----返回值      none
+************************************************************************************************************************/
+void vDisp_OledDrawVLine(u8 x, u8 y, u8 len, bool on)
+{
+    u8 i;
+    for(i = 0; i < len; i++)
+        vDisp_OledDrawPixel(x, (u8)(y + i), on);
+}
+
+/***********************************************************************************************************************
+-----函数功能    绘制6x8字符
+-----说明(备注)  使用内置5x7字模显示单个字符，字符宽度按6列处理，便于字符间隔控制。
+-----传入参数    x:起点列坐标  y:起点行坐标  c:待显示字符
+-----输出参数    none
+-----返回值      none
+************************************************************************************************************************/
+void vDisp_OledDrawChar6x8(u8 x, u8 y, char c)
+{
+    u8 col;
+    u8 row;
+    const u8 *glyph = oled_font_5x7(c);
+
+    for(col = 0; col < 5U; col++)
+    {
+        u8 bits = glyph[col];
+        for(row = 0; row < 7U; row++)
+        {
+            vDisp_OledDrawPixel((u8)(x + col), (u8)(y + row), ((bits & 0x01U) != 0U));
+            bits >>= 1;
+        }
+    }
+
+    for(row = 0; row < 7U; row++)
+        vDisp_OledDrawPixel((u8)(x + 5U), (u8)(y + row), false);
+}
+
+/***********************************************************************************************************************
+-----函数功能    绘制6x8字符串
+-----说明(备注)  逐字符调用字体绘制接口显示字符串，超出显示区域时自动停止。
+-----传入参数    x:起点列坐标  y:起点行坐标  str:字符串指针
+-----输出参数    none
+-----返回值      none
+************************************************************************************************************************/
+void vDisp_OledDrawString6x8(u8 x, u8 y, const char *str)
+{
+    while((*str) != '\0')
+    {
+        vDisp_OledDrawChar6x8(x, y, *str);
+        x = (u8)(x + 6U);
+        if(x > 122U)
+            break;
+        str++;
+    }
+}
+
+/***********************************************************************************************************************
+-----函数功能    填充OLED显存缓存
+-----说明(备注)  用指定数据批量填充GRAM缓存，常用于全亮/全灭测试。
+-----传入参数    value:填充值
+-----输出参数    none
+-----返回值      none
+************************************************************************************************************************/
+void vDisp_OledFillBuffer(u8 value)
+{
+    u8 x;
+    u8 page;
+    for(page = 0; page < OLED_PAGE_COUNT; page++)
+    {
+        for(x = 0; x < OLED_WIDTH_PIXELS; x++)
+            s_oled_gram[page][x] = value;
+    }
+}
+#endif  //dispUSE_U8G2  == 0
+
+
+/***********************************************************************************************************************
+-----函数功能    显示驱动初始化
+-----说明(备注)  。
+-----传入参数    none
+-----输出参数    none
+-----返回值      none
+************************************************************************************************************************/
+void vDisp_Init(void)
+{
+    #if(dispUSE_U8G2 == 1)
+	v_disp_u8g2_init(&u8g2);
+    #else
+    oled_write_cmd(0xAE);
+    oled_write_cmd(0x02);
+    oled_write_cmd(0x10);
+    oled_write_cmd(0x40);
+    oled_write_cmd(0xB0);
+    oled_write_cmd(0x81);
+    oled_write_cmd(0xCF);
+    oled_write_cmd(0xA1);
+    oled_write_cmd(0xA6);
+    oled_write_cmd(0xA8);
+    oled_write_cmd(0x3F);
+    oled_write_cmd(0xAD);
+    oled_write_cmd(0x8B);
+    oled_write_cmd(0x33);
+    oled_write_cmd(0xC8);
+    oled_write_cmd(0xD3);
+    oled_write_cmd(0x00);
+    oled_write_cmd(0xD5);
+    oled_write_cmd(0x80);
+    oled_write_cmd(0xD9);
+    oled_write_cmd(0x1F);
+    oled_write_cmd(0xDA);
+    oled_write_cmd(0x12);
+    oled_write_cmd(0xDB);
+    oled_write_cmd(0x40);
+
+    vDisp_OledClearBuffer();
+    vDisp_OledRefresh();
+    vDisp_OledSetPower(true);
+    #endif  //dispUSE_U8G2
+
+    g_bDispPageDirty = false;
+}
+
+/***********************************************************************************************************************
+-----函数功能    清空显存缓存
+-----说明(备注)  将GRAM缓存全部清零，等待后续刷新到屏幕。
+-----传入参数    none
+-----输出参数    none
+-----返回值      none
+************************************************************************************************************************/
+void vDisp_ClearBuffer(void)
+{
+    #if(dispUSE_U8G2 == 1)
+    u8g2_ClearBuffer(&u8g2);
+    #else
+    for(int page = 0; page < OLED_PAGE_COUNT; page++)
+    {
+        for(int x = 0; x < OLED_WIDTH_PIXELS; x++)
+            s_oled_gram[page][x] = 0x00U;
+    }
+    #endif  //dispUSE_U8G2
+}
+
+/***********************************************************************************************************************
+-----函数功能    刷新显示内容
+-----说明(备注)  将显存缓存逐页写入OLED面板。
+-----传入参数    none
+-----输出参数    none
+-----返回值      none
+************************************************************************************************************************/
+void vDisp_Refresh(void)
+{
+    #if(dispUSE_U8G2 == 1)
+    u8g2_SendBuffer(&u8g2);
+    #else
+    for(int page = 0; page < OLED_PAGE_COUNT; page++)
+    {
+        oled_write_cmd((u8)(0xB0U + page));
+        oled_write_cmd(0x02);
+        oled_write_cmd(0x10);
+        vDisp_OledWriteByte(&s_oled_gram[page][0], OLED_WIDTH_PIXELS, OLED_DATA);
+    }
+    #endif  //dispUSE_U8G2
+}
+
+/***********************************************************************************************************************
+-----函数功能    设置电源状态
+-----说明(备注)  通过指令控制OLED显示开关。
+-----传入参数    on:true开显示 false关显示
+-----输出参数    none
+-----返回值      none
+************************************************************************************************************************/
+void vDisp_SetPower(bool on)
+{
+    #if(dispUSE_U8G2 == 1)
+    if(on)
+        u8g2_SetPowerSave(&u8g2, 0);
+    else
+        u8g2_SetPowerSave(&u8g2, 1);
+    #else
+    if(on)
+        oled_write_cmd(0xAF);
+    else
+        oled_write_cmd(0xAE);
+    #endif  //dispUSE_U8G2
 }
 
 /***********************************************************************************************************************
@@ -28,13 +571,23 @@ static void v_disp_draw_test_frame(void)
 -----输出参数    none
 -----返回值      none
 ************************************************************************************************************************/
-void vDisp_ShowHelloWorldTestPage(void)
+void vDisp_UiTest(void)
 {
-	vDisp_OledClearBuffer();
-	v_disp_draw_test_frame();
-	vDisp_OledDrawString6x8(DISP_TEST_TEXT_X, DISP_TEST_TEXT_Y, "HELLO WORLD");
+    // U8g2显示测试页
+    #if(dispUSE_U8G2 == 1)
+    dispOLED_RES_H();  	  // 显示器复位拉高
+    u8g2_ClearBuffer(&u8g2);
+    u8g2_DrawXBM(&u8g2, 0, 0, OLED_WIDTH_PIXELS, OLED_HEIGHT_PIXELS, u8g_logo_bits);
+    u8g2_SendBuffer(&u8g2);
+    #else
+    vDisp_OledClearBuffer();
+	vDisp_OledDrawHLine(0U, 0U, OLED_WIDTH_PIXELS, true);
+	vDisp_OledDrawHLine(0U, (u8)(OLED_HEIGHT_PIXELS - 1U), OLED_WIDTH_PIXELS, true);
+	vDisp_OledDrawVLine(0U, 0U, OLED_HEIGHT_PIXELS, true);
+	vDisp_OledDrawVLine((u8)(OLED_WIDTH_PIXELS - 1U), 0U, OLED_HEIGHT_PIXELS, true);
+	vDisp_OledDrawString6x8(31, 28, "HELLO WORLD");
 	vDisp_OledRefresh();
+    #endif  //dispUSE_U8G2
 }
-
 
 #endif  // boardDISPLAY_EN

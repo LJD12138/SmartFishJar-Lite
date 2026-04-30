@@ -69,8 +69,8 @@
 #if(boardUSE_OS)
 #define     	SYS_TASK_PRIO                  			3     //任务优先级 
 #define      	SYS_TASK_STK_SIZE              			256   //任务堆栈  实际字节数 *4
-TaskHandle_t  	tSysTaskHandler = NULL; 
-void         	vSys_Task(void *pvParameters);
+TaskHandle_t tSysTaskHandler = NULL; 
+void vSys_Task(void *pvParameters);
 #endif  //boardUSE_OS
 
 
@@ -128,7 +128,6 @@ static bool b_task_param_init(void)
 	
 	tSysInfo.sMaxTemp = 25;				//设置默认最高温度
 	tSysInfo.sMinTemp = 25;				//设置默认最低温度
-	tSysInfo.uInit.tFinish.bIF_Gpio = 1;
 	bSys_SetAutoOffTime(tAppMemParam.tSYS.usAutoOffTime);
 	bSys_SetDevState(DS_INIT, false);	//进入初始化
 	
@@ -741,39 +740,60 @@ bool bSys_SetDevState(DevState_E state, bool bz)
 		}
 		else if(tSysInfo.eDevState == DS_CLOSING)  //关闭中
 		{
+			if(tDisp.eDevState != DS_CLOSING)
+				cQueue_AddQueueTask(tpDispTask, STI_CLOSING, 0, false);
+
 			if(uPrint.tFlag.bSysTask)
 				sMyPrint("bSysTask:系统任务状态为关闭中\r\n");
 		}
 		else if(tSysInfo.eDevState == DS_SHUT_DOWN)  //关闭
 		{
+			if(tDisp.eDevState != DS_SHUT_DOWN)
+				cQueue_AddQueueTask(tpDispTask, STI_SHUT_DOWN, 0, false);
+
 			if(uPrint.tFlag.bSysTask)
 				sMyPrint("bSysTask:系统任务状态为关闭\r\n");
 		}
 		else if(tSysInfo.eDevState == DS_ERR)  //错误
 		{
+			if(tDisp.eDevState != DS_ERR)
+				cQueue_AddQueueTask(tpDispTask, STI_ERR, 0, false);
+
 			if(uPrint.tFlag.bSysTask)
 				sMyPrint("bSysTask:系统任务状态为错误\r\n");
 		}
 		else if(tSysInfo.eDevState == DS_BOOTING)    //启动中
 		{
+			if(tDisp.eDevState != DS_BOOTING)
+				cQueue_AddQueueTask(tpDispTask, STI_BOOTING, 0, false);
+
 			vSys_RefreshAllOffTime(true);
 			if(uPrint.tFlag.bSysTask)
 				sMyPrint("bSysTask:系统任务状态为启动中\r\n");
 		}
 		else if(tSysInfo.eDevState == DS_WORK)    //工作
 		{
+			if(tDisp.eDevState != DS_WORK)
+				cQueue_AddQueueTask(tpDispTask, STI_WORK, 0, false);
+
 			if(uPrint.tFlag.bSysTask)
 				sMyPrint("bSysTask:系统任务状态为工作\r\n");
 		}
 		#if(boardENG_MODE_EN)
 		else if(tSysInfo.eDevState == DS_ENG_MODE)  //工程模式
 		{
+			if(tDisp.eDevState != DS_ENG_MODE)
+				cQueue_AddQueueTask(tpDispTask, STI_ENG_MODE, 0, false);
+
 			if(uPrint.tFlag.bSysTask)
 				sMyPrint("bSysTask:----更新系统任务状态为工程模式----\r\n");
 		}
 		#endif //boardENG_MODE_EN
 		else if(tSysInfo.eDevState == DS_UPDATA_MODE)    //工作
 		{
+			// if(tDisp.eDevState != DS_UPDATA_MODE)
+			// 	cQueue_AddQueueTask(tpDispTask, STI_UPDATA_MODE, 0, false);
+
 			if(uPrint.tFlag.bSysTask)
 				sMyPrint("bSysTask:----更新系统任务状态为升级模式----\r\n");
 		}

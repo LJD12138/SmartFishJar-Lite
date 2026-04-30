@@ -28,6 +28,9 @@ float fFunc_Fabs(float num1, float num2);
 u32 ulFunc_Pow(u8 m,u8 n);
 void vFunc_GetCoefficient(const float *x, float *y, int n, float *a, float *dt);
 void vFunc_CycleGetNextNum(u8* num, const u8* num_max);
+void *pvFunc_FastMemcpy(void *dst, const void *src, uint32_t len);
+void *pvFunc_SafeMemcpy(void *dst, const void *src, uint32_t len);
+
 #endif
 
 

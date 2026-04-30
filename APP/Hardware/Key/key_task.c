@@ -34,11 +34,12 @@ void          	vKey_Task(void *pvParameters);
 
 //****************************************************参数初始化**************************************************//
 KeyHandler_t 	tKeyPower;   // 确认键
-KeyHandler_t 	tKeyAC;      // 左键
-KeyHandler_t 	tKeyLight;   // 上键
-KeyHandler_t 	tKeyUSB;     // 下键
-KeyHandler_t 	tKeyDC;      // 右键
+KeyHandler_t 	tKeyLeft;    // 左键
+KeyHandler_t 	tKeyUp;      // 上键
+KeyHandler_t 	tKeyDown;    // 下键
+KeyHandler_t 	tKeyRight;   // 右键
 
+bool b_key_lock = false;
 u8 Key_TriTypeBuff[ keyGROUP_NUM ] = {0};      	//按键功能
 vu16 Key_UnPressTim = 0 , Key_TriTypeCnt = 0;
 
@@ -92,7 +93,9 @@ void vKey_TaskInit(void)
 
 /***********************************************************************************************************************
 -----函数功能    按键初始化
------说明(备注)  none
+-----说明(备注)  
+bEnLongPressAdd //true:长按累加功能 false:关闭
+bEnMulitFunKey //true:多功能按键:双击等前后触发的   false:可以使用一直长按可以触发长按功能,也可以识别同时触发的
 -----传入参数    none
 -----输出参数    none
 -----返回值      none
@@ -125,25 +128,25 @@ static void v_key_gpio_init(void)
     tKeyPower.IsPress = bKey_EnterIsPress;
     v_key_register(&tKeyPower);
 
-    tKeyAC.bEnLongPressAdd = false;
-    tKeyAC.bEnMulitFunKey = true;
-    tKeyAC.IsPress = bKey_LeftIsPress;
-    v_key_register(&tKeyAC);
+	tKeyLeft.bEnLongPressAdd = false;
+	tKeyLeft.bEnMulitFunKey = false;
+	tKeyLeft.IsPress = bKey_LeftIsPress;
+	v_key_register(&tKeyLeft);
 
-    tKeyLight.bEnLongPressAdd = false;
-    tKeyLight.bEnMulitFunKey = false;
-    tKeyLight.IsPress = bKey_UpIsPress;
-    v_key_register(&tKeyLight);
+	tKeyUp.bEnLongPressAdd = false;
+	tKeyUp.bEnMulitFunKey = false;
+	tKeyUp.IsPress = bKey_UpIsPress;
+	v_key_register(&tKeyUp);
 
-    tKeyUSB.bEnLongPressAdd = false;
-    tKeyUSB.bEnMulitFunKey = false;
-    tKeyUSB.IsPress = bKey_DownIsPress;
-    v_key_register(&tKeyUSB);
+	tKeyDown.bEnLongPressAdd = false;
+	tKeyDown.bEnMulitFunKey = false;
+	tKeyDown.IsPress = bKey_DownIsPress;
+	v_key_register(&tKeyDown);
 
-    tKeyDC.bEnLongPressAdd = false;
-    tKeyDC.bEnMulitFunKey = false;
-    tKeyDC.IsPress = bKey_RightIsPress;
-    v_key_register(&tKeyDC);
+	tKeyRight.bEnLongPressAdd = false;
+	tKeyRight.bEnMulitFunKey = false;
+	tKeyRight.IsPress = bKey_RightIsPress;
+	v_key_register(&tKeyRight);
 }
 
 
@@ -166,6 +169,8 @@ void vKey_Task(void *pvParameters)
 		//GPIO初始化未完成
 		if(tSysInfo.uInit.tFinish.bIF_Gpio == 0)
 		{
+			b_key_lock = bKey_PowerIsPress();
+
 			#if(boardUSE_OS)
 			vTaskDelay(500);
 			continue;
@@ -173,26 +178,20 @@ void vKey_Task(void *pvParameters)
 			return;
 			#endif
 		}
+
+		//长按开启不松开
+		if(b_key_lock == true && bKey_PowerIsPress() == true)
+		{
+			#if(boardUSE_OS)
+			vTaskDelay(keyTASK_CYCLE_TIME);
+			continue;
+			#else
+			return;
+			#endif
+		}
+
+		b_key_lock = false;
 		
-		//更改按键触发方式
-		#if(boardENG_MODE_EN)
-		if((tSysInfo.eDevState == DS_SHUT_DOWN || 
-			tSysInfo.eDevState == DS_ENG_MODE))
-		{
-			tKeyPower.bEnMulitFunKey = false;
-		}
-		#else
-		if(tSysInfo.eDevState == DS_SHUT_DOWN)
-		{
-			tKeyPower.bEnMulitFunKey = false;
-		}
-		#endif
-		else 
-		{
-			tKeyPower.bEnMulitFunKey = true;
-		}
-		
-	
 		for(Currkey = 0; Currkey < KeyHandlerListNum; Currkey++)
 		{
 			//******************************************按键 按下状态***********************************************
@@ -257,25 +256,25 @@ void vKey_Task(void *pvParameters)
             else                                   
             { 
 				//按键已经松开,记录当前按键事件,并等待是否还有组合按键触发------------------------------------------------
-				 if( Key_UnPressTim < keyNUPRESS_MAX_TIME && Key_UnPressTim >= 4) 
+				 if(Key_UnPressTim < keyNUPRESS_MAX_TIME && Key_UnPressTim >= 4)
 				 {
 					 //短按  :按下时间在 keySHORT_PRESS_TIME ~ KeyLongPressTime 之间
 					 if(RANGE( KeyHandlerList[Currkey]->sOnPressCnt,  keySHORT_PRESS_TIME,
-						 ( keyLONG_PRESS_TIME - keyADD_SPACE_TIME -1 )))   
-					 {  
+						 ( keyLONG_PRESS_TIME - keyADD_SPACE_TIME -1 )))
+					 {
 						 v_key_shot_press(KeyHandlerList[Currkey]);
 						 if(KeyHandlerList[Currkey]->bEnMulitFunKey == false) //没有使能多功能按键,就不需要等待,直接触发按键
 							goto KeyTri;
 					 }
 					 else if( KeyHandlerList[Currkey]->sOnPressCnt >= keyLONG_PRESS_TIME)  //长按
 					 {
-						 v_key_long_press(KeyHandlerList[Currkey]);	
+						 v_key_long_press(KeyHandlerList[Currkey]);
 						 if(KeyHandlerList[Currkey]->bEnMulitFunKey == false) //没有使能多功能按键,就不需要等待,直接触发按键
 							goto KeyTri;
 					 }
 				 }
 				 //已经处理完--------------------------------------------------------------------------------------------
-				 else  if( Key_UnPressTim == keyNUPRESS_MAX_TIME) 
+				 else if( Key_UnPressTim == keyNUPRESS_MAX_TIME)
 				 {
 					 KeyTri:
 				     vKey_ProcKeyFunc(Key_TriTypeBuff);
@@ -341,7 +340,7 @@ static void v_key_shot_press(KeyHandler_t* keyHandler)
 	
 	if(keyHandler == &tKeyPower)
 	{
-		Key_TriTypeBuff[Key_TriTypeCnt] = KTE_POWER_SHORT ;  
+		Key_TriTypeBuff[Key_TriTypeCnt] = KTE_ENTER_SHORT ;  
 		if((keyGROUP_NUM - 1) > Key_TriTypeCnt) Key_TriTypeCnt ++;
 		
 		keyHandler->sOnPressCnt = -1;
@@ -349,58 +348,52 @@ static void v_key_shot_press(KeyHandler_t* keyHandler)
 		if(uPrint.tFlag.bKeyTask)
 			sMyPrint("Key_Task:电源短按\r\n");
 	}
-	
-	#if(boardDCAC_EN)	
-	else if(keyHandler == &tKeyAC) 
+		
+	else if(keyHandler == &tKeyLeft) 
 	{
-		Key_TriTypeBuff[Key_TriTypeCnt] = KTE_AC_SHORT ; 
+		Key_TriTypeBuff[Key_TriTypeCnt] = KTE_LEFT_SHORT ; 
 		if((keyGROUP_NUM - 1) > Key_TriTypeCnt) Key_TriTypeCnt ++;
 		
 		keyHandler->sOnPressCnt = -1;
 		
 		if(uPrint.tFlag.bKeyTask)
-			sMyPrint("Key_Task:AC短按\r\n");
+			sMyPrint("Key_Task:Left短按\r\n");
 	}
-	#endif  //boardDCAC_EN
 
 	#if(boardLIGHT_EN)
-	else if(keyHandler == &tKeyLight) 
+	else if(keyHandler == &tKeyUp) 
 	{
-		Key_TriTypeBuff[Key_TriTypeCnt] = KTE_LIGHT_SHORT ; 
+		Key_TriTypeBuff[Key_TriTypeCnt] = KTE_UP_SHORT ; 
 		if((keyGROUP_NUM - 1) > Key_TriTypeCnt) Key_TriTypeCnt ++;
 		
 		keyHandler->sOnPressCnt = -1;
 		
 		if(uPrint.tFlag.bKeyTask)
-			sMyPrint("Key_Task:Light短按\r\n");
+			sMyPrint("Key_Task:Up短按\r\n");
 	}
 	#endif  //boardLIGHT_EN
 
-	#if(boardUSB_EN)
-	else if(keyHandler == &tKeyUSB) 
+	else if(keyHandler == &tKeyDown) 
 	{
-		Key_TriTypeBuff[Key_TriTypeCnt] = KTE_USB_SHORT ; 
+		Key_TriTypeBuff[Key_TriTypeCnt] = KTE_DOWN_SHORT ; 
 		if((keyGROUP_NUM - 1) > Key_TriTypeCnt) Key_TriTypeCnt ++;
 		
 		keyHandler->sOnPressCnt = -1;
 		
 		if(uPrint.tFlag.bKeyTask)
-			sMyPrint("Key_Task:USB短按\r\n");
+			sMyPrint("Key_Task:Down短按\r\n");
 	}
-	#endif  //boardUSB_EN
 
-	#if(boardDC_EN)
-	else if(keyHandler == &tKeyDC) 
+	else if(keyHandler == &tKeyRight) 
 	{
-		Key_TriTypeBuff[Key_TriTypeCnt] = KTE_DC_SHORT ; 
+		Key_TriTypeBuff[Key_TriTypeCnt] = KTE_RIGHT_SHORT ; 
 		if((keyGROUP_NUM - 1) > Key_TriTypeCnt) Key_TriTypeCnt ++;
 		
 		keyHandler->sOnPressCnt = -1;
 		
 		if(uPrint.tFlag.bKeyTask)
-			sMyPrint("Key_Task:DC短按\r\n");
+			sMyPrint("Key_Task:Right短按\r\n");
 	}
-	#endif  //boardDC_EN
 }
 
 
@@ -427,7 +420,7 @@ static void v_key_long_press(KeyHandler_t* keyHandler)
 	
 	if(keyHandler == &tKeyPower) 
 	{
-		Key_TriTypeBuff[Key_TriTypeCnt] = KTE_POWER_LONG ;  
+		Key_TriTypeBuff[Key_TriTypeCnt] = KTE_ENTER_LONG ;  
 		if((keyGROUP_NUM - 1) > Key_TriTypeCnt) Key_TriTypeCnt ++;
 		
 		keyHandler->sOnPressCnt = -1;
@@ -437,57 +430,51 @@ static void v_key_long_press(KeyHandler_t* keyHandler)
 		
 	}
 
-	#if(boardDCAC_EN)
-	else if(keyHandler == &tKeyAC) 
+	else if(keyHandler == &tKeyLeft) 
 	{
-		Key_TriTypeBuff[Key_TriTypeCnt] = KTE_AC_LONG ; 
+		Key_TriTypeBuff[Key_TriTypeCnt] = KTE_LEFT_LONG ; 
 		if((keyGROUP_NUM-1)>Key_TriTypeCnt) Key_TriTypeCnt ++;
 		
 		keyHandler->sOnPressCnt = -1;
 		
 		if(uPrint.tFlag.bKeyTask)
-			sMyPrint("Key_Task:AC长按\r\n");
+			sMyPrint("Key_Task:Left长按\r\n");
 	}
-	#endif  //boardDCAC_EN
 
 	#if(boardLIGHT_EN)
-	else if(keyHandler == &tKeyLight) 
+	else if(keyHandler == &tKeyUp) 
 	{
-		Key_TriTypeBuff[Key_TriTypeCnt] = KTE_LIGHT_LONG ; 
+		Key_TriTypeBuff[Key_TriTypeCnt] = KTE_UP_LONG ; 
 		if((keyGROUP_NUM - 1) > Key_TriTypeCnt) Key_TriTypeCnt ++;
 		
 		keyHandler->sOnPressCnt = -1;
 		
 		if(uPrint.tFlag.bKeyTask)
-			sMyPrint("Key_Task:Light长按\r\n");
+			sMyPrint("Key_Task:Up长按\r\n");
 	}
 	#endif  //boardLIGHT_EN
 
-	#if(boardUSB_EN)
-	else if(keyHandler == &tKeyUSB) 
+	else if(keyHandler == &tKeyDown) 
 	{
-		Key_TriTypeBuff[Key_TriTypeCnt] = KTE_USB_LONG ; 
+		Key_TriTypeBuff[Key_TriTypeCnt] = KTE_DOWN_LONG ; 
 		if((keyGROUP_NUM - 1) > Key_TriTypeCnt) Key_TriTypeCnt ++;
 		
 		keyHandler->sOnPressCnt = -1;
 		
 		if(uPrint.tFlag.bKeyTask)
-			sMyPrint("Key_Task:USB长按\r\n");
+			sMyPrint("Key_Task:Down长按\r\n");
 	}
-	#endif  //boardUSB_EN
 
-	#if(boardDC_EN)
-	else if(keyHandler == &tKeyDC) 
+	else if(keyHandler == &tKeyRight) 
 	{
-		Key_TriTypeBuff[Key_TriTypeCnt] = KTE_DC_LONG ; 
+		Key_TriTypeBuff[Key_TriTypeCnt] = KTE_RIGHT_LONG ; 
 		if((keyGROUP_NUM - 1) > Key_TriTypeCnt) Key_TriTypeCnt ++;
 		
 		keyHandler->sOnPressCnt = -1;
 		
 		if(uPrint.tFlag.bKeyTask)
-			sMyPrint("Key_Task:DC长按\r\n");
+			sMyPrint("Key_Task:Right长按\r\n");
 	}
-	#endif  //boardDC_EN
 }
 
 /***********************************************************************************************************************

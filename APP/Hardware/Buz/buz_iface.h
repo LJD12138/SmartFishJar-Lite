@@ -8,6 +8,9 @@
 #define    		buzPWM_GPIO_PORT    					GPIOB
 #define    		buzPWM_GPIO_PIN     					GPIO_PIN_10
 
+#define 		buzPWM_MAX_VALUE     					999
+#define 		buzPWM_PSC           					60
+
 #define    		buzTIMER         						TIMER1
 #define    		buzTIMER_RCU    						RCU_TIMER1
 #define    		buzTIMER_CH     						TIMER_CH_2

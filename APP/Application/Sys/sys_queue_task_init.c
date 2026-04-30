@@ -17,14 +17,6 @@
 #include "Buz/buz_task.h"
 #endif
 
-#if(boardWATER_PUMP_EN)
-#include "Pump/pump_task.h"
-#endif
-
-#if(boardO2PUMP_EN)
-#include "O2Pump/o2pump_task.h"
-#endif
-
 #define     	sysTASK_INIT_CYCLE_TIME					100 //任务时间
 
 /***********************************************************************************************************************
@@ -119,6 +111,12 @@ void v_sys_queue_task_init(Task_T *tp_task)
 				#else
 				true
 				#endif  //boardADC_EN
+
+				#if(boardDISPLAY_EN)
+				&& tSysInfo.uInit.tFinish.bIF_DispTask
+				#else
+				true
+				#endif  //boardDISPLAY_EN
 			)
 				cQueue_GotoStep(tp_task, STEP_NEXT);
 			else
@@ -262,14 +260,9 @@ void v_sys_queue_task_init(Task_T *tp_task)
 		{
 			tSysInfo.uInit.tFinish.bIF_SysTask = 1;
 			tSysInfo.uInit.tFinish.bIF_SysInit = 1;
+			tSysInfo.uInit.tFinish.bIF_Gpio = 1;
 
             /* 初始化水泵、氧气泵、使能12V供电 */
-            #if(boardWATER_PUMP_EN)
-            bPump_TaskInit();
-            #endif
-            #if(boardO2PUMP_EN)
-            bO2Pump_TaskInit();
-            #endif
             #if(board12V_EN)
             vGPIO_12VPowerSwitch(true);
             #endif

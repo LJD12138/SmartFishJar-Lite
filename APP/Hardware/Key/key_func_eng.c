@@ -76,14 +76,14 @@ enum
 	EMKF_COMFIRM,  		//确认
 }eEngModeKeyFunc;
 //工程模式按键类型
-u8 const KeyTriType_SetBuff[ 3 ]    = { KTE_AC_LONG, KTE_POWER_LONG, KTE_FUN_NULL};  //进入
-u8 const KeyTriType_Set1Buff[ 3 ]   = { KTE_POWER_LONG, KTE_AC_LONG, KTE_FUN_NULL};
-u8 const KeyTriType_NextOptionBuff[ 3 ]= { KTE_POWER_SHORT,KTE_POWER_SHORT, KTE_FUN_NULL};  //对象
-u8 const KeyTriType_ChargeBuff[ 2 ] = { KTE_POWER_SHORT, KTE_FUN_NULL};  		//项目
-u8 const KeyTriType_AddBuff[ 2 ]    = { KTE_AC_SHORT, KTE_FUN_NULL};    	//增加
-u8 const KeyTriType_ReduceBuff[ 2 ] = { KTE_DC_SHORT, KTE_FUN_NULL};    	//减少
-u8 const KeyTriType_ComfirmBuff[ 2 ]= { KTE_POWER_LONG, KTE_FUN_NULL};      //确认
-u8 const KeyTriType_NullBuff[ 2 ]= { KTE_LIGHT_SHORT, KTE_FUN_NULL};      	//空闲
+u8 const KeyTriType_SetBuff[ 3 ]    = { KTE_LEFT_LONG, KTE_ENTER_LONG, KTE_FUN_NULL};  //进入
+u8 const KeyTriType_Set1Buff[ 3 ]   = { KTE_ENTER_LONG, KTE_LEFT_LONG, KTE_FUN_NULL};
+u8 const KeyTriType_NextOptionBuff[ 3 ]= { KTE_ENTER_SHORT,KTE_ENTER_SHORT, KTE_FUN_NULL};  //对象
+u8 const KeyTriType_ChargeBuff[ 2 ] = { KTE_ENTER_SHORT, KTE_FUN_NULL};  		//项目
+u8 const KeyTriType_AddBuff[ 2 ]    = { KTE_LEFT_SHORT, KTE_FUN_NULL};    	//增加
+u8 const KeyTriType_ReduceBuff[ 2 ] = { KTE_RIGHT_SHORT, KTE_FUN_NULL};    	//减少
+u8 const KeyTriType_ComfirmBuff[ 2 ]= { KTE_ENTER_LONG, KTE_FUN_NULL};      //确认
+u8 const KeyTriType_NullBuff[ 2 ]= { KTE_UP_SHORT, KTE_FUN_NULL};      	//空闲
 
 
 //****************************************************Function Declaration****************************************************//
@@ -186,13 +186,13 @@ static bool eng_mode_key_deal(u8 func)
 	//累加设置
 //	if(step ==EMS_TIME)
 //	{
-//		tKeyAC.bEnLongPressAdd = true;
-//		tKeyLight.bEnLongPressAdd = true;
+//		tKeyLeft.bEnLongPressAdd = true;
+//		tKeyUp.bEnLongPressAdd = true;
 //	}
 //	else 
 //	{
-//		tKeyAC.bEnLongPressAdd = false;
-//		tKeyLight.bEnLongPressAdd = false;
+//		tKeyLeft.bEnLongPressAdd = false;
+//		tKeyUp.bEnLongPressAdd = false;
 //	}
 	
 	vEng_RefreshEngModeTime();

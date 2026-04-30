@@ -99,9 +99,9 @@ static void v_print_gpio_init(void)
 	#endif
 	
 	//接口使能
-	rcu_periph_clock_enable(printIFACE_EN_RCU);
-	gpio_init(printIFACE_EN_PORT, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, printIFACE_EN_PIN);
-	printIFACE_EN_ON();  //默认接收
+//	rcu_periph_clock_enable(printIFACE_EN_RCU);
+//	gpio_init(printIFACE_EN_PORT, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, printIFACE_EN_PIN);
+//	printIFACE_EN_ON();  //默认接收
 }
 
 /***********************************************************************************************************************

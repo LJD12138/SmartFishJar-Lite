@@ -309,10 +309,6 @@ s8 c_relay0A_bat_param(void)
 	#if(boardBMS_EN)
 	uint8_t data[255] = {0};
     uint8_t len = 0;
-    
-//	tBmsRx.usSOC = 12;
-//	tBmsRx.sTotalCurr = 23;
-//	tBmsRx.usChgFullTime = 45;
 	
     len = sizeof(tBms); 
     if(len > sizeof(data)) return false;//data³¤¶È²»×ã

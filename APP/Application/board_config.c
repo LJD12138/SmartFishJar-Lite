@@ -78,17 +78,26 @@
 #include "Sys/sys_queue_task_updata.h"
 #endif  //boardUPDATA
 
+#if(boardWATER_PUMP_EN)
+#include "Pump/pump_task.h"
+#endif
+
+#if(boardO2PUMP_EN)
+#include "O2Pump/o2pump_task.h"
+#endif
+
 
 void SysParamInit(void)
 {
 	#if(boardPRINT_IFACE)
 	uPrint.tFlag.bImportant = 1;
 	uPrint.tFlag.bAppInfo   = 1;
-	uPrint.tFlag.bSysTask   = 0;
+	uPrint.tFlag.bSysTask   = 1;
 	uPrint.tFlag.bKeyTask   = 1;
 	uPrint.tFlag.bUsbTask   = 0;
 	uPrint.tFlag.bDcTask    = 0;
-	uPrint.tFlag.bDispTask   = 0;
+	uPrint.tFlag.bDispTask  = 0;
+	uPrint.tFlag.bAdcTask	= 1;
 	
 	#if(boardUSE_OS_DEBUG_OUT)
 	uPrint.tFlag.bFreeRTOS = 1;
@@ -173,6 +182,10 @@ void vBoard_StartTask(void *pvParameters)
 	bDisp_TaskInit();             //显示任务
 	#endif  //boardDISPLAY_EN
 	
+	#if(boardLED_EN)
+	vLed_TaskInit();             //指示灯任务
+	#endif  //boardLED_EN
+	
 	#if(boardBUZ_EN)
     bBuz_TaskInit();            //蜂鸣器任务
 	#endif  //boardBUZ_EN
@@ -181,10 +194,6 @@ void vBoard_StartTask(void *pvParameters)
     vKey_TaskInit();             //按键任务
 	#endif  //boardKEY_EN
 	
-	#if(boardLED_EN)
-	vLed_TaskInit();             //指示灯任务
-	#endif  //boardLED_EN
-	
 	#if(boardLIGHT_EN)
 	vLight_TaskInit();           //照明灯任务
 	#endif  //boardLIGHT_EN
@@ -192,6 +201,14 @@ void vBoard_StartTask(void *pvParameters)
 	#if(boardHEAT_MANAGE_EN)
 	bHM_TaskInit();             //风扇散热任务
 	#endif  //boardHEAT_MANAGE_EN
+
+	#if(boardWATER_PUMP_EN)
+	bPump_TaskInit();			//水泵任务
+	#endif
+	
+	#if(boardO2PUMP_EN)
+	bO2Pump_TaskInit();			//氧气泵任务
+	#endif
 	
 	#if(boardUSB_EN)
 	bUsb_TaskInit();             //USB任务

@@ -1,4 +1,5 @@
 #include "Buz/buz_iface.h"
+#include "Led/led_iface.h"
 
 /***********************************************************************************************************************
 -----函数功能    蜂鸣器IO初始化
@@ -34,10 +35,10 @@ static void v_buz_timer_init(void)
 
     timer_struct_para_init(&timer_initpara);                 /*默认值初始化*/
     /* TIMER0 configuration */
-    timer_initpara.prescaler         = 60;                   /*分频数*/
+    timer_initpara.prescaler         = buzPWM_PSC;           /*分频数*/
     timer_initpara.alignedmode       = TIMER_COUNTER_EDGE;   /*边沿对齐模式*/
     timer_initpara.counterdirection  = TIMER_COUNTER_UP;     /*向上计时*/
-    timer_initpara.period            = 999;                  /*重装值*/
+    timer_initpara.period            = buzPWM_MAX_VALUE;     /*重装值*/
     timer_initpara.clockdivision     = TIMER_CKDIV_DIV1;     /*分频系数*/
     timer_initpara.repetitioncounter = 0;                    /*初始计数器值*/
     timer_init(buzTIMER, &timer_initpara);
@@ -48,10 +49,15 @@ static void v_buz_timer_init(void)
     timer_ocinitpara.ocpolarity   = TIMER_OC_POLARITY_HIGH;
     timer_ocinitpara.ocidlestate  = TIMER_OC_IDLE_STATE_LOW;
     timer_channel_output_config(buzTIMER, buzTIMER_CH, &timer_ocinitpara);
+	timer_channel_output_config(buzTIMER, ledTIMER_CH, &timer_ocinitpara);
 	
     timer_channel_output_pulse_value_config(buzTIMER, buzTIMER_CH, 0);
     timer_channel_output_mode_config(buzTIMER, buzTIMER_CH, TIMER_OC_MODE_PWM0);
     timer_channel_output_shadow_config(buzTIMER, buzTIMER_CH, TIMER_OC_SHADOW_DISABLE);
+	
+	timer_channel_output_pulse_value_config(buzTIMER, ledTIMER_CH, 0);
+    timer_channel_output_mode_config(buzTIMER, ledTIMER_CH, TIMER_OC_MODE_PWM0);
+    timer_channel_output_shadow_config(buzTIMER, ledTIMER_CH, TIMER_OC_SHADOW_DISABLE);
 
     /* enable TIMER primary output function */
     timer_primary_output_config(buzTIMER, ENABLE);

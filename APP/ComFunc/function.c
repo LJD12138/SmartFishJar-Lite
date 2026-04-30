@@ -1,6 +1,12 @@
 #include "function.h"
 #include <math.h>
 #include <ctype.h>
+#include "board_config.h"
+
+#if(boardUSE_OS)
+#include "freertos.h"
+#include "task.h"
+#endif  //boardUSE_OS
 
 // 将16进制数组转换为ASCII码数组
 void hex2ascii(unsigned char* hex, char* ascii, int len) {
@@ -526,3 +532,125 @@ void vFunc_CycleGetNextNum(u8* num, const u8* num_max)
 	else
 		*num = 0;
 }
+
+/***********************************************************************************************************************
+-----函数功能    高效数据搬运（快速拷贝）
+-----说明(备注)  针对 ARM Cortex-M3/M4 优化：
+                1. 先拷贝前导字节使目标地址 4 字节对齐
+                2. 源地址也对齐时使用 32-bit (4×32bit = 16 字节) 块拷贝
+                3. 最后拷贝尾部剩余字节
+                不处理地址重叠，若可能重叠请使用标准 memmove
+                该函数本身可重入，不依赖全局状态，适合多任务调用（各任务操作独立缓冲区）
+-----传入参数    dst: 目标地址
+                 src: 源地址
+                 len: 拷贝长度（字节）
+-----输出参数    none
+-----返回值      目标地址指针
+************************************************************************************************************************/
+void *pvFunc_FastMemcpy(void *dst, const void *src, uint32_t len)
+{
+    uint8_t *d;
+    const uint8_t *s;
+    uint32_t *d32;
+    const uint32_t *s32;
+    uint32_t t0, t1, t2, t3;
+
+    if (dst == NULL || src == NULL || len == 0) {
+        return dst;
+    }
+
+    d = (uint8_t *)dst;
+    s = (const uint8_t *)src;
+
+    /* 1. 前导字节拷贝：使目标地址按 4 字节对齐 */
+    while (len > 0 && (((uint32_t)d) & 0x03)) {
+        *d++ = *s++;
+        len--;
+    }
+
+    /* 2. 若源地址也 4 字节对齐，使用 32-bit 块拷贝 */
+    if ((((uint32_t)s) & 0x03) == 0) {
+        d32 = (uint32_t *)d;
+        s32 = (const uint32_t *)s;
+
+        /* 每次拷贝 16 字节（4 × 32-bit），减少循环开销 */
+        while (len >= 16) {
+            t0 = s32[0];
+            t1 = s32[1];
+            t2 = s32[2];
+            t3 = s32[3];
+            d32[0] = t0;
+            d32[1] = t1;
+            d32[2] = t2;
+            d32[3] = t3;
+            s32 += 4;
+            d32 += 4;
+            len -= 16;
+        }
+
+        /* 剩余 4 字节块 */
+        while (len >= 4) {
+            *d32++ = *s32++;
+            len -= 4;
+        }
+
+        d = (uint8_t *)d32;
+        s = (const uint8_t *)s32;
+    }
+
+    /* 3. 尾部字节拷贝 */
+    while (len > 0) {
+        *d++ = *s++;
+        len--;
+    }
+
+    return dst;
+}
+
+/***********************************************************************************************************************
+-----函数功能    线程安全的高效数据搬运
+-----说明(备注)  基于 pvFunc_FastMemcpy，在拷贝前后进入/退出临界区：
+                - 若定义了 USE_FREERTOS / FREERTOS_CONFIG_H，使用 FreeRTOS 的 taskENTER_CRITICAL / taskEXIT_CRITICAL
+                - 否则使用裸机 __disable_irq / __enable_irq（保存/恢复 PRIMASK 状态）
+                适合拷贝可能被中断或其他任务并发修改的共享缓冲区。
+                注意：临界区内不宜执行过长拷贝，大数据量建议配合信号量/互斥锁分块处理。
+-----传入参数    dst: 目标地址
+                 src: 源地址
+                 len: 拷贝长度（字节）
+-----输出参数    none
+-----返回值      目标地址指针
+************************************************************************************************************************/
+void *pvFunc_SafeMemcpy(void *dst, const void *src, uint32_t len)
+{
+    void *ret;
+
+    if (dst == NULL || src == NULL || len == 0) {
+        return dst;
+    }
+
+    /* 进入临界区 */
+	#if(boardUSE_OS)
+    taskENTER_CRITICAL();
+	#else
+    {
+        uint32_t primask = __get_PRIMASK();
+        __disable_irq();
+	#endif
+
+        /* 执行高效拷贝 */
+        ret = pvFunc_FastMemcpy(dst, src, len);
+
+    /* 退出临界区 */
+	#if(boardUSE_OS)
+    taskEXIT_CRITICAL();
+	#else
+        if (primask == 0) {
+            __enable_irq();
+        }
+    }
+	#endif
+
+    return ret;
+}
+
+

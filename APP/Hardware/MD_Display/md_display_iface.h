@@ -37,28 +37,18 @@
 #define     	dispOLED_DC_H()               			GPIO_BOP(dispOLED_DC_PORT) = (uint32_t)dispOLED_DC_PIN
 #define     	dispOLED_DC_L()               			GPIO_BC(dispOLED_DC_PORT) = (uint32_t)dispOLED_DC_PIN
 
-#if(boardDISP_SPI_MODE == boardDISP_SPI_MODE_HARD_DMA)
-#define     	dispOLED_SPI_PERIPH           			SPI2
-#define     	dispOLED_SPI_RCU              			RCU_SPI2
-#define     	dispOLED_SPI_DMA_PERIPH       			DMA1
-#define     	dispOLED_SPI_DMA_RCU          			RCU_DMA1
-#define     	dispOLED_SPI_DMA_TX_CH        			DMA_CH1
+#if(boardDISP_SPI_MODE == 1)
+#define     	dispOLED_SPI_PERIPH           			SPI1
+#define     	dispOLED_SPI_RCU              			RCU_SPI1
+#define     	dispOLED_SPI_DMA_PERIPH       			DMA0
+#define     	dispOLED_SPI_DMA_RCU          			RCU_DMA0
+#define     	dispOLED_SPI_DMA_TX_CH        			DMA_CH4
 #define     	dispOLED_SPI_PRESCALE         			SPI_PSC_16
-#endif
+#endif  //boardDISP_SPI_MODE
 
-void vDisp_OledIfaceInit(void);
-void vDisp_OledReInit(void);
-void vDisp_OledSetPower(bool on);
-
-void vDisp_OledClearBuffer(void);
-void vDisp_OledFillBuffer(u8 value);
-void vDisp_OledRefresh(void);
-
-void vDisp_OledDrawPixel(u8 x, u8 y, bool on);
-void vDisp_OledDrawHLine(u8 x, u8 y, u8 len, bool on);
-void vDisp_OledDrawVLine(u8 x, u8 y, u8 len, bool on);
-void vDisp_OledDrawChar6x8(u8 x, u8 y, char c);
-void vDisp_OledDrawString6x8(u8 x, u8 y, const char *str);
+void vDisp_IfaceInit(void);
+void vDisp_SpiSendByte(const u8 *data, u16 len);
+void vDisp_OledWriteByte(const u8 *data, u16 len, u8 mode);
 
 #endif  // boardDISPLAY_EN
 

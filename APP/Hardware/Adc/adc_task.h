@@ -8,16 +8,16 @@
 
 // VIN电压分压比 R13(68K)/R14(12K): Vout = Vadc * (R13+R14)/R14 * 0.1V
 #define     	adcVIN_VOLT_R1                      	68.0f  //(Kohm) 分压上电阻
-#define     	adcVIN_VOLT_R2                      	12.0f  //(Kohm) 分压下电阻
+#define     	adcVIN_VOLT_R2                      	4.7f  //(Kohm) 分压下电阻
 #define     	adcVIN_VOLT_RES_RATIO               	((((3.3f / 4095.0f) * (adcVIN_VOLT_R1 + adcVIN_VOLT_R2)) / adcVIN_VOLT_R2) * 10.0f)
 
 // 12V电压分压比 R37/R38（参考原理图，暂用47K/5.1K）
-#define     	adc12V_VOLT_R1                      	47.0f  //(Kohm)
-#define     	adc12V_VOLT_R2                      	5.1f   //(Kohm)
+#define     	adc12V_VOLT_R1                      	20.0f  //(Kohm)
+#define     	adc12V_VOLT_R2                      	4.7f   //(Kohm)
 #define     	adc12V_VOLT_RES_RATIO               	((((3.3f / 4095.0f) * (adc12V_VOLT_R1 + adc12V_VOLT_R2)) / adc12V_VOLT_R2) * 10.0f)
 
 // 电流换算系数 (采样电阻R84，按原理图值，暂用0.01Ohm，运放增益10: I=Vadc/10/0.01)
-#define     	adcCURR_RES_RATIO                   	0.0806f  // Vadc(0-3.3V)/4095 * 3.3 / 运放增益 / 采样电阻
+#define     	adcCURR_RES_RATIO                   	0.00311f  // Vadc(0-3.3V)/4095 * 3.3 / 运放增益 / 采样电阻
 
 typedef struct
 {

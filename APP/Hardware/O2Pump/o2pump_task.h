@@ -2,7 +2,7 @@
 #define O2PUMP_TASK_H_
 
 #include "board_config.h"
-#include "ComFunc/function.h"
+#include "function.h"
 
 #if(boardO2PUMP_EN)
 

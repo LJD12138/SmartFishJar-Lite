@@ -64,12 +64,12 @@ void v_sys_queue_task_work(Task_T *tp_task)
 		case 0:
 		{
 			/* 进入工作状态：启动水泵和O2泵默认挡位 */
-			#if(boardWATER_PUMP_EN)
-			bPump_SetMode(PUMP_MID);
-			#endif
-			#if(boardO2PUMP_EN)
-			bO2Pump_SetMode(O2PUMP_MID);
-			#endif
+			// #if(boardWATER_PUMP_EN)
+			// bPump_SetMode(PUMP_MID);
+			// #endif
+			// #if(boardO2PUMP_EN)
+			// bO2Pump_SetMode(O2PUMP_MID);
+			// #endif
 			cQueue_GotoStep( tp_task, STEP_NEXT );
 		}
 		break;
@@ -167,16 +167,16 @@ __STATIC_INLINE void v_chg_pwr_manage(void)
 ************************************************************************************************************************/
 static void v_pump_manage(void)
 {
-    #if(boardWATER_PUMP_EN && boardADC_EN)
-    /* 水泵过流检测：电流超过3A时关闭，避免损坏 */
-    if(tAdcSamp.fPumpCurr > 3.0f)
-        bPump_SetMode(PUMP_OFF);
-    #endif
+    // #if(boardWATER_PUMP_EN && boardADC_EN)
+    // /* 水泵过流检测：电流超过3A时关闭，避免损坏 */
+    // if(tAdcSamp.fPumpCurr > 3.0f)
+    //     bPump_SetMode(PUMP_OFF);
+    // #endif
 
-    #if(boardO2PUMP_EN && boardADC_EN)
-    /* O2泵过流检测：电流超过2A时关闭 */
-    if(tAdcSamp.fO2Curr > 2.0f)
-        bO2Pump_SetMode(O2PUMP_OFF);
-    #endif
+    // #if(boardO2PUMP_EN && boardADC_EN)
+    // /* O2泵过流检测：电流超过2A时关闭 */
+    // if(tAdcSamp.fO2Curr > 2.0f)
+    //     bO2Pump_SetMode(O2PUMP_OFF);
+    // #endif
 }
 

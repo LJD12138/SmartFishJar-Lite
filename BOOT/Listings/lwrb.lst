@@ -1,0 +1,1875 @@
+L 1 "Middlewares\LightweightRingBuffer\src\lwrb.c"
+N/**
+N * \file            lwrb.c
+N * \brief           轻量级环形缓冲区
+N */
+N
+N/*
+N * Copyright (c) 2024 Tilen MAJERLE
+N *
+N * 特此授予任何获得本软件及相关文档文件（以下简称“软件”）副本的人
+N * 免费许可，在不受限制的情况下处理本软件，包括但不限于使用、复制、修改、合并、
+N * 出版、分发、再许可和/或出售软件副本的权利，
+N * 以及允许向其提供软件的人做出上述行为，
+N * 但须符合以下条件：
+N *
+N * 上述版权声明和本许可声明应包含在软件的所有副本或主要部分中。
+N *
+N * 本软件按“原样”提供，不提供任何形式的保证，
+N * 无论是明示的还是暗示的，包括但不限于适销性、
+N * 特定用途适用性和非侵权性的保证。在任何情况下，作者或版权持有人
+N * 均不对任何索赔、损害或其他责任承担责任，
+N * 无论是在合同诉讼、侵权行为或其他方面，
+N * 源于、基于或与软件或软件的使用或其他交易有关。
+N *
+N * 本文件是LwRB（轻量级环形缓冲区库）的一部分。
+N *
+N * 作者：Tilen MAJERLE <tilen@majerle.eu>
+N * 版本：v3.2.0
+N */
+N#include "lwrb.h"
+L 1 "Middlewares\LightweightRingBuffer\src\lwrb.h" 1
+N/**
+N * \file            lwrb.h
+N * \brief           LwRB - Lightweight ring buffer
+N */
+N
+N/*
+N * Copyright (c) 2024 Tilen MAJERLE
+N *
+N * Permission is hereby granted, free of charge, to any person
+N * obtaining a copy of this software and associated documentation
+N * files (the "Software"), to deal in the Software without restriction,
+N * including without limitation the rights to use, copy, modify, merge,
+N * publish, distribute, sublicense, and/or sell copies of the Software,
+N * and to permit persons to whom the Software is furnished to do so,
+N * subject to the following conditions:
+N *
+N * The above copyright notice and this permission notice shall be
+N * included in all copies or substantial portions of the Software.
+N *
+N * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+N * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+N * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
+N * AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+N * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+N * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+N * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+N * OTHER DEALINGS IN THE SOFTWARE.
+N *
+N * This file is part of LwRB - Lightweight ring buffer library.
+N *
+N * Author:          Tilen MAJERLE <tilen@majerle.eu>
+N * Version:         v3.2.0
+N */
+N#ifndef LWRB_HDR_H
+N#define LWRB_HDR_H
+N
+N#include <stddef.h>
+L 1 "C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h" 1
+N/* stddef.h: ANSI 'C' (X3J11 Oct 88) library header, section 4.1.4 */
+N
+N/* Copyright (C) ARM Ltd., 1999
+N * All rights reserved
+N * RCS $Revision$
+N * Checkin $Date$
+N * Revising $Author: agrant $
+N */
+N
+N/* Copyright (C) Codemist Ltd., 1988                            */
+N/* Copyright 1991 ARM Limited. All rights reserved.             */
+N/* version 0.05 */
+N
+N/*
+N * The following types and macros are defined in several headers referred to in
+N * the descriptions of the functions declared in that header. They are also
+N * defined in this header file.
+N */
+N
+N#ifndef __stddef_h
+N#define __stddef_h
+N#define __ARMCLIB_VERSION 5060044
+N
+N  #ifndef __STDDEF_DECLS
+N  #define __STDDEF_DECLS
+N    #undef __CLIBNS
+N    #ifdef __cplusplus
+S        namespace std {
+S        #define __CLIBNS ::std::
+S        extern "C" {
+N    #else
+N      #define __CLIBNS
+N    #endif  /* __cplusplus */
+N
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+S  typedef signed long ptrdiff_t;
+N#else
+N  typedef signed int ptrdiff_t;
+N#endif
+N
+N#if defined(__cplusplus) || !defined(__STRICT_ANSI__)
+X#if 0L || !0L
+N /* unconditional in C++ and non-strict C for consistency of debug info */
+N  #if __sizeof_ptr == 8
+X  #if 4 == 8
+S    typedef unsigned long size_t;   /* see <stddef.h> */
+N  #else
+N    typedef unsigned int size_t;   /* see <stddef.h> */
+N  #endif
+N#elif !defined(__size_t)
+S  #define __size_t 1
+S  #if __sizeof_ptr == 8
+S    typedef unsigned long size_t;   /* see <stddef.h> */
+S  #else
+S    typedef unsigned int size_t;   /* see <stddef.h> */
+S  #endif
+S   /* the unsigned integral type of the result of the sizeof operator. */
+N#endif
+N
+N#ifndef __cplusplus  /* wchar_t is a builtin type for C++ */
+N  #if !defined(__STRICT_ANSI__)
+X  #if !0L
+N  /* unconditional in non-strict C for consistency of debug info */
+N    #if defined(__WCHAR32) || (defined(__ARM_SIZEOF_WCHAR_T) && __ARM_SIZEOF_WCHAR_T == 4)
+X    #if 0L || (0L && __ARM_SIZEOF_WCHAR_T == 4)
+S      typedef unsigned int wchar_t; /* also in <stdlib.h> and <inttypes.h> */
+N    #else
+N      typedef unsigned short wchar_t; /* also in <stdlib.h> and <inttypes.h> */
+N    #endif
+N  #elif !defined(__wchar_t)
+S    #define __wchar_t 1
+S    #if defined(__WCHAR32) || (defined(__ARM_SIZEOF_WCHAR_T) && __ARM_SIZEOF_WCHAR_T == 4)
+S      typedef unsigned int wchar_t; /* also in <stdlib.h> and <inttypes.h> */
+S    #else
+S      typedef unsigned short wchar_t; /* also in <stdlib.h> and <inttypes.h> */
+S    #endif
+S   /*
+S    * An integral type whose range of values can represent distinct codes for
+S    * all members of the largest extended character set specified among the
+S    * supported locales; the null character shall have the code value zero and
+S    * each member of the basic character set shall have a code value when used
+S    * as the lone character in an integer character constant.
+S    */
+N  #endif
+N#endif
+N
+N#undef NULL  /* others (e.g. <stdio.h>) also define */
+N#define NULL 0
+N   /* null pointer constant. */
+N
+N#ifdef __clang__
+S  #define offsetof(t, d) __builtin_offsetof(t, d)
+N#else
+N  /* EDG uses __INTADDR__ to avoid errors when strict */
+N  #define offsetof(t, memb) ((__CLIBNS size_t)__INTADDR__(&(((t *)0)->memb)))
+N#endif
+N
+N#if !defined(__STRICT_ANSI__) || (defined(__STDC_VERSION__) && 201112L <= __STDC_VERSION__) || (defined(__cplusplus) && 201103L <= __cplusplus)
+X#if !0L || (1L && 201112L <= 199901L) || (0L && 201103L <= __cplusplus)
+N  typedef long double max_align_t;
+N#endif
+N
+N    #ifdef __cplusplus
+S         }  /* extern "C" */
+S      }  /* namespace std */
+N    #endif /* __cplusplus */
+N  #endif /* __STDDEF_DECLS */
+N
+N
+N  #ifdef __cplusplus
+S    #ifndef __STDDEF_NO_EXPORTS
+S      using ::std::size_t;
+S      using ::std::ptrdiff_t;
+S      #if !defined(__STRICT_ANSI__) || (defined(__cplusplus) && 201103L <= __cplusplus)
+S        using ::std::max_align_t;
+S      #endif
+S    #endif 
+N  #endif /* __cplusplus */
+N
+N#endif
+N
+N/* end of stddef.h */
+N
+L 38 "Middlewares\LightweightRingBuffer\src\lwrb.h" 2
+N#include <stdint.h>
+L 1 "C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h" 1
+N/* Copyright (C) ARM Ltd., 1999,2014 */
+N/* All rights reserved */
+N
+N/*
+N * RCS $Revision$
+N * Checkin $Date$
+N * Revising $Author: agrant $
+N */
+N
+N#ifndef __stdint_h
+N#define __stdint_h
+N#define __ARMCLIB_VERSION 5060044
+N
+N  #ifdef __INT64_TYPE__
+S    /* armclang predefines '__INT64_TYPE__' and '__INT64_C_SUFFIX__' */
+S    #define __INT64 __INT64_TYPE__
+N  #else
+N    /* armcc has builtin '__int64' which can be used in --strict mode */
+N    #define __INT64 __int64
+N    #define __INT64_C_SUFFIX__ ll
+N  #endif
+N  #define __PASTE2(x, y) x ## y
+N  #define __PASTE(x, y) __PASTE2(x, y)
+N  #define __INT64_C(x)  __ESCAPE__(__PASTE(x, __INT64_C_SUFFIX__))
+N  #define __UINT64_C(x)  __ESCAPE__(__PASTE(x ## u, __INT64_C_SUFFIX__))
+N  #if defined(__clang__) || (defined(__ARMCC_VERSION) && !defined(__STRICT_ANSI__))
+X  #if 0L || (1L && !0L)
+N    /* armclang and non-strict armcc allow 'long long' in system headers */
+N    #define __LONGLONG long long
+N  #else
+S    /* strict armcc has '__int64' */
+S    #define __LONGLONG __int64
+N  #endif
+N
+N  #ifndef __STDINT_DECLS
+N  #define __STDINT_DECLS
+N
+N    #undef __CLIBNS
+N
+N    #ifdef __cplusplus
+S      namespace std {
+S          #define __CLIBNS std::
+S          extern "C" {
+N    #else
+N      #define __CLIBNS
+N    #endif  /* __cplusplus */
+N
+N
+N/*
+N * 'signed' is redundant below, except for 'signed char' and if
+N * the typedef is used to declare a bitfield.
+N */
+N
+N    /* 7.18.1.1 */
+N
+N    /* exact-width signed integer types */
+Ntypedef   signed          char int8_t;
+Ntypedef   signed short     int int16_t;
+Ntypedef   signed           int int32_t;
+Ntypedef   signed       __INT64 int64_t;
+Xtypedef   signed       __int64 int64_t;
+N
+N    /* exact-width unsigned integer types */
+Ntypedef unsigned          char uint8_t;
+Ntypedef unsigned short     int uint16_t;
+Ntypedef unsigned           int uint32_t;
+Ntypedef unsigned       __INT64 uint64_t;
+Xtypedef unsigned       __int64 uint64_t;
+N
+N    /* 7.18.1.2 */
+N
+N    /* smallest type of at least n bits */
+N    /* minimum-width signed integer types */
+Ntypedef   signed          char int_least8_t;
+Ntypedef   signed short     int int_least16_t;
+Ntypedef   signed           int int_least32_t;
+Ntypedef   signed       __INT64 int_least64_t;
+Xtypedef   signed       __int64 int_least64_t;
+N
+N    /* minimum-width unsigned integer types */
+Ntypedef unsigned          char uint_least8_t;
+Ntypedef unsigned short     int uint_least16_t;
+Ntypedef unsigned           int uint_least32_t;
+Ntypedef unsigned       __INT64 uint_least64_t;
+Xtypedef unsigned       __int64 uint_least64_t;
+N
+N    /* 7.18.1.3 */
+N
+N    /* fastest minimum-width signed integer types */
+Ntypedef   signed           int int_fast8_t;
+Ntypedef   signed           int int_fast16_t;
+Ntypedef   signed           int int_fast32_t;
+Ntypedef   signed       __INT64 int_fast64_t;
+Xtypedef   signed       __int64 int_fast64_t;
+N
+N    /* fastest minimum-width unsigned integer types */
+Ntypedef unsigned           int uint_fast8_t;
+Ntypedef unsigned           int uint_fast16_t;
+Ntypedef unsigned           int uint_fast32_t;
+Ntypedef unsigned       __INT64 uint_fast64_t;
+Xtypedef unsigned       __int64 uint_fast64_t;
+N
+N    /* 7.18.1.4 integer types capable of holding object pointers */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+Stypedef   signed       __INT64 intptr_t;
+Stypedef unsigned       __INT64 uintptr_t;
+N#else
+Ntypedef   signed           int intptr_t;
+Ntypedef unsigned           int uintptr_t;
+N#endif
+N
+N    /* 7.18.1.5 greatest-width integer types */
+Ntypedef   signed     __LONGLONG intmax_t;
+Xtypedef   signed     long long intmax_t;
+Ntypedef unsigned     __LONGLONG uintmax_t;
+Xtypedef unsigned     long long uintmax_t;
+N
+N
+N#if !defined(__cplusplus) || defined(__STDC_LIMIT_MACROS)
+X#if !0L || 0L
+N
+N    /* 7.18.2.1 */
+N
+N    /* minimum values of exact-width signed integer types */
+N#define INT8_MIN                   -128
+N#define INT16_MIN                -32768
+N#define INT32_MIN          (~0x7fffffff)   /* -2147483648 is unsigned */
+N#define INT64_MIN  __INT64_C(~0x7fffffffffffffff) /* -9223372036854775808 is unsigned */
+N
+N    /* maximum values of exact-width signed integer types */
+N#define INT8_MAX                    127
+N#define INT16_MAX                 32767
+N#define INT32_MAX            2147483647
+N#define INT64_MAX  __INT64_C(9223372036854775807)
+N
+N    /* maximum values of exact-width unsigned integer types */
+N#define UINT8_MAX                   255
+N#define UINT16_MAX                65535
+N#define UINT32_MAX           4294967295u
+N#define UINT64_MAX __UINT64_C(18446744073709551615)
+N
+N    /* 7.18.2.2 */
+N
+N    /* minimum values of minimum-width signed integer types */
+N#define INT_LEAST8_MIN                   -128
+N#define INT_LEAST16_MIN                -32768
+N#define INT_LEAST32_MIN          (~0x7fffffff)
+N#define INT_LEAST64_MIN  __INT64_C(~0x7fffffffffffffff)
+N
+N    /* maximum values of minimum-width signed integer types */
+N#define INT_LEAST8_MAX                    127
+N#define INT_LEAST16_MAX                 32767
+N#define INT_LEAST32_MAX            2147483647
+N#define INT_LEAST64_MAX  __INT64_C(9223372036854775807)
+N
+N    /* maximum values of minimum-width unsigned integer types */
+N#define UINT_LEAST8_MAX                   255
+N#define UINT_LEAST16_MAX                65535
+N#define UINT_LEAST32_MAX           4294967295u
+N#define UINT_LEAST64_MAX __UINT64_C(18446744073709551615)
+N
+N    /* 7.18.2.3 */
+N
+N    /* minimum values of fastest minimum-width signed integer types */
+N#define INT_FAST8_MIN           (~0x7fffffff)
+N#define INT_FAST16_MIN          (~0x7fffffff)
+N#define INT_FAST32_MIN          (~0x7fffffff)
+N#define INT_FAST64_MIN  __INT64_C(~0x7fffffffffffffff)
+N
+N    /* maximum values of fastest minimum-width signed integer types */
+N#define INT_FAST8_MAX             2147483647
+N#define INT_FAST16_MAX            2147483647
+N#define INT_FAST32_MAX            2147483647
+N#define INT_FAST64_MAX  __INT64_C(9223372036854775807)
+N
+N    /* maximum values of fastest minimum-width unsigned integer types */
+N#define UINT_FAST8_MAX            4294967295u
+N#define UINT_FAST16_MAX           4294967295u
+N#define UINT_FAST32_MAX           4294967295u
+N#define UINT_FAST64_MAX __UINT64_C(18446744073709551615)
+N
+N    /* 7.18.2.4 */
+N
+N    /* minimum value of pointer-holding signed integer type */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+S#define INTPTR_MIN INT64_MIN
+N#else
+N#define INTPTR_MIN INT32_MIN
+N#endif
+N
+N    /* maximum value of pointer-holding signed integer type */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+S#define INTPTR_MAX INT64_MAX
+N#else
+N#define INTPTR_MAX INT32_MAX
+N#endif
+N
+N    /* maximum value of pointer-holding unsigned integer type */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+S#define UINTPTR_MAX UINT64_MAX
+N#else
+N#define UINTPTR_MAX UINT32_MAX
+N#endif
+N
+N    /* 7.18.2.5 */
+N
+N    /* minimum value of greatest-width signed integer type */
+N#define INTMAX_MIN  __ESCAPE__(~0x7fffffffffffffffll)
+N
+N    /* maximum value of greatest-width signed integer type */
+N#define INTMAX_MAX  __ESCAPE__(9223372036854775807ll)
+N
+N    /* maximum value of greatest-width unsigned integer type */
+N#define UINTMAX_MAX __ESCAPE__(18446744073709551615ull)
+N
+N    /* 7.18.3 */
+N
+N    /* limits of ptrdiff_t */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+S#define PTRDIFF_MIN INT64_MIN
+S#define PTRDIFF_MAX INT64_MAX
+N#else
+N#define PTRDIFF_MIN INT32_MIN
+N#define PTRDIFF_MAX INT32_MAX
+N#endif
+N
+N    /* limits of sig_atomic_t */
+N#define SIG_ATOMIC_MIN (~0x7fffffff)
+N#define SIG_ATOMIC_MAX   2147483647
+N
+N    /* limit of size_t */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+S#define SIZE_MAX UINT64_MAX
+N#else
+N#define SIZE_MAX UINT32_MAX
+N#endif
+N
+N    /* limits of wchar_t */
+N    /* NB we have to undef and redef because they're defined in both
+N     * stdint.h and wchar.h */
+N#undef WCHAR_MIN
+N#undef WCHAR_MAX
+N
+N#if defined(__WCHAR32) || (defined(__ARM_SIZEOF_WCHAR_T) && __ARM_SIZEOF_WCHAR_T == 4)
+X#if 0L || (0L && __ARM_SIZEOF_WCHAR_T == 4)
+S  #define WCHAR_MIN   0
+S  #define WCHAR_MAX   0xffffffffU
+N#else
+N  #define WCHAR_MIN   0
+N  #define WCHAR_MAX   65535
+N#endif
+N
+N    /* limits of wint_t */
+N#define WINT_MIN (~0x7fffffff)
+N#define WINT_MAX 2147483647
+N
+N#endif /* __STDC_LIMIT_MACROS */
+N
+N#if !defined(__cplusplus) || defined(__STDC_CONSTANT_MACROS)
+X#if !0L || 0L
+N
+N    /* 7.18.4.1 macros for minimum-width integer constants */
+N#define INT8_C(x)   (x)
+N#define INT16_C(x)  (x)
+N#define INT32_C(x)  (x)
+N#define INT64_C(x)  __INT64_C(x)
+N
+N#define UINT8_C(x)  (x ## u)
+N#define UINT16_C(x) (x ## u)
+N#define UINT32_C(x) (x ## u)
+N#define UINT64_C(x) __UINT64_C(x)
+N
+N    /* 7.18.4.2 macros for greatest-width integer constants */
+N#define INTMAX_C(x)  __ESCAPE__(x ## ll)
+N#define UINTMAX_C(x) __ESCAPE__(x ## ull)
+N
+N#endif /* __STDC_CONSTANT_MACROS */
+N
+N    #ifdef __cplusplus
+S         }  /* extern "C" */
+S      }  /* namespace std */
+N    #endif /* __cplusplus */
+N  #endif /* __STDINT_DECLS */
+N
+N  #ifdef __cplusplus
+S    #ifndef __STDINT_NO_EXPORTS
+S      using ::std::int8_t;
+S      using ::std::int16_t;
+S      using ::std::int32_t;
+S      using ::std::int64_t;
+S      using ::std::uint8_t;
+S      using ::std::uint16_t;
+S      using ::std::uint32_t;
+S      using ::std::uint64_t;
+S      using ::std::int_least8_t;
+S      using ::std::int_least16_t;
+S      using ::std::int_least32_t;
+S      using ::std::int_least64_t;
+S      using ::std::uint_least8_t;
+S      using ::std::uint_least16_t;
+S      using ::std::uint_least32_t;
+S      using ::std::uint_least64_t;
+S      using ::std::int_fast8_t;
+S      using ::std::int_fast16_t;
+S      using ::std::int_fast32_t;
+S      using ::std::int_fast64_t;
+S      using ::std::uint_fast8_t;
+S      using ::std::uint_fast16_t;
+S      using ::std::uint_fast32_t;
+S      using ::std::uint_fast64_t;
+S      using ::std::intptr_t;
+S      using ::std::uintptr_t;
+S      using ::std::intmax_t;
+S      using ::std::uintmax_t;
+S    #endif
+N  #endif /* __cplusplus */
+N
+N#undef __INT64
+N#undef __LONGLONG
+N
+N#endif /* __stdint_h */
+N
+N/* end of stdint.h */
+L 39 "Middlewares\LightweightRingBuffer\src\lwrb.h" 2
+N#include <string.h>
+L 1 "C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\string.h" 1
+N/* string.h: ANSI 'C' (X3J11 Oct 88) library header, section 4.11 */
+N/* Copyright (C) Codemist Ltd., 1988-1993.                        */
+N/* Copyright 1991-1993 ARM Limited. All rights reserved.          */
+N/* version 0.04 */
+N
+N/*
+N * RCS $Revision$
+N * Checkin $Date$
+N */
+N
+N/*
+N * string.h declares one type and several functions, and defines one macro
+N * useful for manipulating character arrays and other objects treated as
+N * character arrays. Various methods are used for determining the lengths of
+N * the arrays, but in all cases a char * or void * argument points to the
+N * initial (lowest addresses) character of the array. If an array is written
+N * beyond the end of an object, the behaviour is undefined.
+N */
+N
+N#ifndef __string_h
+N#define __string_h
+N#define __ARMCLIB_VERSION 5060044
+N
+N#define _ARMABI __declspec(__nothrow)
+N
+N  #ifndef __STRING_DECLS
+N  #define __STRING_DECLS
+N
+N    #undef __CLIBNS
+N
+N    #ifdef __cplusplus
+S        namespace std {
+S        #define __CLIBNS std::
+S        extern "C" {
+N    #else
+N      #define __CLIBNS
+N    #endif  /* __cplusplus */
+N
+N#if defined(__cplusplus) || !defined(__STRICT_ANSI__)
+X#if 0L || !0L
+N /* unconditional in C++ and non-strict C for consistency of debug info */
+N  #if __sizeof_ptr == 8
+X  #if 4 == 8
+S    typedef unsigned long size_t;   /* see <stddef.h> */
+N  #else
+N    typedef unsigned int size_t;   /* see <stddef.h> */
+N  #endif
+N#elif !defined(__size_t)
+S  #define __size_t 1
+S  #if __sizeof_ptr == 8
+S    typedef unsigned long size_t;   /* see <stddef.h> */
+S  #else
+S    typedef unsigned int size_t;   /* see <stddef.h> */
+S  #endif
+N#endif
+N
+N#undef NULL
+N#define NULL 0                   /* see <stddef.h> */
+N
+Nextern _ARMABI void *memcpy(void * __restrict /*s1*/,
+Xextern __declspec(__nothrow) void *memcpy(void * __restrict  ,
+N                    const void * __restrict /*s2*/, size_t /*n*/) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * copies n characters from the object pointed to by s2 into the object
+N    * pointed to by s1. If copying takes place between objects that overlap,
+N    * the behaviour is undefined.
+N    * Returns: the value of s1.
+N    */
+Nextern _ARMABI void *memmove(void * /*s1*/,
+Xextern __declspec(__nothrow) void *memmove(void *  ,
+N                    const void * /*s2*/, size_t /*n*/) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * copies n characters from the object pointed to by s2 into the object
+N    * pointed to by s1. Copying takes place as if the n characters from the
+N    * object pointed to by s2 are first copied into a temporary array of n
+N    * characters that does not overlap the objects pointed to by s1 and s2,
+N    * and then the n characters from the temporary array are copied into the
+N    * object pointed to by s1.
+N    * Returns: the value of s1.
+N    */
+Nextern _ARMABI char *strcpy(char * __restrict /*s1*/, const char * __restrict /*s2*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) char *strcpy(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * copies the string pointed to by s2 (including the terminating nul
+N    * character) into the array pointed to by s1. If copying takes place
+N    * between objects that overlap, the behaviour is undefined.
+N    * Returns: the value of s1.
+N    */
+Nextern _ARMABI char *strncpy(char * __restrict /*s1*/, const char * __restrict /*s2*/, size_t /*n*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) char *strncpy(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * copies not more than n characters (characters that follow a null
+N    * character are not copied) from the array pointed to by s2 into the array
+N    * pointed to by s1. If copying takes place between objects that overlap,
+N    * the behaviour is undefined.
+N    * Returns: the value of s1.
+N    */
+N
+Nextern _ARMABI char *strcat(char * __restrict /*s1*/, const char * __restrict /*s2*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) char *strcat(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * appends a copy of the string pointed to by s2 (including the terminating
+N    * null character) to the end of the string pointed to by s1. The initial
+N    * character of s2 overwrites the null character at the end of s1.
+N    * Returns: the value of s1.
+N    */
+Nextern _ARMABI char *strncat(char * __restrict /*s1*/, const char * __restrict /*s2*/, size_t /*n*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) char *strncat(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * appends not more than n characters (a null character and characters that
+N    * follow it are not appended) from the array pointed to by s2 to the end of
+N    * the string pointed to by s1. The initial character of s2 overwrites the
+N    * null character at the end of s1. A terminating null character is always
+N    * appended to the result.
+N    * Returns: the value of s1.
+N    */
+N
+N/*
+N * The sign of a nonzero value returned by the comparison functions is
+N * determined by the sign of the difference between the values of the first
+N * pair of characters (both interpreted as unsigned char) that differ in the
+N * objects being compared.
+N */
+N
+Nextern _ARMABI int memcmp(const void * /*s1*/, const void * /*s2*/, size_t /*n*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) int memcmp(const void *  , const void *  , size_t  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * compares the first n characters of the object pointed to by s1 to the
+N    * first n characters of the object pointed to by s2.
+N    * Returns: an integer greater than, equal to, or less than zero, according
+N    *          as the object pointed to by s1 is greater than, equal to, or
+N    *          less than the object pointed to by s2.
+N    */
+Nextern _ARMABI int strcmp(const char * /*s1*/, const char * /*s2*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) int strcmp(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * compares the string pointed to by s1 to the string pointed to by s2.
+N    * Returns: an integer greater than, equal to, or less than zero, according
+N    *          as the string pointed to by s1 is greater than, equal to, or
+N    *          less than the string pointed to by s2.
+N    */
+Nextern _ARMABI int strncmp(const char * /*s1*/, const char * /*s2*/, size_t /*n*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) int strncmp(const char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * compares not more than n characters (characters that follow a null
+N    * character are not compared) from the array pointed to by s1 to the array
+N    * pointed to by s2.
+N    * Returns: an integer greater than, equal to, or less than zero, according
+N    *          as the string pointed to by s1 is greater than, equal to, or
+N    *          less than the string pointed to by s2.
+N    */
+Nextern _ARMABI int strcasecmp(const char * /*s1*/, const char * /*s2*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) int strcasecmp(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * compares the string pointed to by s1 to the string pointed to by s2,
+N    * case-insensitively as defined by the current locale.
+N    * Returns: an integer greater than, equal to, or less than zero, according
+N    *          as the string pointed to by s1 is greater than, equal to, or
+N    *          less than the string pointed to by s2.
+N    */
+Nextern _ARMABI int strncasecmp(const char * /*s1*/, const char * /*s2*/, size_t /*n*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) int strncasecmp(const char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * compares not more than n characters (characters that follow a null
+N    * character are not compared) from the array pointed to by s1 to the array
+N    * pointed to by s2, case-insensitively as defined by the current locale.
+N    * Returns: an integer greater than, equal to, or less than zero, according
+N    *          as the string pointed to by s1 is greater than, equal to, or
+N    *          less than the string pointed to by s2.
+N    */
+Nextern _ARMABI int strcoll(const char * /*s1*/, const char * /*s2*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) int strcoll(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * compares the string pointed to by s1 to the string pointed to by s2, both
+N    * interpreted as appropriate to the LC_COLLATE category of the current
+N    * locale.
+N    * Returns: an integer greater than, equal to, or less than zero, according
+N    *          as the string pointed to by s1 is greater than, equal to, or
+N    *          less than the string pointed to by s2 when both are interpreted
+N    *          as appropriate to the current locale.
+N    */
+N
+Nextern _ARMABI size_t strxfrm(char * __restrict /*s1*/, const char * __restrict /*s2*/, size_t /*n*/) __attribute__((__nonnull__(2)));
+Xextern __declspec(__nothrow) size_t strxfrm(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(2)));
+N   /*
+N    * transforms the string pointed to by s2 and places the resulting string
+N    * into the array pointed to by s1. The transformation function is such that
+N    * if the strcmp function is applied to two transformed strings, it returns
+N    * a value greater than, equal to or less than zero, corresponding to the
+N    * result of the strcoll function applied to the same two original strings.
+N    * No more than n characters are placed into the resulting array pointed to
+N    * by s1, including the terminating null character. If n is zero, s1 is
+N    * permitted to be a null pointer. If copying takes place between objects
+N    * that overlap, the behaviour is undefined.
+N    * Returns: The length of the transformed string is returned (not including
+N    *          the terminating null character). If the value returned is n or
+N    *          more, the contents of the array pointed to by s1 are
+N    *          indeterminate.
+N    */
+N
+N
+N#ifdef __cplusplus
+Sextern _ARMABI const void *memchr(const void * /*s*/, int /*c*/, size_t /*n*/) __attribute__((__nonnull__(1)));
+Sextern "C++" void *memchr(void * __s, int __c, size_t __n) __attribute__((__nonnull__(1)));
+Sextern "C++" inline void *memchr(void * __s, int __c, size_t __n)
+S    { return const_cast<void *>(memchr(const_cast<const void *>(__s), __c, __n)); }
+N#else
+Nextern _ARMABI void *memchr(const void * /*s*/, int /*c*/, size_t /*n*/) __attribute__((__nonnull__(1)));
+Xextern __declspec(__nothrow) void *memchr(const void *  , int  , size_t  ) __attribute__((__nonnull__(1)));
+N#endif
+N   /*
+N    * locates the first occurence of c (converted to an unsigned char) in the
+N    * initial n characters (each interpreted as unsigned char) of the object
+N    * pointed to by s.
+N    * Returns: a pointer to the located character, or a null pointer if the
+N    *          character does not occur in the object.
+N    */
+N
+N#ifdef __cplusplus
+Sextern _ARMABI const char *strchr(const char * /*s*/, int /*c*/) __attribute__((__nonnull__(1)));
+Sextern "C++" char *strchr(char * __s, int __c) __attribute__((__nonnull__(1)));
+Sextern "C++" inline char *strchr(char * __s, int __c)
+S    { return const_cast<char *>(strchr(const_cast<const char *>(__s), __c)); }
+N#else
+Nextern _ARMABI char *strchr(const char * /*s*/, int /*c*/) __attribute__((__nonnull__(1)));
+Xextern __declspec(__nothrow) char *strchr(const char *  , int  ) __attribute__((__nonnull__(1)));
+N#endif
+N   /*
+N    * locates the first occurence of c (converted to an char) in the string
+N    * pointed to by s (including the terminating null character).
+N    * Returns: a pointer to the located character, or a null pointer if the
+N    *          character does not occur in the string.
+N    */
+N
+Nextern _ARMABI size_t strcspn(const char * /*s1*/, const char * /*s2*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) size_t strcspn(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * computes the length of the initial segment of the string pointed to by s1
+N    * which consists entirely of characters not from the string pointed to by
+N    * s2. The terminating null character is not considered part of s2.
+N    * Returns: the length of the segment.
+N    */
+N
+N#ifdef __cplusplus
+Sextern _ARMABI const char *strpbrk(const char * /*s1*/, const char * /*s2*/) __attribute__((__nonnull__(1,2)));
+Sextern "C++" char *strpbrk(char * __s1, const char * __s2) __attribute__((__nonnull__(1,2)));
+Sextern "C++" inline char *strpbrk(char * __s1, const char * __s2)
+S    { return const_cast<char *>(strpbrk(const_cast<const char *>(__s1), __s2)); }
+N#else
+Nextern _ARMABI char *strpbrk(const char * /*s1*/, const char * /*s2*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) char *strpbrk(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+N#endif
+N   /*
+N    * locates the first occurence in the string pointed to by s1 of any
+N    * character from the string pointed to by s2.
+N    * Returns: returns a pointer to the character, or a null pointer if no
+N    *          character form s2 occurs in s1.
+N    */
+N
+N#ifdef __cplusplus
+Sextern _ARMABI const char *strrchr(const char * /*s*/, int /*c*/) __attribute__((__nonnull__(1)));
+Sextern "C++" char *strrchr(char * __s, int __c) __attribute__((__nonnull__(1)));
+Sextern "C++" inline char *strrchr(char * __s, int __c)
+S    { return const_cast<char *>(strrchr(const_cast<const char *>(__s), __c)); }
+N#else
+Nextern _ARMABI char *strrchr(const char * /*s*/, int /*c*/) __attribute__((__nonnull__(1)));
+Xextern __declspec(__nothrow) char *strrchr(const char *  , int  ) __attribute__((__nonnull__(1)));
+N#endif
+N   /*
+N    * locates the last occurence of c (converted to a char) in the string
+N    * pointed to by s. The terminating null character is considered part of
+N    * the string.
+N    * Returns: returns a pointer to the character, or a null pointer if c does
+N    *          not occur in the string.
+N    */
+N
+Nextern _ARMABI size_t strspn(const char * /*s1*/, const char * /*s2*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) size_t strspn(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * computes the length of the initial segment of the string pointed to by s1
+N    * which consists entirely of characters from the string pointed to by S2
+N    * Returns: the length of the segment.
+N    */
+N
+N#ifdef __cplusplus
+Sextern _ARMABI const char *strstr(const char * /*s1*/, const char * /*s2*/) __attribute__((__nonnull__(1,2)));
+Sextern "C++" char *strstr(char * __s1, const char * __s2) __attribute__((__nonnull__(1,2)));
+Sextern "C++" inline char *strstr(char * __s1, const char * __s2)
+S    { return const_cast<char *>(strstr(const_cast<const char *>(__s1), __s2)); }
+N#else
+Nextern _ARMABI char *strstr(const char * /*s1*/, const char * /*s2*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) char *strstr(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+N#endif
+N   /*
+N    * locates the first occurence in the string pointed to by s1 of the
+N    * sequence of characters (excluding the terminating null character) in the
+N    * string pointed to by s2.
+N    * Returns: a pointer to the located string, or a null pointer if the string
+N    *          is not found.
+N    */
+N
+Nextern _ARMABI char *strtok(char * __restrict /*s1*/, const char * __restrict /*s2*/) __attribute__((__nonnull__(2)));
+Xextern __declspec(__nothrow) char *strtok(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(2)));
+Nextern _ARMABI char *_strtok_r(char * /*s1*/, const char * /*s2*/, char ** /*ptr*/) __attribute__((__nonnull__(2,3)));
+Xextern __declspec(__nothrow) char *_strtok_r(char *  , const char *  , char **  ) __attribute__((__nonnull__(2,3)));
+N#ifndef __STRICT_ANSI__
+Nextern _ARMABI char *strtok_r(char * /*s1*/, const char * /*s2*/, char ** /*ptr*/) __attribute__((__nonnull__(2,3)));
+Xextern __declspec(__nothrow) char *strtok_r(char *  , const char *  , char **  ) __attribute__((__nonnull__(2,3)));
+N#endif
+N   /*
+N    * A sequence of calls to the strtok function breaks the string pointed to
+N    * by s1 into a sequence of tokens, each of which is delimited by a
+N    * character from the string pointed to by s2. The first call in the
+N    * sequence has s1 as its first argument, and is followed by calls with a
+N    * null pointer as their first argument. The separator string pointed to by
+N    * s2 may be different from call to call.
+N    * The first call in the sequence searches for the first character that is
+N    * not contained in the current separator string s2. If no such character
+N    * is found, then there are no tokens in s1 and the strtok function returns
+N    * a null pointer. If such a character is found, it is the start of the
+N    * first token.
+N    * The strtok function then searches from there for a character that is
+N    * contained in the current separator string. If no such character is found,
+N    * the current token extends to the end of the string pointed to by s1, and
+N    * subsequent searches for a token will fail. If such a character is found,
+N    * it is overwritten by a null character, which terminates the current
+N    * token. The strtok function saves a pointer to the following character,
+N    * from which the next search for a token will start.
+N    * Each subsequent call, with a null pointer as the value for the first
+N    * argument, starts searching from the saved pointer and behaves as
+N    * described above.
+N    * Returns: pointer to the first character of a token, or a null pointer if
+N    *          there is no token.
+N    *
+N    * strtok_r() is a common extension which works exactly like
+N    * strtok(), but instead of storing its state in a hidden
+N    * library variable, requires the user to pass in a pointer to a
+N    * char * variable which will be used instead. Any sequence of
+N    * calls to strtok_r() passing the same char ** pointer should
+N    * behave exactly like the corresponding sequence of calls to
+N    * strtok(). This means that strtok_r() can safely be used in
+N    * multi-threaded programs, and also that you can tokenise two
+N    * strings in parallel.
+N    */
+N
+Nextern _ARMABI void *memset(void * /*s*/, int /*c*/, size_t /*n*/) __attribute__((__nonnull__(1)));
+Xextern __declspec(__nothrow) void *memset(void *  , int  , size_t  ) __attribute__((__nonnull__(1)));
+N   /*
+N    * copies the value of c (converted to an unsigned char) into each of the
+N    * first n charactes of the object pointed to by s.
+N    * Returns: the value of s.
+N    */
+Nextern _ARMABI char *strerror(int /*errnum*/);
+Xextern __declspec(__nothrow) char *strerror(int  );
+N   /*
+N    * maps the error number in errnum to an error message string.
+N    * Returns: a pointer to the string, the contents of which are
+N    *          implementation-defined. The array pointed to shall not be
+N    *          modified by the program, but may be overwritten by a
+N    *          subsequent call to the strerror function.
+N    */
+Nextern _ARMABI size_t strlen(const char * /*s*/) __attribute__((__nonnull__(1)));
+Xextern __declspec(__nothrow) size_t strlen(const char *  ) __attribute__((__nonnull__(1)));
+N   /*
+N    * computes the length of the string pointed to by s.
+N    * Returns: the number of characters that precede the terminating null
+N    *          character.
+N    */
+N
+Nextern _ARMABI size_t strlcpy(char * /*dst*/, const char * /*src*/, size_t /*len*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) size_t strlcpy(char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * copies the string src into the string dst, using no more than
+N    * len bytes of dst. Always null-terminates dst _within the
+N    * length len (i.e. will copy at most len-1 bytes of string plus
+N    * a NUL), unless len is actually zero.
+N    * 
+N    * Return value is the length of the string that _would_ have
+N    * been written, i.e. the length of src. Thus, the operation
+N    * succeeded without truncation if and only if ret < len;
+N    * otherwise, the value in ret tells you how big to make dst if
+N    * you decide to reallocate it. (That value does _not_ include
+N    * the NUL.)
+N    * 
+N    * This is a BSD-derived library extension, which we are
+N    * permitted to declare in a standard header because ISO defines
+N    * function names beginning with 'str' as reserved for future
+N    * expansion of <string.h>.
+N    */
+N
+Nextern _ARMABI size_t strlcat(char * /*dst*/, const char * /*src*/, size_t /*len*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) size_t strlcat(char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * concatenates the string src to the string dst, using no more
+N    * than len bytes of dst. Always null-terminates dst _within the
+N    * length len (i.e. will copy at most len-1 bytes of string plus
+N    * a NUL), unless len is actually zero.
+N    * 
+N    * Return value is the length of the string that _would_ have
+N    * been written, i.e. the length of src plus the original length
+N    * of dst. Thus, the operation succeeded without truncation if
+N    * and only if ret < len; otherwise, the value in ret tells you
+N    * how big to make dst if you decide to reallocate it. (That
+N    * value does _not_ include the NUL.)
+N    * 
+N    * If no NUL is encountered within the first len bytes of dst,
+N    * then the length of dst is considered to have been equal to
+N    * len for the purposes of the return value (as if there were a
+N    * NUL at dst[len]). Thus, the return value in this case is len
+N    * + strlen(src).
+N    * 
+N    * This is a BSD-derived library extension, which we are
+N    * permitted to declare in a standard header because ISO defines
+N    * function names beginning with 'str' as reserved for future
+N    * expansion of <string.h>.
+N    */
+N
+Nextern _ARMABI void _membitcpybl(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitcpybl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+Nextern _ARMABI void _membitcpybb(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitcpybb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+Nextern _ARMABI void _membitcpyhl(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitcpyhl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+Nextern _ARMABI void _membitcpyhb(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitcpyhb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+Nextern _ARMABI void _membitcpywl(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitcpywl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+Nextern _ARMABI void _membitcpywb(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitcpywb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+Nextern _ARMABI void _membitmovebl(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitmovebl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+Nextern _ARMABI void _membitmovebb(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitmovebb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+Nextern _ARMABI void _membitmovehl(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitmovehl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+Nextern _ARMABI void _membitmovehb(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitmovehb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+Nextern _ARMABI void _membitmovewl(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitmovewl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+Nextern _ARMABI void _membitmovewb(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+N    /*
+N     * Copies or moves a piece of memory from one place to another,
+N     * with one-bit granularity. So you can start or finish a copy
+N     * part way through a byte, and you can copy between regions
+N     * with different alignment within a byte.
+N     * 
+N     * All these functions have the same prototype: two void *
+N     * pointers for destination and source, then two integers
+N     * giving the bit offset from those pointers, and finally the
+N     * number of bits to copy.
+N     * 
+N     * Just like memcpy and memmove, the "cpy" functions copy as
+N     * fast as they can in the assumption that the memory regions
+N     * do not overlap, while the "move" functions cope correctly
+N     * with overlap.
+N     *
+N     * Treating memory as a stream of individual bits requires
+N     * defining a convention about what order those bits are
+N     * considered to be arranged in. The above functions support
+N     * multiple conventions:
+N     * 
+N     *  - the "bl" functions consider the unit of memory to be the
+N     *    byte, and consider the bits within each byte to be
+N     *    arranged in little-endian fashion, so that the LSB comes
+N     *    first. (For example, membitcpybl(a,b,0,7,1) would copy
+N     *    the MSB of the byte at b to the LSB of the byte at a.)
+N     * 
+N     *  - the "bb" functions consider the unit of memory to be the
+N     *    byte, and consider the bits within each byte to be
+N     *    arranged in big-endian fashion, so that the MSB comes
+N     *    first.
+N     * 
+N     *  - the "hl" functions consider the unit of memory to be the
+N     *    16-bit halfword, and consider the bits within each word
+N     *    to be arranged in little-endian fashion.
+N     * 
+N     *  - the "hb" functions consider the unit of memory to be the
+N     *    16-bit halfword, and consider the bits within each word
+N     *    to be arranged in big-endian fashion.
+N     * 
+N     *  - the "wl" functions consider the unit of memory to be the
+N     *    32-bit word, and consider the bits within each word to be
+N     *    arranged in little-endian fashion.
+N     * 
+N     *  - the "wb" functions consider the unit of memory to be the
+N     *    32-bit word, and consider the bits within each word to be
+N     *    arranged in big-endian fashion.
+N     */
+N
+N    #ifdef __cplusplus
+S         }  /* extern "C" */
+S      }  /* namespace std */
+N    #endif /* __cplusplus */
+N  #endif /* __STRING_DECLS */
+N
+N  #ifdef __cplusplus
+S    #ifndef __STRING_NO_EXPORTS
+S      using ::std::size_t;
+S      using ::std::memcpy;
+S      using ::std::memmove;
+S      using ::std::strcpy;
+S      using ::std::strncpy;
+S      using ::std::strcat;
+S      using ::std::strncat;
+S      using ::std::memcmp;
+S      using ::std::strcmp;
+S      using ::std::strncmp;
+S      using ::std::strcasecmp;
+S      using ::std::strncasecmp;
+S      using ::std::strcoll;
+S      using ::std::strxfrm;
+S      using ::std::memchr;
+S      using ::std::strchr;
+S      using ::std::strcspn;
+S      using ::std::strpbrk;
+S      using ::std::strrchr;
+S      using ::std::strspn;
+S      using ::std::strstr;
+S      using ::std::strtok;
+S#ifndef __STRICT_ANSI__
+S      using ::std::strtok_r;
+S#endif
+S      using ::std::_strtok_r;
+S      using ::std::memset;
+S      using ::std::strerror;
+S      using ::std::strlen;
+S      using ::std::strlcpy;
+S      using ::std::strlcat;
+S      using ::std::_membitcpybl;
+S      using ::std::_membitcpybb;
+S      using ::std::_membitcpyhl;
+S      using ::std::_membitcpyhb;
+S      using ::std::_membitcpywl;
+S      using ::std::_membitcpywb;
+S      using ::std::_membitmovebl;
+S      using ::std::_membitmovebb;
+S      using ::std::_membitmovehl;
+S      using ::std::_membitmovehb;
+S      using ::std::_membitmovewl;
+S      using ::std::_membitmovewb;
+S    #endif /* __STRING_NO_EXPORTS */
+N  #endif /* __cplusplus */
+N
+N#endif
+N
+N/* end of string.h */
+N
+L 40 "Middlewares\LightweightRingBuffer\src\lwrb.h" 2
+N
+N#ifdef __cplusplus
+Sextern "C" {
+N#endif /* __cplusplus */
+N
+N
+N#define LWRB_DEV 1
+N
+N/**
+N * \defgroup        LWRB Lightweight ring buffer manager
+N * \brief           Lightweight ring buffer manager
+N * \{
+N */
+N#define LWRB_DISABLE_ATOMIC
+N#ifdef LWRB_DISABLE_ATOMIC
+Ntypedef unsigned long lwrb_ulong_t;
+N#else
+S#include <stdatomic.h>
+Stypedef atomic_ulong lwrb_ulong_t;
+N#endif
+N
+N#if !defined(LWRB_DISABLE_ATOMIC) || __DOXYGEN__
+X#if !1L || __DOXYGEN__
+S#include <stdatomic.h>
+S
+S/**
+S * \brief           Atomic type for size variable.
+S * Default value is set to be `unsigned 32-bits` type
+S */
+Stypedef atomic_ulong lwrb_sz_atomic_t;
+S
+S/**
+S * \brief           Size variable for all library operations.
+S * Default value is set to be `unsigned 32-bits` type
+S */
+Stypedef unsigned long lwrb_sz_t;
+N#else
+Ntypedef unsigned long lwrb_sz_atomic_t;
+Ntypedef unsigned long lwrb_sz_t;
+N#endif
+N
+N/* 可选的原子操作 */
+N#ifdef LWRB_DISABLE_ATOMIC
+N#define LWRB_INIT(var, val)        (var) = (val)
+N#define LWRB_LOAD(var, type)       (var)
+N#define LWRB_STORE(var, val, type) (var) = (val)
+N#else
+S#define LWRB_INIT(var, val)        atomic_init(&(var), (val))
+S#define LWRB_LOAD(var, type)       atomic_load_explicit(&(var), (type))
+S#define LWRB_STORE(var, val, type) atomic_store_explicit(&(var), (val), (type))
+N#endif
+N
+N/**
+N * \brief           Event type for buffer operations
+N */
+Ntypedef enum {
+N    LWRB_EVT_READ,  /*!< Read event */
+N    LWRB_EVT_WRITE, /*!< Write event */
+N    LWRB_EVT_RESET, /*!< Reset event */
+N} lwrb_evt_type_t;
+N
+N/**
+N * \brief           Buffer structure forward declaration
+N */
+Nstruct lwrb;
+N
+N/**
+N * \brief           Event callback function type
+N * \param[in]       buff: Buffer handle for event
+N * \param[in]       evt: Event type
+N * \param[in]       bp: Number of bytes written or read (when used), depends on event type
+N */
+Ntypedef void (*lwrb_evt_fn)(struct lwrb* buff, lwrb_evt_type_t evt, lwrb_sz_t bp);
+N
+N/* List of flags */
+N#define LWRB_FLAG_READ_ALL  ((uint16_t)0x0001)
+N#define LWRB_FLAG_WRITE_ALL ((uint16_t)0x0001)
+N
+N/**
+N * \brief           Buffer structure
+N */
+Ntypedef struct lwrb {
+N    uint8_t* buff;  		/*!< 指向缓冲区数据的指针。当 `buff != NULL` 且 `size > 0` 时，缓冲区被视为已初始化 */
+N    lwrb_sz_t size; 		/*!< 缓冲区数据的大小。实际可用缓冲区大小比该值小 1 字节 */
+N    lwrb_sz_atomic_t r_ptr; /*!< 下一个读取指针。
+N                                当 `r == w` 时缓冲区为空，当 `w == r - 1` 时缓冲区为满 */
+N    lwrb_sz_atomic_t w_ptr; /*!< 下一个写入指针。
+N                                当 `r == w` 时缓冲区为空，当 `w == r - 1` 时缓冲区为满 */
+N    lwrb_evt_fn evt_fn;     /*!< 指向事件回调函数的指针 */
+N    void* arg;              /*!< 事件的自定义用户参数 */
+N} lwrb_t;
+N
+Nuint8_t lwrb_init(lwrb_t* buff, void* buffdata, lwrb_sz_t size);
+Nuint8_t lwrb_is_ready(lwrb_t* buff);
+Nvoid lwrb_free(lwrb_t* buff);
+Nvoid lwrb_reset(lwrb_t* buff);
+Nvoid lwrb_set_evt_fn(lwrb_t* buff, lwrb_evt_fn fn);
+Nvoid lwrb_set_arg(lwrb_t* buff, void* arg);
+Nvoid* lwrb_get_arg(lwrb_t* buff);
+N
+N/* Read/Write functions */
+Nlwrb_sz_t lwrb_write(lwrb_t* buff, const void* data, lwrb_sz_t btw);
+Nlwrb_sz_t lwrb_read(lwrb_t* buff, void* data, lwrb_sz_t btr);
+Nlwrb_sz_t lwrb_peek(const lwrb_t* buff, lwrb_sz_t skip_count, void* data, lwrb_sz_t btp);
+N
+N/* Extended read/write functions */
+Nuint8_t lwrb_write_ex(lwrb_t* buff, const void* data, lwrb_sz_t btw, lwrb_sz_t* bwritten, uint16_t flags);
+Nuint8_t lwrb_read_ex(lwrb_t* buff, void* data, lwrb_sz_t btr, lwrb_sz_t* bread, uint16_t flags);
+N
+N/* Buffer size information */
+Nlwrb_sz_t lwrb_get_free(const lwrb_t* buff);
+Nlwrb_sz_t lwrb_get_full(const lwrb_t* buff);
+N
+N/* Read data block management */
+Nvoid* lwrb_get_linear_block_read_address(const lwrb_t* buff);
+Nlwrb_sz_t lwrb_get_linear_block_read_length(const lwrb_t* buff);
+Nlwrb_sz_t lwrb_skip(lwrb_t* buff, lwrb_sz_t len);
+N
+N/* Write data block management */
+Nvoid* lwrb_get_linear_block_write_address(const lwrb_t* buff);
+Nlwrb_sz_t lwrb_get_linear_block_write_length(const lwrb_t* buff);
+Nlwrb_sz_t lwrb_advance(lwrb_t* buff, lwrb_sz_t len);
+N
+N/* Search in buffer */
+N#if(LWRB_DEV)
+X#if(1)
+Nlwrb_sz_t lwrb_overwrite(lwrb_t* buff, const void* data, lwrb_sz_t btw);
+Nlwrb_sz_t lwrb_move(lwrb_t* dest, lwrb_t* src);
+Nuint8_t lwrb_find(const lwrb_t* buff, const void* bts, lwrb_sz_t len, lwrb_sz_t start_offset, lwrb_sz_t* found_idx);
+Nuint32_t lwrb_find_target_read(lwrb_t *BuffHandler,uint8_t target,uint32_t needLen,uint8_t *outBuf);
+N#endif  //LWRB_DEV
+N
+Nint lwrb_test(void);
+N
+N
+N/**
+N * \}
+N */
+N
+N#ifdef __cplusplus
+S}
+N#endif /* __cplusplus */
+N
+N#endif /* LWRB_HDR_H */
+L 30 "Middlewares\LightweightRingBuffer\src\lwrb.c" 2
+N
+N/* 内存设置和复制函数 */
+N#define BUF_MEMSET      memset
+N#define BUF_MEMCPY      memcpy
+N
+N#define BUF_IS_VALID(b) ((b) != NULL && (b)->buff != NULL && (b)->size > 0)
+N#define BUF_MIN(x, y)   ((x) < (y) ? (x) : (y))
+N#define BUF_MAX(x, y)   ((x) > (y) ? (x) : (y))
+N#define BUF_SEND_EVT(b, type, bp)                                                                                      \
+N    do {                                                                                                               \
+N        if ((b)->evt_fn != NULL) {                                                                                     \
+N            (b)->evt_fn((void*)(b), (type), (bp));                                                                     \
+N        }                                                                                                              \
+N    } while (0)
+X#define BUF_SEND_EVT(b, type, bp)                                                                                          do {                                                                                                                       if ((b)->evt_fn != NULL) {                                                                                                 (b)->evt_fn((void*)(b), (type), (bp));                                                                             }                                                                                                                  } while (0)
+N
+N
+N
+N/**
+N * \brief           使用大小和缓冲区数据数组将缓冲区句柄初始化为默认值
+N * \param[in]       buff: 环形缓冲区实例
+N * \param[in]       buffdata: 用作缓冲区数据的内存指针
+N * \param[in]       size: `buffdata`的大小（以字节为单位）
+N *                      缓冲区可容纳的最大字节数为`size - 1`
+N * \return          成功返回`1`，否则返回`0`
+N */
+Nuint8_t
+Nlwrb_init(lwrb_t* buff, void* buffdata, lwrb_sz_t size) {
+N    if (buff == NULL || buffdata == NULL || size == 0) {
+X    if (buff == 0 || buffdata == 0 || size == 0) {
+N        return 0;
+N    }
+N
+N    buff->evt_fn = NULL;
+X    buff->evt_fn = 0;
+N    buff->size = size;
+N    buff->buff = buffdata;
+N    LWRB_INIT(buff->w_ptr, 0);
+X    (buff->w_ptr) = (0);
+N    LWRB_INIT(buff->r_ptr, 0);
+X    (buff->r_ptr) = (0);
+N    return 1;
+N}
+N
+N/**
+N * \brief           检查缓冲区是否已初始化并可以使用
+N * \param[in]       buff: 环形缓冲区实例
+N * \return          就绪返回`1`，否则返回`0`
+N */
+Nuint8_t
+Nlwrb_is_ready(lwrb_t* buff) {
+N    return BUF_IS_VALID(buff);
+X    return ((buff) != 0 && (buff)->buff != 0 && (buff)->size > 0);
+N}
+N
+N/**
+N * \brief           释放缓冲区内存
+N * \note            由于实现不使用动态分配，
+N *                  只需将缓冲区句柄设置为`NULL`
+N * \param[in]       buff: 环形缓冲区实例
+N */
+Nvoid
+Nlwrb_free(lwrb_t* buff) {
+N    if (BUF_IS_VALID(buff)) {
+X    if (((buff) != 0 && (buff)->buff != 0 && (buff)->size > 0)) {
+N        buff->buff = NULL;
+X        buff->buff = 0;
+N    }
+N}
+N
+N/**
+N * \brief           为不同的缓冲区操作设置事件函数回调
+N * \param[in]       buff: 环形缓冲区实例
+N * \param[in]       evt_fn: 回调函数
+N */
+Nvoid
+Nlwrb_set_evt_fn(lwrb_t* buff, lwrb_evt_fn evt_fn) {
+N    if (BUF_IS_VALID(buff)) {
+X    if (((buff) != 0 && (buff)->buff != 0 && (buff)->size > 0)) {
+N        buff->evt_fn = evt_fn;
+N    }
+N}
+N
+N/**
+N * \brief           设置自定义缓冲区参数，可在事件函数中检索
+N * \param[in]       buff: 环形缓冲区实例
+N * \param[in]       arg: 自定义用户参数
+N */
+Nvoid
+Nlwrb_set_arg(lwrb_t* buff, void* arg) {
+N    if (BUF_IS_VALID(buff)) {
+X    if (((buff) != 0 && (buff)->buff != 0 && (buff)->size > 0)) {
+N        buff->arg = arg;
+N    }
+N}
+N
+N/**
+N * \brief           获取自定义缓冲区参数，先前通过\ref lwrb_set_arg设置
+N * \param[in]       buff: 环形缓冲区实例
+N * \return          先前通过\ref lwrb_set_arg设置的用户参数
+N */
+Nvoid*
+Nlwrb_get_arg(lwrb_t* buff) {
+N    return buff != NULL ? buff->arg : NULL;
+X    return buff != 0 ? buff->arg : 0;
+N}
+N
+N/**
+N * \brief           向缓冲区写入数据。
+N *                  将数据从`data`数组复制到缓冲区，并将写指针推进最多`btw`个字节。
+N * 
+N *                  如果缓冲区中可用内存较少，则复制的字节数较少。
+N *                  用户必须检查函数的返回值并将其与
+N *                  请求的写入长度进行比较，以确定是否已写入所有内容
+N * 
+N * \note            更高级的用法请使用\ref lwrb_write_ex
+N *
+N * \param[in]       buff: 环形缓冲区实例
+N * \param[in]       data: 要写入缓冲区的数据指针
+N * \param[in]       btw: 要写入的字节数
+N * \return          写入缓冲区的字节数。
+N *                      当返回值小于`btw`时，没有足够的内存可用
+N *                      来复制完整的数据数组。
+N */
+Nlwrb_sz_t
+Nlwrb_write(lwrb_t* buff, const void* data, lwrb_sz_t btw) {
+N    lwrb_sz_t written = 0;
+N
+N    if (lwrb_write_ex(buff, data, btw, &written, 0)) {
+N        return written;
+N    }
+N    return 0;
+N}
+N
+N/**
+N * \brief           扩展写入功能
+N * 
+N * \param           buff: 环形缓冲区实例
+N * \param           data: 要写入缓冲区的数据指针
+N * \param           btw: 要写入的字节数
+N * \param           bwritten: 输出指针，用于写入写入缓冲区的字节数
+N * \param           flags: 可选标志。
+N *                      \ref LWRB_FLAG_WRITE_ALL: 请求写入所有数据（最多btw）。
+N *                          如果没有可用内存，将提前返回
+N * \return          写入操作成功返回`1`，否则返回`0`
+N */
+Nuint8_t
+Nlwrb_write_ex(lwrb_t* buff, const void* data, lwrb_sz_t btw, lwrb_sz_t* bwritten, uint16_t flags) {
+N    lwrb_sz_t tocopy = 0, free = 0, w_ptr = 0;
+N    const uint8_t* d_ptr = data;
+N
+N    if (!BUF_IS_VALID(buff) || data == NULL || btw == 0) {
+X    if (!((buff) != 0 && (buff)->buff != 0 && (buff)->size > 0) || data == 0 || btw == 0) {
+N        return 0;
+N    }
+N
+N    /* 计算可写入的最大字节数 */
+N    free = lwrb_get_free(buff);
+N    /* 如果没有内存，或者用户想要写入所有数据但空间不足，提前退出 */
+N    if (free == 0 || (free < btw && (flags & LWRB_FLAG_WRITE_ALL))) {
+X    if (free == 0 || (free < btw && (flags & ((uint16_t)0x0001)))) {
+N        return 0;
+N    }
+N    btw = BUF_MIN(free, btw);
+X    btw = ((free) < (btw) ? (free) : (btw));
+N    w_ptr = LWRB_LOAD(buff->w_ptr, memory_order_acquire);
+X    w_ptr = (buff->w_ptr);
+N
+N    /* 步骤1：将数据写入缓冲区的线性部分 */
+N    tocopy = BUF_MIN(buff->size - w_ptr, btw);
+X    tocopy = ((buff->size - w_ptr) < (btw) ? (buff->size - w_ptr) : (btw));
+N    BUF_MEMCPY(&buff->buff[w_ptr], d_ptr, tocopy);
+X    memcpy(&buff->buff[w_ptr], d_ptr, tocopy);
+N    d_ptr += tocopy;
+N    w_ptr += tocopy;
+N    btw -= tocopy;
+N
+N    /* 步骤2：将数据写入缓冲区的开头（溢出部分） */
+N    if (btw > 0) {
+N        BUF_MEMCPY(buff->buff, d_ptr, btw);
+X        memcpy(buff->buff, d_ptr, btw);
+N        w_ptr = btw;
+N    }
+N
+N    /* 步骤3：检查缓冲区末尾 */
+N    if (w_ptr >= buff->size) {
+N        w_ptr = 0;
+N    }
+N
+N    /*
+N     * 将最终值写入实际运行的变量。
+N     * 这是为了确保没有读取操作可以访问中间数据
+N     */
+N    LWRB_STORE(buff->w_ptr, w_ptr, memory_order_release);
+X    (buff->w_ptr) = (w_ptr);
+N
+N    BUF_SEND_EVT(buff, LWRB_EVT_WRITE, tocopy + btw);
+X    do { if ((buff)->evt_fn != 0) { (buff)->evt_fn((void*)(buff), (LWRB_EVT_WRITE), (tocopy + btw)); } } while (0);
+N    if (bwritten != NULL) {
+X    if (bwritten != 0) {
+N        *bwritten = tocopy + btw;
+N    }
+N    return 1;
+N}
+N
+N/**
+N * \brief           从缓冲区读取数据。
+N *                  将数据从`data`数组复制到缓冲区，并将读指针推进最多`btr`个字节。
+N * 
+N *                  如果缓冲区中的可用数据较少，则复制的字节数较少。
+N * 
+N * \note            更高级的用法请使用\ref lwrb_read_ex
+N *
+N * \param[in]       buff: 环形缓冲区实例
+N * \param[out]      data: 用于复制缓冲区数据的输出内存指针
+N * \param[in]       btr: 要读取的字节数
+N * \return          读取并复制到数据数组的字节数
+N */
+Nlwrb_sz_t
+Nlwrb_read(lwrb_t* buff, void* data, lwrb_sz_t btr) {
+N    lwrb_sz_t read = 0;
+N
+N    if (lwrb_read_ex(buff, data, btr, &read, 0)) {
+N        return read;
+N    }
+N    return 0;
+N}
+N
+N/**
+N * \brief           扩展读取功能
+N * 
+N * \param           buff: 环形缓冲区实例
+N * \param           data: 用于写入从缓冲区读取的数据的内存指针
+N * \param           btr: 要读取的字节数
+N * \param           bread: 输出指针，用于写入从缓冲区读取并写入到
+N *                      输出`data`变量的字节数
+N * \param           flags: 可选标志
+N *                      \ref LWRB_FLAG_READ_ALL: 请求读取所有数据（最多btr）。
+N *                          如果缓冲区中没有足够的字节，将提前返回
+N * \return          读取操作成功返回`1`，否则返回`0`
+N */
+Nuint8_t
+Nlwrb_read_ex(lwrb_t* buff, void* data, lwrb_sz_t btr, lwrb_sz_t* bread, uint16_t flags) {
+N    lwrb_sz_t tocopy = 0, full = 0, r_ptr = 0;
+N    uint8_t* d_ptr = data;
+N
+N    if (!BUF_IS_VALID(buff) || data == NULL || btr == 0) {
+X    if (!((buff) != 0 && (buff)->buff != 0 && (buff)->size > 0) || data == 0 || btr == 0) {
+N        return 0;
+N    }
+N
+N    /* 计算可读取的最大字节数 */
+N    full = lwrb_get_full(buff);
+N    if (full == 0 || (full < btr && (flags & LWRB_FLAG_READ_ALL))) {
+X    if (full == 0 || (full < btr && (flags & ((uint16_t)0x0001)))) {
+N        return 0;
+N    }
+N    btr = BUF_MIN(full, btr);
+X    btr = ((full) < (btr) ? (full) : (btr));
+N    r_ptr = LWRB_LOAD(buff->r_ptr, memory_order_acquire);
+X    r_ptr = (buff->r_ptr);
+N
+N    /* 步骤1：从缓冲区的线性部分读取数据 */
+N    tocopy = BUF_MIN(buff->size - r_ptr, btr);
+X    tocopy = ((buff->size - r_ptr) < (btr) ? (buff->size - r_ptr) : (btr));
+N    BUF_MEMCPY(d_ptr, &buff->buff[r_ptr], tocopy);
+X    memcpy(d_ptr, &buff->buff[r_ptr], tocopy);
+N    d_ptr += tocopy;
+N    r_ptr += tocopy;
+N    btr -= tocopy;
+N
+N    /* 步骤2：从缓冲区的开头读取数据（溢出部分） */
+N    if (btr > 0) {
+N        BUF_MEMCPY(d_ptr, buff->buff, btr);
+X        memcpy(d_ptr, buff->buff, btr);
+N        r_ptr = btr;
+N    }
+N
+N    /* 步骤3：检查缓冲区末尾 */
+N    if (r_ptr >= buff->size) {
+N        r_ptr = 0;
+N    }
+N
+N    /*
+N     * 将最终值写入实际运行的变量。
+N     * 这是为了确保没有写入操作可以访问中间数据
+N     */
+N    LWRB_STORE(buff->r_ptr, r_ptr, memory_order_release);
+X    (buff->r_ptr) = (r_ptr);
+N
+N    BUF_SEND_EVT(buff, LWRB_EVT_READ, tocopy + btr);
+X    do { if ((buff)->evt_fn != 0) { (buff)->evt_fn((void*)(buff), (LWRB_EVT_READ), (tocopy + btr)); } } while (0);
+N    if (bread != NULL) {
+X    if (bread != 0) {
+N        *bread = tocopy + btr;
+N    }
+N    return 1;
+N}
+N
+N/**
+N * \brief           从缓冲区读取而不改变读指针（仅预览）
+N * \param[in]       buff: 环形缓冲区实例
+N * \param[in]       skip_count: 读取数据前要跳过的字节数
+N * \param[out]      data: 用于复制缓冲区数据的输出内存指针
+N * \param[in]       btp: 要预览的字节数
+N * \return          预览并写入输出数组的字节数
+N */
+Nlwrb_sz_t
+Nlwrb_peek(const lwrb_t* buff, lwrb_sz_t skip_count, void* data, lwrb_sz_t btp) {
+N    lwrb_sz_t full = 0, tocopy = 0, r_ptr = 0;
+N    uint8_t* d_ptr = data;
+N
+N    if (!BUF_IS_VALID(buff) || data == NULL || btp == 0) {
+X    if (!((buff) != 0 && (buff)->buff != 0 && (buff)->size > 0) || data == 0 || btp == 0) {
+N        return 0;
+N    }
+N
+N    /*
+N     * 计算可读取的最大字节数
+N     * 并检查是否可以容纳
+N     */
+N    full = lwrb_get_full(buff);
+N    if (skip_count >= full) {
+N        return 0;
+N    }
+N    r_ptr = LWRB_LOAD(buff->r_ptr, memory_order_relaxed);
+X    r_ptr = (buff->r_ptr);
+N    r_ptr += skip_count;
+N    full -= skip_count;
+N    if (r_ptr >= buff->size) {
+N        r_ptr -= buff->size;
+N    }
+N
+N    /* 检查跳过之后可读取的最大字节数 */
+N    btp = BUF_MIN(full, btp);
+X    btp = ((full) < (btp) ? (full) : (btp));
+N    if (btp == 0) {
+N        return 0;
+N    }
+N
+N    /* 步骤1：从缓冲区的线性部分读取数据 */
+N    tocopy = BUF_MIN(buff->size - r_ptr, btp);
+X    tocopy = ((buff->size - r_ptr) < (btp) ? (buff->size - r_ptr) : (btp));
+N    BUF_MEMCPY(d_ptr, &buff->buff[r_ptr], tocopy);
+X    memcpy(d_ptr, &buff->buff[r_ptr], tocopy);
+N    d_ptr += tocopy;
+N    btp -= tocopy;
+N
+N    /* 步骤2：从缓冲区的开头读取数据（溢出部分） */
+N    if (btp > 0) {
+N        BUF_MEMCPY(d_ptr, buff->buff, btp);
+X        memcpy(d_ptr, buff->buff, btp);
+N    }
+N    return tocopy + btp;
+N}
+N
+N/**
+N * \brief           获取缓冲区中可用于写入操作的可用大小
+N * \param[in]       buff: 环形缓冲区实例
+N * \return          内存中的空闲字节数
+N */
+Nlwrb_sz_t
+Nlwrb_get_free(const lwrb_t* buff) {
+N    lwrb_sz_t size = 0, w_ptr = 0, r_ptr = 0;
+N
+N    if (!BUF_IS_VALID(buff)) {
+X    if (!((buff) != 0 && (buff)->buff != 0 && (buff)->size > 0)) {
+N        return 0;
+N    }
+N
+N    /*
+N     * 通过原子访问将缓冲区指针复制到局部变量。
+N     *
+N     * 为确保线程安全（仅在单入口、单出口FIFO模式用例中），
+N     * 重要的是将缓冲区r和w值写入局部w和r变量。
+N     *
+N     * 局部变量将确保下面的if语句将始终使用相同的值，
+N     * 即使buff->w或buff->r在中断处理期间发生变化。
+N     *
+N     * 它们可能在加载操作期间发生变化，重要的是
+N     * 在这些赋值之后的if-else操作期间它们不会变化。
+N     *
+N     * lwrb_get_free仅用于写入目的，当处于FIFO模式时：
+N     * - buff->w指针不会被另一个进程/中断更改，因为我们现在处于写入模式
+N     * - buff->r指针可能被另一个进程更改。如果在buff->r已加载到局部变量后更改，
+N     *    缓冲区将看到“空闲大小”小于实际大小。这不是问题，应用程序可以
+N     *    再次尝试将更多数据写入在复制操作期间刚刚读取的剩余空闲内存中
+N     */
+N    w_ptr = LWRB_LOAD(buff->w_ptr, memory_order_relaxed);
+X    w_ptr = (buff->w_ptr);
+N    r_ptr = LWRB_LOAD(buff->r_ptr, memory_order_relaxed);
+X    r_ptr = (buff->r_ptr);
+N
+N    if (w_ptr >= r_ptr) {
+N        size = buff->size - (w_ptr - r_ptr);
+N    } else {
+N        size = r_ptr - w_ptr;
+N    }
+N
+N    /* 缓冲区空闲大小总是比实际大小小1 */
+N    return size - 1;
+N}
+N
+N/**
+N * \brief           获取缓冲区中当前可用的字节数
+N * \param[in]       buff: 环形缓冲区实例
+N * \return          准备好读取的字节数
+N */
+Nlwrb_sz_t
+Nlwrb_get_full(const lwrb_t* buff) {
+N    lwrb_sz_t size = 0, w_ptr = 0, r_ptr = 0;
+N
+N    if (!BUF_IS_VALID(buff)) {
+X    if (!((buff) != 0 && (buff)->buff != 0 && (buff)->size > 0)) {
+N        return 0;
+N    }
+N
+N    /*
+N     * 将缓冲区指针复制到局部变量。
+N     *
+N     * 为确保线程安全（仅在单入口、单出口FIFO模式用例中），
+N     * 重要的是将缓冲区r和w值写入局部w和r变量。
+N     *
+N     * 局部变量将确保下面的if语句将始终使用相同的值，
+N     * 即使buff->w或buff->r在中断处理期间发生变化。
+N     *
+N     * 它们可能在加载操作期间发生变化，重要的是
+N     * 在这些赋值之后的if-else操作期间它们不会变化。
+N     *
+N     * lwrb_get_full仅用于读取目的，当处于FIFO模式时：
+N     * - buff->r指针不会被另一个进程/中断更改，因为我们现在处于读取模式
+N     * - buff->w指针可能被另一个进程更改。如果在buff->w已加载到局部变量后更改，
+N     *    缓冲区将看到“已满大小”小于实际大小。这不是问题，应用程序可以
+N     *    再次尝试从在复制操作期间刚刚写入的剩余已满内存中读取更多数据
+N     */
+N    w_ptr = LWRB_LOAD(buff->w_ptr, memory_order_relaxed);
+X    w_ptr = (buff->w_ptr);
+N    r_ptr = LWRB_LOAD(buff->r_ptr, memory_order_relaxed);
+X    r_ptr = (buff->r_ptr);
+N
+N    if (w_ptr >= r_ptr) {
+N        size = w_ptr - r_ptr;
+N    } else {
+N        size = buff->size - (r_ptr - w_ptr);
+N    }
+N    return size;
+N}
+N
+N/**
+N * \brief           将缓冲区重置为默认值。缓冲区大小不会修改
+N * \note            此函数不是线程安全的。
+N *                      使用时，应用程序必须确保没有活动的读/写操作
+N * \param[in]       buff: 环形缓冲区实例
+N */
+Nvoid
+Nlwrb_reset(lwrb_t* buff) {
+N    if (BUF_IS_VALID(buff)) {
+X    if (((buff) != 0 && (buff)->buff != 0 && (buff)->size > 0)) {
+N        LWRB_STORE(buff->w_ptr, 0, memory_order_release);
+X        (buff->w_ptr) = (0);
+N        LWRB_STORE(buff->r_ptr, 0, memory_order_release);
+X        (buff->r_ptr) = (0);
+N        BUF_SEND_EVT(buff, LWRB_EVT_RESET, 0);
+X        do { if ((buff)->evt_fn != 0) { (buff)->evt_fn((void*)(buff), (LWRB_EVT_RESET), (0)); } } while (0);
+N    }
+N}
+N
+N/**
+N * \brief           获取缓冲区的线性地址以进行快速读取
+N * \param[in]       buff: 环形缓冲区实例
+N * \return          线性缓冲区起始地址
+N */
+Nvoid*
+Nlwrb_get_linear_block_read_address(const lwrb_t* buff) {
+N    lwrb_sz_t ptr = 0;
+N
+N    if (!BUF_IS_VALID(buff)) {
+X    if (!((buff) != 0 && (buff)->buff != 0 && (buff)->size > 0)) {
+N        return NULL;
+X        return 0;
+N    }
+N    ptr = LWRB_LOAD(buff->r_ptr, memory_order_relaxed);
+X    ptr = (buff->r_ptr);
+N    return &buff->buff[ptr];
+N}
+N
+N/**
+N * \brief           获取读取操作溢出前的线性块地址长度
+N * \param[in]       buff: 环形缓冲区实例
+N * \return          用于读取操作的线性缓冲区大小（以字节为单位）
+N */
+Nlwrb_sz_t
+Nlwrb_get_linear_block_read_length(const lwrb_t* buff) {
+N    lwrb_sz_t len = 0, w_ptr = 0, r_ptr = 0;
+N
+N    if (!BUF_IS_VALID(buff)) {
+X    if (!((buff) != 0 && (buff)->buff != 0 && (buff)->size > 0)) {
+N        return 0;
+N    }
+N
+N    /*
+N     * 在操作期间使用临时值以防它们被更改。
+N     * 有关为什么这样做可行的更多信息，请参见lwrb_buff_free或lwrb_buff_full函数。
+N     */
+N    w_ptr = LWRB_LOAD(buff->w_ptr, memory_order_relaxed);
+X    w_ptr = (buff->w_ptr);
+N    r_ptr = LWRB_LOAD(buff->r_ptr, memory_order_relaxed);
+X    r_ptr = (buff->r_ptr);
+N
+N    if (w_ptr > r_ptr) {
+N        len = w_ptr - r_ptr;
+N    } else if (r_ptr > w_ptr) {
+N        len = buff->size - r_ptr;
+N    } else {
+N        len = 0;
+N    }
+N    return len;
+N}
+N
+N/**
+N * \brief           跳过（忽略；推进读指针）缓冲区数据
+N * 将数据标记为已在缓冲区中读取，并最多增加`len`字节的空闲内存
+N *
+N * \note            在流式传输（如DMA）结束时很有用
+N * \param[in]       buff: 环形缓冲区实例
+N * \param[in]       len: 要跳过并标记为已读取的字节数
+N * \return          跳过的字节数
+N */
+Nlwrb_sz_t
+Nlwrb_skip(lwrb_t* buff, lwrb_sz_t len) {
+N    lwrb_sz_t full = 0, r_ptr = 0;
+N
+N    if (!BUF_IS_VALID(buff) || len == 0) {
+X    if (!((buff) != 0 && (buff)->buff != 0 && (buff)->size > 0) || len == 0) {
+N        return 0;
+N    }
+N
+N    full = lwrb_get_full(buff);
+N    len = BUF_MIN(len, full);
+X    len = ((len) < (full) ? (len) : (full));
+N    r_ptr = LWRB_LOAD(buff->r_ptr, memory_order_acquire);
+X    r_ptr = (buff->r_ptr);
+N    r_ptr += len;
+N    if (r_ptr >= buff->size) {
+N        r_ptr -= buff->size;
+N    }
+N    LWRB_STORE(buff->r_ptr, r_ptr, memory_order_release);
+X    (buff->r_ptr) = (r_ptr);
+N    BUF_SEND_EVT(buff, LWRB_EVT_READ, len);
+X    do { if ((buff)->evt_fn != 0) { (buff)->evt_fn((void*)(buff), (LWRB_EVT_READ), (len)); } } while (0);
+N    return len;
+N}
+N
+N/**
+N * \brief           获取缓冲区的线性地址以进行快速写入
+N * \param[in]       buff: 环形缓冲区实例
+N * \return          线性缓冲区起始地址
+N */
+Nvoid*
+Nlwrb_get_linear_block_write_address(const lwrb_t* buff) {
+N    lwrb_sz_t ptr = 0;
+N
+N    if (!BUF_IS_VALID(buff)) {
+X    if (!((buff) != 0 && (buff)->buff != 0 && (buff)->size > 0)) {
+N        return NULL;
+X        return 0;
+N    }
+N    ptr = LWRB_LOAD(buff->w_ptr, memory_order_relaxed);
+X    ptr = (buff->w_ptr);
+N    return &buff->buff[ptr];
+N}
+N
+N/**
+N * \brief           获取写入操作溢出前的线性块地址长度
+N * \param[in]       buff: 环形缓冲区实例
+N * \return          用于写入操作的线性缓冲区大小（以字节为单位）
+N */
+Nlwrb_sz_t
+Nlwrb_get_linear_block_write_length(const lwrb_t* buff) {
+N    lwrb_sz_t len = 0, w_ptr = 0, r_ptr = 0;
+N
+N    if (!BUF_IS_VALID(buff)) {
+X    if (!((buff) != 0 && (buff)->buff != 0 && (buff)->size > 0)) {
+N        return 0;
+N    }
+N
+N    /*
+N     * 在操作期间使用临时值以防它们被更改。
+N     * 有关为什么这样做可行的更多信息，请参见lwrb_buff_free或lwrb_buff_full函数。
+N     */
+N    w_ptr = LWRB_LOAD(buff->w_ptr, memory_order_relaxed);
+X    w_ptr = (buff->w_ptr);
+N    r_ptr = LWRB_LOAD(buff->r_ptr, memory_order_relaxed);
+X    r_ptr = (buff->r_ptr);
+N
+N    if (w_ptr >= r_ptr) {
+N        len = buff->size - w_ptr;
+N        /*
+N         * 当读指针为0时，
+N         * 最大长度少1，因为如果写入太多字节，
+N         * 缓冲区将再次被视为空（r == w）
+N         */
+N        if (r_ptr == 0) {
+N            /*
+N             * 不会溢出：
+N             * - 如果r不为0，则不调用该语句
+N             * - buff->size不能为0，并且如果r为0，则len大于0
+N             */
+N            --len;
+N        }
+N    } else {
+N        len = r_ptr - w_ptr - 1;
+N    }
+N    return len;
+N}
+N
+N/**
+N * \brief           推进缓冲区中的写指针。
+N * 类似于跳过函数，但修改写指针而不是读指针
+N *
+N * \note            当硬件正在写入缓冲区并且应用程序需要增加
+N *                      硬件写入缓冲区的字节数时很有用
+N * \param[in]       buff: 环形缓冲区实例
+N * \param[in]       len: 要推进的字节数
+N * \return          为写入操作推进的字节数
+N */
+Nlwrb_sz_t
+Nlwrb_advance(lwrb_t* buff, lwrb_sz_t len) {
+N    lwrb_sz_t free = 0, w_ptr = 0;
+N
+N    if (!BUF_IS_VALID(buff) || len == 0) {
+X    if (!((buff) != 0 && (buff)->buff != 0 && (buff)->size > 0) || len == 0) {
+N        return 0;
+N    }
+N
+N    /* 在写回主结构之前使用局部变量 */
+N    free = lwrb_get_free(buff);
+N    len = BUF_MIN(len, free);
+X    len = ((len) < (free) ? (len) : (free));
+N    w_ptr = LWRB_LOAD(buff->w_ptr, memory_order_acquire);
+X    w_ptr = (buff->w_ptr);
+N    w_ptr += len;
+N    if (w_ptr >= buff->size) {
+N        w_ptr -= buff->size;
+N    }
+N    LWRB_STORE(buff->w_ptr, w_ptr, memory_order_release);
+X    (buff->w_ptr) = (w_ptr);
+N    BUF_SEND_EVT(buff, LWRB_EVT_WRITE, len);
+X    do { if ((buff)->evt_fn != 0) { (buff)->evt_fn((void*)(buff), (LWRB_EVT_WRITE), (len)); } } while (0);
+N    return len;
+N}
+N
+N

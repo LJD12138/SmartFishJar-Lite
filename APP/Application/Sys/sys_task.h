@@ -24,9 +24,6 @@
 #define  		sysCHG_PWR_LEVEL4              		3000
 
 
-//#define		//4Tab									//10Tab
-#define     	bmsDEV_NUM								6
-
 extern bool G_TestMode;
 extern Task_T *tpSysTask;
 extern TaskHandle_t tSysTaskHandler;
@@ -69,6 +66,7 @@ typedef union
 		
 		u16 			bIF_UsbTask:1;
 		u16 			bIF_DcTask:1;
+		u16 			bIF_DispTask:1;
 	}tFinish;
 	u16 State;
 }InitFinish_U;

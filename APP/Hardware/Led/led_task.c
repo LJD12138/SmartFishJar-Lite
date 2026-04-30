@@ -9,14 +9,6 @@
 #include "Led/led_iface.h"
 #include "Sys/sys_task.h"
 
-#if(boardUSB_EN)
-#include "Usb/usb_task.h"
-#endif  //boardUSB_EN
-
-#if(boardDC_EN)
-#include "Dc/dc_task.h"
-#endif  //boardDC_EN
-
 #if(boardLIGHT_EN)
 #include "MD_Light/md_light_task.h"
 #endif  //boardLIGHT_EN
@@ -24,16 +16,6 @@
 #if(boardDISPLAY_EN)
 #include "MD_Display/md_display_task.h"
 #endif  //boardDISPLAY_EN
-
-#if(boardBMS_EN)
-#include "MD_Bms/md_bms_task.h"
-#include "MD_Bms/md_bms_rec_task.h"
-#endif  //boardBMS_EN
-
-#if(boardDCAC_EN)
-#include "MD_Dcac/md_dcac_task.h"
-#include "MD_Dcac/md_dcac_rec_task.h"
-#endif  //DCACÊ¹ÄÜ
 
 #if(boardUSE_OS)
 #include "freertos.h"
@@ -100,10 +82,6 @@ void vLed_Task(void *pvParameters)
 			case DS_SHUT_DOWN:
 			{	
 				ledPWR_SW_OFF();
-				ledAC_SW_OFF();
-				ledUSB_SW_OFF();
-				ledLight_SW_OFF();
-				ledDC_SW_OFF();
 				#if(boardUSE_OS)
 				vTaskDelay(ledTASK_CYCLE_TIME);
 				#endif  //boardUSE_OS
@@ -129,50 +107,6 @@ void vLed_Task(void *pvParameters)
 				else 
 				#endif  //boardDISPLAY_EN
 					v_led_breathing();
-				
-				#if(boardDCAC_EN)
-				if(tDcac.eDisChgState >= IOS_STARTING)
-					ledAC_SW_ON();
-				else 
-					ledAC_SW_OFF();
-				
-				
-				
-				if(tLight.eDevState == DS_WORK)
-					ledLight_SW_ON();
-				else 
-					ledLight_SW_OFF();
-				
-				
-				
-				#if(boardDCAC_PARA_IN)
-				//USB DC
-				if(tUsb.eDevState >= DS_BOOTING || tDc.eDevState >= DS_BOOTING)
-					ledUSB_SW_ON();
-				else 
-					ledUSB_SW_OFF();
-				//²¢Íø
-				if(tDcac.eParanInState >= IOS_STARTING)
-					ledDC_SW_ON();
-				else 
-					ledDC_SW_OFF();
-				#else
-				//USB
-				if(tUsb.eDevState >= DS_BOOTING)
-					ledUSB_SW_ON();
-				else 
-					ledUSB_SW_OFF();
-				//DC
-				if(tDc.eDevState >= DS_BOOTING)
-					ledDC_SW_ON();
-				else 
-					ledDC_SW_OFF();
-				#endif
-				
-				#if(boardUSE_OS)
-				vTaskDelay(50);
-				#endif  //boardUSE_OS
-				#endif  //boardDCAC_EN
 			}
 			break;
 			
@@ -269,7 +203,7 @@ static void v_led_breathing(void)
 	static u8 breath_cnt = 0;
 	static bool breath_flag = 0;
 	
-	ledPWR_SW_PWM_SET(breath_cnt * 50);
+	ledPWR_SW_PWM_SET(breath_cnt * (ledPWM_MAX_VALUE / 20));
 	
 	if(breath_flag == 0) breath_cnt++;
 	else 

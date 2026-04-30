@@ -106,19 +106,6 @@ typedef enum
 	KTE_RIGHT_SUPER_LONG,
 }KeyTriEvent_e;  //触发事件
 
-// 向后兼容旧枚举值名（旧key_func.c / key_func_eng.c 使用）
-#define KTE_POWER_SHORT     KTE_ENTER_SHORT
-#define KTE_POWER_LONG      KTE_ENTER_LONG
-#define KTE_POWER_SLONG     KTE_ENTER_SUPER_LONG
-#define KTE_AC_SHORT        KTE_LEFT_SHORT
-#define KTE_AC_LONG         KTE_LEFT_LONG
-#define KTE_LIGHT_SHORT     KTE_UP_SHORT
-#define KTE_LIGHT_LONG      KTE_UP_LONG
-#define KTE_DC_SHORT        KTE_DOWN_SHORT
-#define KTE_DC_LONG         KTE_DOWN_LONG
-#define KTE_USB_SHORT       KTE_RIGHT_SHORT
-#define KTE_USB_LONG        KTE_RIGHT_LONG
-
 
 typedef struct
 {

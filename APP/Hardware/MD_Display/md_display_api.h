@@ -23,8 +23,14 @@ extern "C" {
 #include "board_config.h"
 
 #if(boardDISPLAY_EN)
-/* ==========================================macros======================================*/
 
+/* ==========================================macros======================================*/
+#define     OLED_CMD                        0U
+#define     OLED_DATA                       1U
+#define     OLED_WIDTH_PIXELS               128U
+#define     OLED_HEIGHT_PIXELS              64U
+#define     OLED_PAGE_COUNT                 8U
+#define     OLED_SPI_TIMEOUT                0x0000FFFFUL
 
 /* ==========================================globals=====================================*/
 
@@ -33,13 +39,26 @@ extern "C" {
 
 
 /* ==========================================extern======================================*/
-void vDisp_ShowHelloWorldTestPage(void);
 
+#if(dispUSE_U8G2 == 0)
+void vDisp_OledDrawPixel(u8 x, u8 y, bool on);
+void vDisp_OledDrawHLine(u8 x, u8 y, u8 len, bool on);
+void vDisp_OledDrawVLine(u8 x, u8 y, u8 len, bool on);
+void vDisp_OledDrawChar6x8(u8 x, u8 y, char c);
+void vDisp_OledDrawString6x8(u8 x, u8 y, const char *str);
+void vDisp_OledFillBuffer(u8 value);
+#endif  // dispUSE_U8G2 == 0
 
-#endif  // boardDISPLAY_EN
+void vDisp_Init(void);
+void vDisp_Refresh(void);
+void vDisp_SetPower(bool on);
+void vDisp_ClearBuffer(void);
+void vDisp_UiTest(void);
 
 #ifdef __cplusplus
 }
 #endif
+
+#endif //boardDISPLAY_EN
 
 #endif  //MD_DISPLAY_API_H

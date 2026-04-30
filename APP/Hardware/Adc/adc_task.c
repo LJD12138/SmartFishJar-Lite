@@ -212,16 +212,16 @@ void vAdc_Task(void *pvParameters)
 
         //*****************************ŒÔ¿Ì¡øªªÀ„*****************************
         tAdcSamp.usVinVolt    = (vu16)(us_vin_volt * adcVIN_VOLT_RES_RATIO);
-        tAdcSamp.fVinCurr     = us_vin_curr * adcCURR_RES_RATIO;
+        tAdcSamp.fVinCurr     = us_vin_curr * 0.0066f;
 
         tAdcSamp.us12VVolt    = (vu16)(us_12v_volt * adc12V_VOLT_RES_RATIO);
         tAdcSamp.s12VTemp     = (s16)LIMIT((307 - (37 * log((float)us_12v_ntc))), -128, 127);
         tAdcSamp.s5VTemp      = (s16)LIMIT((307 - (37 * log((float)us_5v_ntc))), -128, 127);
 
-        tAdcSamp.fHeatCurr    = us_heat_curr * adcCURR_RES_RATIO;
-        tAdcSamp.fO2Curr      = us_o2_curr   * adcCURR_RES_RATIO;
-        tAdcSamp.fPumpCurr    = us_pump_curr * adcCURR_RES_RATIO;
-        tAdcSamp.fLightCurr   = us_light_curr * adcCURR_RES_RATIO;
+        tAdcSamp.fHeatCurr    = us_heat_curr * 0.005f;
+        tAdcSamp.fO2Curr      = us_o2_curr   * 0.00311f;
+        tAdcSamp.fPumpCurr    = us_pump_curr * 0.00323f;
+        tAdcSamp.fLightCurr   = us_light_curr * 0.005f;
 
         tAdcSamp.usLightRes   = us_light_res;
         tAdcSamp.sWaterTemp1  = (s16)LIMIT((307 - (37 * log((float)us_water_ntc1))), -128, 127);
