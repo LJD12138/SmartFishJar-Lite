@@ -7,6 +7,7 @@
 #if(boardDISPLAY_EN)
 
 // OLED SPI 引脚定义
+//OLED SPI引脚映射, 高低电平宏直接写GPIO置位/复位寄存器
 #define     	dispOLED_NSS_RCU              			RCU_GPIOB
 #define     	dispOLED_NSS_PORT             			GPIOB
 #define     	dispOLED_NSS_PIN              			GPIO_PIN_12
@@ -37,6 +38,8 @@
 #define     	dispOLED_DC_H()               			GPIO_BOP(dispOLED_DC_PORT) = (uint32_t)dispOLED_DC_PIN
 #define     	dispOLED_DC_L()               			GPIO_BC(dispOLED_DC_PORT) = (uint32_t)dispOLED_DC_PIN
 
+
+//硬件SPI DMA配置; boardDISP_SPI_MODE为0时使用软件模拟SPI
 #if(boardDISP_SPI_MODE == 1)
 #define     	dispOLED_SPI_PERIPH           			SPI1
 #define     	dispOLED_SPI_RCU              			RCU_SPI1

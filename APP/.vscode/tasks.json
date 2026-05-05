@@ -1,40 +1,75 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "build",
-            "type": "shell",
-            "command": "${command:eide.project.build}",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "flash",
-            "type": "shell",
-            "command": "${command:eide.project.uploadToDevice}",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "build and flash",
-            "type": "shell",
-            "command": "${command:eide.project.buildAndFlash}",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "rebuild",
-            "type": "shell",
-            "command": "${command:eide.project.rebuild}",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "clean",
-            "type": "shell",
-            "command": "${command:eide.project.clean}",
-            "group": "build",
-            "problemMatcher": []
-        }
-    ]
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "build",
+			"type": "shell",
+			"command": "${command:eide.project.build}",
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "flash",
+			"type": "shell",
+			"command": "${command:eide.project.uploadToDevice}",
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "flash (direct JLink)",
+			"type": "shell",
+			"command": "C:\\Program Files\\SEGGER\\JLink\\JLink.exe",
+			"args": [
+				"-ExitOnError",
+				"1",
+				"-AutoConnect",
+				"1",
+				"-Device",
+				"GD32F303RC",
+				"-If",
+				"SWD",
+				"-Speed",
+				"1000",
+				"-CommandFile",
+				"${workspaceFolder}\\build\\APP\\commands.jlink"
+			],
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "build and flash",
+			"type": "shell",
+			"command": "${command:eide.project.buildAndFlash}",
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "rebuild",
+			"type": "shell",
+			"command": "${command:eide.project.rebuild}",
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "clean",
+			"type": "shell",
+			"command": "${command:eide.project.clean}",
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "uv4 build",
+			"type": "shell",
+			"command": "C:\\Users\\Administrator\\AppData\\Local\\Keil_v5\\UV4\\UV4.exe",
+			"args": [
+				"-j0",
+				"-b",
+				"APP.uvprojx",
+				"-o",
+				"build\\APP\\uv4_build.log"
+			],
+			"isBackground": false,
+			"group": "build"
+		}
+	]
 }

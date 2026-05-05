@@ -70,12 +70,12 @@ OF SUCH DAMAGE.
 //APP中断向量表地址偏移 需要在Linker选项卡勾选“USE Memory Layout from Target Dialog”，
 //并修改Target选项卡中的ROM的Start地址
 
-#define 		USER_BOOT_EXIST				         	1			         		//是否有bootloader
-#if(USER_BOOT_EXIST)
+
+#if(boardUSER_BOOT)
 #define 		NVIC_VECTTAB_RAM1                   	((uint32_t)SRAM_START) 		//RAM首地址
 #define 		NVIC_VECTTAB_FLASH1                 	((uint32_t)flashAPP_START) 	//Flash首地址
 #define 		VECT_TAB_OFFSET				         	flashAPP_START      		//偏移量
-#endif	//USER_BOOT_EXIST
+#endif	//boardUSER_BOOT
 
 //****************************************************任务初始化**************************************************//
 TaskHandle_t    StartTask_Handler; 
@@ -106,10 +106,10 @@ static void nvic_init(void)
 int main(void)
 {
 	
-	#if(USER_BOOT_EXIST == 1)
+	#if(boardUSER_BOOT == 1)
 	nvic_vector_table_set(NVIC_VECTTAB_FLASH1, VECT_TAB_OFFSET);  //设置NVIC中断向量表的偏移
 	__enable_irq();	//解除中断屏蔽
-	#endif	//USER_BOOT_EXIST
+	#endif	//boardUSER_BOOT
 	
 	SystemInit();
 	

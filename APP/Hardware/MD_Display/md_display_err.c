@@ -1,46 +1,16 @@
-/*****************************************************************************************************************
-*                                                                                                                *
- *                                         LCD错误显示                                                          *
-*                                                                                                                *
-******************************************************************************************************************/
 #include "MD_Display/md_display_task.h"
 
 #if(boardDISPLAY_EN)
+#include "MD_Display/md_display_api.h"
 #include "Sys/sys_task.h"
-
-#if(boardBUZ_EN)
-#include "Buz/buz_task.h"
-#endif  //boardBUZ_EN
-
-#if(boardUSB_EN)
-#include "Usb/usb_task.h"
-#endif  //boardUSB_EN
-
-#if(boardDC_EN)
-#include "Dc/dc_task.h"
-#endif  //boardDC_EN
-
-#if(boardBMS_EN)
-#include "MD_Bms/md_bms_task.h"
-#endif  //boardBMS_EN
-
-#if(boardMPPT_EN)
-#include "MD_Mppt/md_mppt_task.h"
-#endif  //boardMPPT_EN
-
-#if(boardDCAC_EN)
-#include "MD_Dcac/md_dcac_task.h"
-#include "MD_Dcac/md_dcac_rec_task.h"
-#endif  //boardDCAC_EN
-
-
+#include "Print/print_task.h"
 
 /***********************************************************************************************************************
 -----函数功能    LCD错误代码显示
------说明(备注)  none
+-----说明(备注)  轮询各模块错误标志, 多个错误按刷新周期轮流显示
 -----传入参数    none
 -----输出参数    none
------返回值      错误代码,大于99没有错误
+-----返回值      错误代码, 100表示无错误
 ************************************************************************************************************************/
 u16 usDisp_ErrCodeDisplay(void)
 {
@@ -49,6 +19,7 @@ u16 usDisp_ErrCodeDisplay(void)
 	static vu16 us_err_disp_cnt = 0;
 	
 	
+	//所有已使能模块均无错误时, 直接返回无错误码
 	if(tSysInfo.uErrCode.usCode == 0
 
 		#if(boardUSB_EN)
@@ -76,6 +47,7 @@ u16 usDisp_ErrCodeDisplay(void)
 		return 100;
 	}
 
+	//此处利用switch顺序向下扫描, 直到找到当前有效错误位
 	switch(us_err_step)
 	{
 		//------------------------SYS 0~9------------------------------------
@@ -765,6 +737,7 @@ u16 usDisp_ErrCodeDisplay(void)
 		
 	}
 	
+	//达到显示间隔后切换到下一个错误码, 便于轮显多个故障
 	if(us_err_last_step != us_err_step)
 	{
 		us_err_last_step = us_err_step;

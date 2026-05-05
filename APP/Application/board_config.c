@@ -97,7 +97,7 @@ void SysParamInit(void)
 	uPrint.tFlag.bUsbTask   = 0;
 	uPrint.tFlag.bDcTask    = 0;
 	uPrint.tFlag.bDispTask  = 0;
-	uPrint.tFlag.bAdcTask	= 1;
+	uPrint.tFlag.bAdcTask	= 0;
 	
 	#if(boardUSE_OS_DEBUG_OUT)
 	uPrint.tFlag.bFreeRTOS = 1;

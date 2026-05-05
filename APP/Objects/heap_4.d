@@ -1,8 +1,8 @@
 .\objects\heap_4.o: Middlewares\FreeRTOS\portable\MemMang\heap_4.c
-.\objects\heap_4.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\objects\heap_4.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdlib.h
 .\objects\heap_4.o: .\Middlewares\FreeRTOS\include\FreeRTOS.h
-.\objects\heap_4.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
-.\objects\heap_4.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\heap_4.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stddef.h
+.\objects\heap_4.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdint.h
 .\objects\heap_4.o: .\Application\FreeRTOSConfig.h
 .\objects\heap_4.o: .\Application\board_config.h
 .\objects\heap_4.o: .\Application\main.h
@@ -38,10 +38,10 @@
 .\objects\heap_4.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_misc.h
 .\objects\heap_4.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_enet.h
 .\objects\heap_4.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_exmc.h
-.\objects\heap_4.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
-.\objects\heap_4.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
-.\objects\heap_4.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
-.\objects\heap_4.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\assert.h
+.\objects\heap_4.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h
+.\objects\heap_4.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdbool.h
+.\objects\heap_4.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\string.h
+.\objects\heap_4.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\assert.h
 .\objects\heap_4.o: .\Middlewares\FreeRTOS\include\projdefs.h
 .\objects\heap_4.o: .\Middlewares\FreeRTOS\include\portable.h
 .\objects\heap_4.o: .\Middlewares\FreeRTOS\include\deprecated_definitions.h
@@ -50,7 +50,7 @@
 .\objects\heap_4.o: .\Middlewares\SeggerRtt\SEGGER_SYSVIEW_FreeRTOS.h
 .\objects\heap_4.o: .\Middlewares\SeggerRtt\SEGGER_SYSVIEW.h
 .\objects\heap_4.o: .\Middlewares\SeggerRtt\SEGGER.h
-.\objects\heap_4.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
+.\objects\heap_4.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdarg.h
 .\objects\heap_4.o: .\Middlewares\SeggerRtt\Global.h
 .\objects\heap_4.o: .\Middlewares\SeggerRtt\SEGGER_SYSVIEW_ConfDefaults.h
 .\objects\heap_4.o: .\Middlewares\SeggerRtt\SEGGER_SYSVIEW_Conf.h

@@ -50,6 +50,7 @@ void v_sys_queue_task_init(Task_T *tp_task)
 		{
 			tSysInfo.uInit.tFinish.bIF_AppInfo = false;
 			
+			#if(boardUSER_BOOT)
 			c_ret = cApp_BootInfoInit();
 			if(c_ret > 0)
 			{
@@ -73,6 +74,9 @@ void v_sys_queue_task_init(Task_T *tp_task)
 				#endif  //boardUSE_OS
 				break;
 			}
+			#else
+			cQueue_GotoStep(tp_task, STEP_NEXT);
+			#endif  //boardUSER_BOOT
 		}
 		
 		case 1:

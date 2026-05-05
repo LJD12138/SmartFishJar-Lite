@@ -1,7 +1,7 @@
 .\objects\segger_sysview_config_freertos.o: Middlewares\SeggerRtt\SEGGER_SYSVIEW_Config_FreeRTOS.c
 .\objects\segger_sysview_config_freertos.o: .\Middlewares\FreeRTOS\include\FreeRTOS.h
-.\objects\segger_sysview_config_freertos.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
-.\objects\segger_sysview_config_freertos.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\segger_sysview_config_freertos.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stddef.h
+.\objects\segger_sysview_config_freertos.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdint.h
 .\objects\segger_sysview_config_freertos.o: .\Application\FreeRTOSConfig.h
 .\objects\segger_sysview_config_freertos.o: .\Application\board_config.h
 .\objects\segger_sysview_config_freertos.o: .\Application\main.h
@@ -37,11 +37,11 @@
 .\objects\segger_sysview_config_freertos.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_misc.h
 .\objects\segger_sysview_config_freertos.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_enet.h
 .\objects\segger_sysview_config_freertos.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_exmc.h
-.\objects\segger_sysview_config_freertos.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
-.\objects\segger_sysview_config_freertos.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
-.\objects\segger_sysview_config_freertos.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
-.\objects\segger_sysview_config_freertos.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
-.\objects\segger_sysview_config_freertos.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\assert.h
+.\objects\segger_sysview_config_freertos.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h
+.\objects\segger_sysview_config_freertos.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdbool.h
+.\objects\segger_sysview_config_freertos.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\string.h
+.\objects\segger_sysview_config_freertos.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdlib.h
+.\objects\segger_sysview_config_freertos.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\assert.h
 .\objects\segger_sysview_config_freertos.o: .\Middlewares\FreeRTOS\include\projdefs.h
 .\objects\segger_sysview_config_freertos.o: .\Middlewares\FreeRTOS\include\portable.h
 .\objects\segger_sysview_config_freertos.o: .\Middlewares\FreeRTOS\include\deprecated_definitions.h
@@ -50,7 +50,7 @@
 .\objects\segger_sysview_config_freertos.o: .\Middlewares\SeggerRtt\SEGGER_SYSVIEW_FreeRTOS.h
 .\objects\segger_sysview_config_freertos.o: .\Middlewares\SeggerRtt\SEGGER_SYSVIEW.h
 .\objects\segger_sysview_config_freertos.o: .\Middlewares\SeggerRtt\SEGGER.h
-.\objects\segger_sysview_config_freertos.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
+.\objects\segger_sysview_config_freertos.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdarg.h
 .\objects\segger_sysview_config_freertos.o: .\Middlewares\SeggerRtt\Global.h
 .\objects\segger_sysview_config_freertos.o: .\Middlewares\SeggerRtt\SEGGER_SYSVIEW_ConfDefaults.h
 .\objects\segger_sysview_config_freertos.o: .\Middlewares\SeggerRtt\SEGGER_SYSVIEW_Conf.h

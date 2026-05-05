@@ -13,12 +13,12 @@
 #define     dispTASK_SHUT_DOWN_CYCLE_TIME       100 //任务时间
 
 /***********************************************************************************************************************
- -----函数功能    关闭完成显示任务
- -----说明(备注)  none
- -----传入参数    none
- -----输出参数    none
- -----返回值      none
- ************************************************************************************************************************/
+-----函数功能    关闭完成显示任务
+-----说明(备注)  关闭OLED显示, 如有新显示任务入队则退出当前任务
+-----传入参数    tp_task:任务对象指针
+-----输出参数    none
+-----返回值      none
+************************************************************************************************************************/
 void v_disp_queue_task_shut_down(Task_T *tp_task)
 {
     //新的任务
@@ -29,8 +29,8 @@ void v_disp_queue_task_shut_down(Task_T *tp_task)
     {
         case 0:
         {
-            if(tSysInfo.eDevState != DS_SHUT_DOWN)
-                tSysInfo.eDevState = DS_SHUT_DOWN;
+            if(tDisp.eDevState != DS_SHUT_DOWN)
+                bDisp_SetDevState(DS_SHUT_DOWN);
             
             bDisp_Switch(ST_OFF, false);
             cQueue_GotoStep(tp_task, STEP_NEXT);

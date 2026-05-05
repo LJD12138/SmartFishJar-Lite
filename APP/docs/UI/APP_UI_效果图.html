@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartFishJar Lite - APP OLED UI Preview</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --panel: #171a20;
+      --panel-2: #1d2129;
+      --line: #2b313c;
+      --text: #e8edf5;
+      --sub: #9aa6b2;
+      --oled-bg: #090b08;
+      --oled-frame: #2c3128;
+      --oled-pixel: #e7f6d9;
+      --oled-dim: rgba(231, 246, 217, 0.68);
+      --accent: #9fe870;
+      --warn: #ffd166;
+      --danger: #ff7b72;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #0d1014 0%, #11151a 100%);
+      color: var(--text);
+    }
+
+    .page {
+      width: min(1500px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #171b22 0%, #13171d 100%);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 24px 28px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 28px;
+      letter-spacing: 0.5px;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--sub);
+      line-height: 1.7;
+    }
+
+    .meta {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: #20252d;
+      color: #d9e2ee;
+      border: 1px solid #2f3641;
+      font-size: 13px;
+    }
+
+    .chip.warn {
+      background: rgba(255, 123, 114, 0.15);
+      color: var(--danger);
+      border-color: rgba(255, 123, 114, 0.4);
+    }
+
+    .alert {
+      margin-top: 16px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      background: rgba(255, 123, 114, 0.08);
+      border: 1px solid rgba(255, 123, 114, 0.25);
+      color: #ff9a93;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .alert strong {
+      color: var(--danger);
+    }
+
+    .section {
+      margin-top: 22px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .section h2 {
+      margin: 0 0 14px;
+      font-size: 18px;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .flow-item {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      min-height: 92px;
+    }
+
+    .flow-item .id {
+      color: var(--accent);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .flow-item strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 15px;
+    }
+
+    .flow-item span {
+      color: var(--sub);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .screens {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .card-head h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .card-head span {
+      color: var(--sub);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .note {
+      color: var(--sub);
+      line-height: 1.65;
+      margin-top: 12px;
+      font-size: 13px;
+      min-height: 62px;
+    }
+
+    .oled {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 2 / 1;
+      background: radial-gradient(circle at 50% 35%, #12170f 0%, var(--oled-bg) 65%);
+      border: 10px solid var(--oled-frame);
+      border-radius: 18px;
+      box-shadow:
+        inset 0 0 0 2px #454d41,
+        inset 0 0 30px rgba(159, 232, 112, 0.06),
+        0 14px 36px rgba(0, 0, 0, 0.35);
+      overflow: hidden;
+    }
+
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.03) 0px,
+        rgba(255,255,255,0.03) 1px,
+        transparent 1px,
+        transparent 6px
+      );
+      pointer-events: none;
+      opacity: 0.24;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 12px;
+      color: var(--oled-pixel);
+      text-shadow: 0 0 7px rgba(231, 246, 217, 0.18);
+      font-family: "Consolas", monospace;
+    }
+
+    .bar {
+      height: 28px;
+      border-bottom: 2px solid rgba(231, 246, 217, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .main {
+      height: calc(100% - 56px);
+      padding: 8px 8px 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .footer {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      height: 30px;
+      border-top: 2px solid rgba(231, 246, 217, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 8px;
+      font-size: 12px;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-height: 18px;
+      font-size: 12px;
+    }
+
+    .row.big {
+      min-height: 34px;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .row.mid {
+      min-height: 24px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .muted { color: var(--oled-dim); }
+    .warn { color: var(--warn); }
+    .danger { color: var(--danger); }
+    .accent { color: var(--accent); }
+
+    .divider {
+      border-top: 1px dashed rgba(231, 246, 217, 0.5);
+      margin: 2px 0;
+    }
+
+    .progress {
+      height: 16px;
+      border: 2px solid rgba(231, 246, 217, 0.85);
+      position: relative;
+      margin-top: 4px;
+    }
+
+    .progress > span {
+      position: absolute;
+      inset: 2px auto 2px 2px;
+      width: 42%;
+      background: rgba(231, 246, 217, 0.92);
+      box-shadow: 0 0 10px rgba(231, 246, 217, 0.2);
+    }
+
+    .badge {
+      padding: 1px 6px;
+      border: 1px solid rgba(231, 246, 217, 0.78);
+      border-radius: 10px;
+      font-size: 11px;
+    }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 2px;
+    }
+
+    .list .item {
+      display: flex;
+      justify-content: space-between;
+      padding: 2px 4px;
+      border: 1px solid transparent;
+      font-size: 12px;
+    }
+
+    .list .item.focus {
+      border-color: rgba(231, 246, 217, 0.82);
+      background: rgba(231, 246, 217, 0.08);
+    }
+
+    .sleep-screen {
+      display: grid;
+      place-items: center;
+      height: calc(100% - 56px);
+      color: rgba(231, 246, 217, 0.22);
+      font-size: 12px;
+      letter-spacing: 1px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 10px;
+    }
+
+    .small-note {
+      margin-top: 16px;
+      color: var(--sub);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <h1>SmartFishJar Lite - APP OLED UI Preview</h1>
+      <p>This version is rebuilt with ASCII-only copy to avoid local encoding issues. Layout density still follows the real 128x64 monochrome OLED target, so it remains suitable for firmware implementation.</p>
+      <div class="meta">
+        <div class="chip">APP only</div>
+        <div class="chip">SH1106 / SSD1106</div>
+        <div class="chip">128x64 mono OLED</div>
+        <div class="chip">5 keys</div>
+        <div class="chip">WORK / ERR / UPGRADE</div>
+        <div class="chip warn">ASCII ONLY</div>
+      </div>
+      <div class="alert">
+        <strong>[ASCII ONLY]</strong> The firmware only includes <code>u8g2_font_5x8_tr</code> and <code>u8g2_font_6x10_tr</code>. <strong>Chinese characters cannot be rendered.</strong> All on-screen text must use ASCII abbreviations.
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Page Flow</h2>
+      <div class="flow">
+        <div class="flow-item"><div class="id">P00</div><strong>Init</strong><span>Power-on init with version and status.</span></div>
+        <div class="flow-item"><div class="id">P01</div><strong>Boot Check</strong><span>Sensor and actuator self-check stage.</span></div>
+        <div class="flow-item"><div class="id">P10</div><strong>Home</strong><span>Main dashboard for daily quick check.</span></div>
+        <div class="flow-item"><div class="id">P11</div><strong>Env</strong><span>Temperature, light and power detail page.</span></div>
+        <div class="flow-item"><div class="id">P12</div><strong>Act</strong><span>Light, O2 pump, water pump and heat control.</span></div>
+        <div class="flow-item"><div class="id">P13</div><strong>Alarm</strong><span>Alarm code with impact and action hint.</span></div>
+        <div class="flow-item"><div class="id">P14</div><strong>Setting</strong><span>Sleep time, buzzer and brightness.</span></div>
+        <div class="flow-item"><div class="id">P20/P23</div><strong>Upgrade / Error</strong><span>High-priority overlay screens.</span></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Screen Preview</h2>
+      <div class="screens">
+        <div class="card">
+          <div class="card-head"><h3>1. Boot Check</h3><span>P01_BOOTING</span></div>
+          <div class="oled"><div class="scanlines"></div><div class="screen">
+            <div class="bar"><span>BOOT</span><span>CHK 42%</span></div>
+            <div class="main">
+              <div class="row mid"><span>SmartFishJar Lite</span><span class="accent">v1.0.0</span></div>
+              <div class="divider"></div>
+              <div class="row"><span>TEMP SENSOR</span><span>OK</span></div>
+              <div class="row"><span>LIGHT SENSOR</span><span>OK</span></div>
+              <div class="row"><span>PUMP / O2 / HEAT</span><span class="muted">CHECK</span></div>
+              <div class="progress"><span></span></div>
+              <div class="row"><span class="muted">Boot sequence in progress</span><span>...</span></div>
+            </div>
+            <div class="footer"><span>Locked</span><span>Wait</span><span>Wait</span></div>
+          </div></div>
+          <div class="note">Shows clearly that the device is still starting, not frozen.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>2. Home</h3><span>P10_HOME</span></div>
+          <div class="oled"><div class="scanlines"></div><div class="screen">
+            <div class="bar"><span>WORK</span><span>24.8C</span><span class="badge">OK</span></div>
+            <div class="main">
+              <div class="row big"><span>WATER</span><span>24.8</span></div>
+              <div class="row"><span class="muted">TARGET</span><span>26.0C</span></div>
+              <div class="divider"></div>
+              <div class="grid-2">
+                <div class="row"><span>LIGHT</span><span>72%</span></div>
+                <div class="row"><span>HEAT</span><span>OFF</span></div>
+                <div class="row"><span>O2 PUMP</span><span>ON</span></div>
+                <div class="row"><span>WATER P</span><span>ON</span></div>
+              </div>
+              <div class="row"><span>ALM</span><span>000</span></div>
+            </div>
+            <div class="footer"><span>TAB-</span><span>QUICK</span><span>TAB+</span></div>
+          </div></div>
+          <div class="note">Temperature first, actuator summary second. All text must fit 128px width with 5x8 font.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>3. Env</h3><span>P11_ENV</span></div>
+          <div class="oled"><div class="scanlines"></div><div class="screen">
+            <div class="bar"><span>ENV</span><span>SNS ALL OK</span></div>
+            <div class="main">
+              <div class="row mid"><span>WATER</span><span>24.8C</span></div>
+              <div class="row mid"><span>AMBIENT</span><span>25.3C</span></div>
+              <div class="divider"></div>
+              <div class="row"><span>LIGHT ADC</span><span>631</span></div>
+              <div class="row"><span>12V INPUT</span><span>OK</span></div>
+              <div class="row"><span>TEMP PROBE</span><span>ONLINE</span></div>
+              <div class="row"><span class="muted">REFRESH</span><span class="muted">250ms</span></div>
+            </div>
+            <div class="footer"><span>TAB-</span><span>INFO</span><span>TAB+</span></div>
+          </div></div>
+          <div class="note">Sensor values and online status in one place. Keep labels within 9 chars for 5x8 font.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>4. Actuator Control</h3><span>P12_ACT</span></div>
+          <div class="oled"><div class="scanlines"></div><div class="screen">
+            <div class="bar"><span>ACT</span><span>FOCUS: LIGHT</span></div>
+            <div class="main">
+              <div class="list">
+                <div class="item focus"><span>> LIGHT LEVEL</span><span>72%</span></div>
+                <div class="item"><span>  O2 PUMP</span><span>ON</span></div>
+                <div class="item"><span>  WATER PUMP</span><span>ON</span></div>
+                <div class="item"><span>  HEAT</span><span>OFF</span></div>
+              </div>
+              <div class="divider"></div>
+              <div class="row"><span class="muted">Up/Down change item or value</span></div>
+              <div class="row"><span class="muted">Enter opens Quick control</span></div>
+            </div>
+            <div class="footer"><span>TAB-</span><span>QUICK</span><span>TAB+</span></div>
+          </div></div>
+          <div class="note">List focus mode fits a 5-key OLED device. Focus border is drawn with inverted box or frame.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>5. Alarm</h3><span>P13_ALARM</span></div>
+          <div class="oled"><div class="scanlines"></div><div class="screen">
+            <div class="bar"><span>ALARM</span><span class="warn">E02 MED</span></div>
+            <div class="main">
+              <div class="row mid warn"><span>TEMP SENSOR FAIL</span></div>
+              <div class="divider"></div>
+              <div class="row"><span>IMPACT</span><span class="warn">HEAT LIMITED</span></div>
+              <div class="row"><span>ACTION</span><span>CHECK PROBE</span></div>
+              <div class="row"><span>LINK</span><span class="danger">OFFLINE</span></div>
+              <div class="row"><span class="muted">Return after recover</span></div>
+            </div>
+            <div class="footer"><span>TAB-</span><span>MUTE</span><span>TAB+</span></div>
+          </div></div>
+          <div class="note">Alarm page shows code, impact and action together. All text must be ASCII to render correctly.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>6. Setting</h3><span>P14_SETTING</span></div>
+          <div class="oled"><div class="scanlines"></div><div class="screen">
+            <div class="bar"><span>SETTING</span><span>EDIT: OFF</span></div>
+            <div class="main">
+              <div class="list">
+                <div class="item focus"><span>> SLEEP TIME</span><span>180s</span></div>
+                <div class="item"><span>  BUZZER</span><span>ON</span></div>
+                <div class="item"><span>  HIGH BRIGHT</span><span>255</span></div>
+                <div class="item"><span>  LOW BRIGHT</span><span>32</span></div>
+              </div>
+              <div class="divider"></div>
+              <div class="row"><span class="muted">Enter edit/view, Right hold save</span></div>
+            </div>
+            <div class="footer"><span>TAB-</span><span>EDIT</span><span>SAVE</span></div>
+          </div></div>
+          <div class="note">Keeps daily settings light and fast. Right Long = SAVE, per design spec 4.1.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>7. Upgrade</h3><span>P20_UPGRADE</span></div>
+          <div class="oled"><div class="scanlines"></div><div class="screen">
+            <div class="bar"><span>UPDATE</span><span>WRITE FLASH</span></div>
+            <div class="main">
+              <div class="row big"><span>PROGRESS</span><span>35%</span></div>
+              <div class="progress"><span style="width:35%"></span></div>
+              <div class="divider"></div>
+              <div class="row"><span>STEP</span><span>WRITE APP</span></div>
+              <div class="row"><span>VERIFY</span><span>WAIT</span></div>
+              <div class="row warn"><span>NOTE</span><span>NO POWER OFF</span></div>
+            </div>
+            <div class="footer"><span>Locked</span><span>Busy</span><span>Locked</span></div>
+          </div></div>
+          <div class="note">Upgrade page must clearly show flash write state. This is a high-priority overlay screen.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>8. Error</h3><span>P23_ERROR</span></div>
+          <div class="oled"><div class="scanlines"></div><div class="screen">
+            <div class="bar"><span>ERROR</span><span class="danger">E11 HIGH</span></div>
+            <div class="main">
+              <div class="row big danger"><span>SYSTEM FAULT</span></div>
+              <div class="divider"></div>
+              <div class="row"><span>MODULE</span><span>HEAT CTRL</span></div>
+              <div class="row"><span>MODE</span><span class="warn">DEGRADED</span></div>
+              <div class="row"><span>ACTION</span><span>CHECK LOOP</span></div>
+              <div class="row"><span class="muted">Back after manual confirm</span></div>
+            </div>
+            <div class="footer"><span>Back</span><span>Mute</span><span>OK</span></div>
+          </div></div>
+          <div class="note">High priority page separated from normal work screens. Visual style is harder and more focused.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>9. Sleep</h3><span>P22_SLEEP</span></div>
+          <div class="oled"><div class="scanlines"></div><div class="screen">
+            <div class="bar"><span> </span><span> </span></div>
+            <div class="sleep-screen">ANY KEY TO WAKE</div>
+            <div class="footer"><span> </span><span> </span><span> </span></div>
+          </div></div>
+          <div class="note">Firmware can keep a full black screen; preview leaves a faint hint only. First key press wakes only, does not execute function.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>10. Init</h3><span>P00_INIT</span></div>
+          <div class="oled"><div class="scanlines"></div><div class="screen">
+            <div class="bar"><span>INIT</span><span> </span></div>
+            <div class="main">
+              <div class="row mid"><span>SmartFishJar</span></div>
+              <div class="row big"><span class="accent">LITE</span></div>
+              <div class="divider"></div>
+              <div class="row"><span>VERSION</span><span class="accent">v1.0.0</span></div>
+              <div class="row"><span>HW REV</span><span>B.2</span></div>
+              <div class="row"><span class="muted">Initializing...</span><span>...</span></div>
+            </div>
+            <div class="footer"><span>Locked</span><span>Wait</span><span>Locked</span></div>
+          </div></div>
+          <div class="note">First screen after power-on. Shows product name, version and hw revision briefly before entering boot check.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>11. Closing</h3><span>P21_CLOSING</span></div>
+          <div class="oled"><div class="scanlines"></div><div class="screen">
+            <div class="bar"><span>OFF</span><span>SHUTTING DOWN</span></div>
+            <div class="main">
+              <div class="row big"><span>OFF</span></div>
+              <div class="divider"></div>
+              <div class="row"><span>LIGHT</span><span class="muted">OFF</span></div>
+              <div class="row"><span>O2 PUMP</span><span class="muted">OFF</span></div>
+              <div class="row"><span>WATER P</span><span class="muted">OFF</span></div>
+              <div class="row"><span>HEAT</span><span class="muted">OFF</span></div>
+              <div class="progress"><span style="width:65%"></span></div>
+              <div class="row"><span class="muted">Please wait</span><span>...</span></div>
+            </div>
+            <div class="footer"><span>Locked</span><span>Busy</span><span>Locked</span></div>
+          </div></div>
+          <div class="note">Triggered by long Enter press. Shows actuator shutdown progress before entering sleep. All keys locked during closing.</div>
+        </div>
+      </div>
+
+      <div class="small-note">
+        <strong>ASCII-only constraint:</strong> The firmware only includes <code>u8g2_font_5x8_tr</code> and <code>u8g2_font_6x10_tr</code>. Chinese characters cannot be rendered on the 128x64 OLED. All on-screen text must use the abbreviations defined in the design spec (WTMP, TG, AMB, LUX, O2, WP, HT, ALM, etc.).
+      </div>
+    </section>
+  </div>
+</body>
+</html>

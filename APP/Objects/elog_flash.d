@@ -6,7 +6,7 @@
 .\objects\elog_flash.o: .\Application\main.h
 .\objects\elog_flash.o: .\Firmware\CMSIS\GD\GD32F30x\Include\gd32f30x.h
 .\objects\elog_flash.o: .\Firmware\CMSIS\core_cm4.h
-.\objects\elog_flash.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\elog_flash.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdint.h
 .\objects\elog_flash.o: .\Firmware\CMSIS\core_cmInstr.h
 .\objects\elog_flash.o: .\Firmware\CMSIS\core_cmFunc.h
 .\objects\elog_flash.o: .\Firmware\CMSIS\core_cm4_simd.h
@@ -37,12 +37,12 @@
 .\objects\elog_flash.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_misc.h
 .\objects\elog_flash.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_enet.h
 .\objects\elog_flash.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_exmc.h
-.\objects\elog_flash.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
-.\objects\elog_flash.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
-.\objects\elog_flash.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
-.\objects\elog_flash.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
-.\objects\elog_flash.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\assert.h
-.\objects\elog_flash.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\elog_flash.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h
+.\objects\elog_flash.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdbool.h
+.\objects\elog_flash.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\string.h
+.\objects\elog_flash.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdlib.h
+.\objects\elog_flash.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\assert.h
+.\objects\elog_flash.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stddef.h
 .\objects\elog_flash.o: .\Middlewares\EasyLogger\inc\..\plugins\flash\elog_flash_cfg.h
 .\objects\elog_flash.o: .\Middlewares\EasyFlash\inc\easyflash.h
 .\objects\elog_flash.o: .\Middlewares\EasyFlash\inc\ef_cfg.h

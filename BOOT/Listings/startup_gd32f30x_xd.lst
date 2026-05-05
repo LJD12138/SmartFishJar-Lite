@@ -580,16 +580,16 @@ ARM Macro Assembler    Page 9
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp.sp --apcs=
 interwork --depend=.\objects\startup_gd32f30x_xd.d -o.\objects\startup_gd32f30x
-_xd.o -IC:\Users\29148\AppData\Local\Arm\Packs\GigaDevice\GD32F30x_DFP\2.2.3\De
-vice\Include --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SET
-A 543" --predefine="GD32F30X_HD SETA 1" --list=.\listings\startup_gd32f30x_xd.l
+_xd.o -IC:\Users\Administrator\AppData\Local\Arm\Packs\GigaDevice\GD32F30x_DFP\
+2.2.3\Device\Include --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VER
+SION SETA 543" --predefine="GD32F30X_HD SETA 1" --list=.\listings\startup_gd32f
 
 
 
 ARM Macro Assembler    Page 10 
 
 
-st Firmware\CMSIS\GD\GD32F30x\Source\ARM\startup_gd32f30x_xd.s
+30x_xd.lst Firmware\CMSIS\GD\GD32F30x\Source\ARM\startup_gd32f30x_xd.s
 
 
 

@@ -4,7 +4,7 @@
 .\objects\usb_queue_task_init.o: .\Application\main.h
 .\objects\usb_queue_task_init.o: .\Firmware\CMSIS\GD\GD32F30x\Include\gd32f30x.h
 .\objects\usb_queue_task_init.o: .\Firmware\CMSIS\core_cm4.h
-.\objects\usb_queue_task_init.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\usb_queue_task_init.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdint.h
 .\objects\usb_queue_task_init.o: .\Firmware\CMSIS\core_cmInstr.h
 .\objects\usb_queue_task_init.o: .\Firmware\CMSIS\core_cmFunc.h
 .\objects\usb_queue_task_init.o: .\Firmware\CMSIS\core_cm4_simd.h
@@ -35,8 +35,8 @@
 .\objects\usb_queue_task_init.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_misc.h
 .\objects\usb_queue_task_init.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_enet.h
 .\objects\usb_queue_task_init.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_exmc.h
-.\objects\usb_queue_task_init.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
-.\objects\usb_queue_task_init.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
-.\objects\usb_queue_task_init.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
-.\objects\usb_queue_task_init.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
-.\objects\usb_queue_task_init.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\assert.h
+.\objects\usb_queue_task_init.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h
+.\objects\usb_queue_task_init.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdbool.h
+.\objects\usb_queue_task_init.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\string.h
+.\objects\usb_queue_task_init.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdlib.h
+.\objects\usb_queue_task_init.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\assert.h

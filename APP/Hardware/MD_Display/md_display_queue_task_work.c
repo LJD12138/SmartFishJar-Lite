@@ -13,14 +13,17 @@
 #define     dispTASK_WORK_CYCLE_TIME            100 //任务时间
 
 /***********************************************************************************************************************
- -----函数功能    工作显示任务
- -----说明(备注)  none
- -----传入参数    none
- -----输出参数    none
- -----返回值      none
- ************************************************************************************************************************/
+-----函数功能    工作显示任务
+-----说明(备注)  刷新工作页面、处理长文本滚动并周期刷新实时数据
+-----传入参数    tp_task:任务对象指针
+-----输出参数    none
+-----返回值      none
+************************************************************************************************************************/
 void v_disp_queue_task_work(Task_T *tp_task)
 {
+	static u8 s_refresh_div = 0;
+    static u8 s_scroll_div = 0;
+
     //新的任务
     if(lwrb_get_full(&tp_task->tQueueBuff))
         cQueue_GotoStep(tp_task, STEP_END);
@@ -43,17 +46,74 @@ void v_disp_queue_task_work(Task_T *tp_task)
                 bDisp_SetDevState(DS_WORK);
 
             bDisp_Switch(ST_ON, true);
-
-            if(g_bDispPageDirty)
-                vDisp_Init();
+            vDisp_PageSyncByState(DS_WORK);
+            tDispPageCtx.usDirtyMask = DDM_FULL;
+            g_bDispPageDirty = true;
+            vDisp_RenderUi();
             cQueue_GotoStep(tp_task, STEP_NEXT);
         }
         break;
 
         case 1:
         {
-            // 更新工作显示
-            vDisp_UiTest();
+            if(g_bDispPageDirty == false)
+            {
+                s_scroll_div++;
+                if(s_scroll_div >= 1U)
+                {
+                    s_scroll_div = 0U;
+                    if(tDispPageCtx.tTextScroll.ucMaxOffset > 0U)
+                    {
+                        if(tDispPageCtx.tTextScroll.ucHoldCnt < 7U)
+                            tDispPageCtx.tTextScroll.ucHoldCnt++;
+                        else
+                        {
+                            tDispPageCtx.tTextScroll.ucHoldCnt = 0U;
+                            if(tDispPageCtx.tTextScroll.ucOffset < tDispPageCtx.tTextScroll.ucMaxOffset)
+                                tDispPageCtx.tTextScroll.ucOffset++;
+                            else
+                                tDispPageCtx.tTextScroll.ucOffset = 0U;
+
+                            tDispPageCtx.usDirtyMask |= DDM_CONTENT;
+                            g_bDispPageDirty = true;
+                        }
+                    }
+                }
+            }
+
+            if(g_bDispPageDirty == false)
+            {
+                s_refresh_div++;
+                if(s_refresh_div >= 3U)
+                {
+                    s_refresh_div = 0U;
+                    switch(tDispPageCtx.ePageId)
+                    {
+                        case DPI_HOME:
+						case DPI_LIGHT:
+						case DPI_HEAT:
+						case DPI_WPUMP:
+						case DPI_O2PUMP:
+						case DPI_SETTING:
+						case DPI_ADC:
+						case DPI_ENV:
+						case DPI_ACT:
+						case DPI_ALARM:
+                            if(tDispPageCtx.bEditing == false)
+                            {
+                                tDispPageCtx.usDirtyMask |= DDM_CONTENT;
+                                g_bDispPageDirty = true;
+                            }
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            if(g_bDispPageDirty)
+                vDisp_RenderUi();
             cQueue_GotoStep(tp_task, STEP_END);
         }
         break;

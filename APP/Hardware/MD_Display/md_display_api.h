@@ -25,6 +25,7 @@ extern "C" {
 #if(boardDISPLAY_EN)
 
 /* ==========================================macros======================================*/
+//OLED面板参数, 供直驱接口和U8g2适配层共用
 #define     OLED_CMD                        0U
 #define     OLED_DATA                       1U
 #define     OLED_WIDTH_PIXELS               128U
@@ -49,11 +50,14 @@ void vDisp_OledDrawString6x8(u8 x, u8 y, const char *str);
 void vDisp_OledFillBuffer(u8 value);
 #endif  // dispUSE_U8G2 == 0
 
+//显示驱动与页面渲染接口
 void vDisp_Init(void);
 void vDisp_Refresh(void);
 void vDisp_SetPower(bool on);
+void vDisp_SetContrast(u8 value);
 void vDisp_ClearBuffer(void);
 void vDisp_UiTest(void);
+void vDisp_RenderUi(void);
 
 #ifdef __cplusplus
 }

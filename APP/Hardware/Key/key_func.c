@@ -103,6 +103,12 @@ void vKey_ProcKeyFunc(u8* pKeyTriTypeBuff)
 				sMyPrint("Key_Task:系统充放保护\r\n");
 		}
 		#if(boardDISPLAY_EN)
+		else if(pKeyTriTypeBuff[1] == KTE_FUN_NULL && bDisp_PageHandleKey((KeyTriEvent_e)pKeyTriTypeBuff[0]))
+		{
+			vDisp_RequestRefresh();
+			if(uPrint.tFlag.bKeyTask)
+				sMyPrint("Key_Task:UI页面事件\r\n");
+		}
 		else if(bFun_DataCompare( pKeyTriTypeBuff, (u8*)&KeyTriType_BLOnOffBuff, sizeof(KeyTriType_BLOnOffBuff))) //单击POWER按键　
 		{
 			bDisp_Switch(ST_NULL, true);

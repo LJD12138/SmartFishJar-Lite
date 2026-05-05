@@ -11,7 +11,7 @@
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pArmCC>5060960::V5.06 update 7 (build 960)::.\ARMCC</pArmCC>
-      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
+      <pCCUsed>5060960::V5.06 update 7 (build 960)::ARMCLANG</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -277,8 +277,8 @@
               </OCR_RVCT3>
               <OCR_RVCT4>
                 <Type>1</Type>
-                <StartAddress>0x800d000</StartAddress>
-                <Size>0x28000</Size>
+                <StartAddress>0x8000000</StartAddress>
+                <Size>0x80000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -676,9 +676,9 @@
               <FilePath>.\Middlewares\U8g2\u8g2_font.c</FilePath>
             </File>
             <File>
-              <FileName>u8g2_fonts.c</FileName>
+              <FileName>u8g2_fonts_min.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Middlewares\U8g2\u8g2_fonts.c</FilePath>
+              <FilePath>.\Middlewares\U8g2\u8g2_fonts_min.c</FilePath>
             </File>
             <File>
               <FileName>u8g2_hvline.c</FileName>

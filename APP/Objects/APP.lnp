@@ -52,7 +52,7 @@
 ".\objects\u8g2_d_memory.o"
 ".\objects\u8g2_d_setup.o"
 ".\objects\u8g2_font.o"
-".\objects\u8g2_fonts.o"
+".\objects\u8g2_fonts_min.o"
 ".\objects\u8g2_hvline.o"
 ".\objects\u8g2_input_value.o"
 ".\objects\u8g2_intersection.o"

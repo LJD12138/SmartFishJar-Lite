@@ -14,13 +14,14 @@
 //在option for ...中勾选 always build
 
 //****************************************************参数初始化**************************************************//		
-__align(4) AppMemParam_T  	tAppMemParam;
+#if(boardUSER_BOOT)
 __align(4) BootMemParam_T  	tBootMemParam;
-
 const char tBootMemParamStr[]	= "tBootMemParam";
 const char tBootVerInfoStr[]	= "tBootVerInfo";
 const char tBootParamStr[] 		= "tBootParam";
+#endif  //boardUSER_BOOT
 
+__align(4) AppMemParam_T  	tAppMemParam;
 const char tAppMemParamStr[]	= "tAppMemParam";
 const char tAppVerInfoStr[]		= "tAppVerInfo";
 const char tAppParamStr[] 		= "tAppParam";
@@ -82,6 +83,7 @@ void v_print_info(void);
 ******************************************************************************************************************/
 void vApp_JumpToBoot(uint32_t cmd)
 {
+	#if(boardUSER_BOOT)
 	s8 c_ret = 0;
 	
 	if(uPrint.tFlag.bAppInfo)
@@ -133,6 +135,7 @@ void vApp_JumpToBoot(uint32_t cmd)
 			NVIC_SystemReset();	
 		}		
 	}
+	#endif  //boardUSER_BOOT
 }
 
 /*****************************************************************************************************************
@@ -142,6 +145,7 @@ void vApp_JumpToBoot(uint32_t cmd)
 -----输出参数    none
 -----返回值      true:成功  false:失败
 ******************************************************************************************************************/
+#if(boardUSER_BOOT)
 s8 cApp_BootInfoInit(void)
 {
 	s8 c_ret = 0;
@@ -170,6 +174,7 @@ s8 cApp_BootInfoInit(void)
 	
 	return 1;
 }
+#endif  //boardUSER_BOOT
 
 /*****************************************************************************************************************
 -----函数功能    获取APP信息
@@ -767,6 +772,7 @@ u16 usApp_GetMemParamSize(void)
 -----输出参数    none
 -----返回值      >0 写入的字节数   0:未操作  <0:错误
 ******************************************************************************************************************/
+#if(boardUSER_BOOT)
 s16 cApp_BootUpdataMemParam(const char* id_str)
 {
 	if(id_str == NULL)
@@ -808,6 +814,7 @@ s16 cApp_BootUpdataMemParam(const char* id_str)
 	#endif
 	return 1;
 }
+#endif  //boardUSER_BOOT
 
 /*****************************************************************************************************************
 -----函数功能    更新BOOT记忆参数
@@ -816,6 +823,7 @@ s16 cApp_BootUpdataMemParam(const char* id_str)
 -----输出参数    none
 -----返回值      >0 写入的字节数   0:未操作  <0:错误
 ******************************************************************************************************************/
+#if(boardUSER_BOOT)
 s16 cApp_BootGetMemParam(const char* id_str)
 {
 	if(id_str == NULL)
@@ -862,6 +870,7 @@ s16 cApp_BootGetMemParam(const char* id_str)
 	#endif
 	return 1;
 }
+#endif  //boardUSER_BOOT
 
 /*****************************************************************************************************************
 -----函数功能    输出录入信息
@@ -872,13 +881,14 @@ s16 cApp_BootGetMemParam(const char* id_str)
 ******************************************************************************************************************/
 void v_print_info(void)
 {
+	#if(boardUSER_BOOT)
 	sMyPrint("Boot: Version		: %s\r\n", tBootMemParam.tVerInfo.saVersion);
 	sMyPrint("Boot: buildTime	: %s\r\n", tBootMemParam.tVerInfo.saBuildDate);
 	sMyPrint("Boot: buildTime	: %s\r\n", tBootMemParam.tVerInfo.saBuildTime);
 	sMyPrint("Boot: ulCmd		: %x\r\n", tBootMemParam.tParam.ulCmd);
 	sMyPrint("Boot: eAppState	: %d\r\n", tBootMemParam.tParam.eAppState);
 	sMyPrint("Boot: ucAppFaultCnt: %d\r\n", tBootMemParam.tParam.ucAppFaultCnt);
-
+	#endif  //boardUSER_BOOT
 	
 	sMyPrint("APP : usInitFinish: %x\r\n", tAppMemParam.tParam.usInitFinish);
 	sMyPrint("APP : Version     : %s\r\n", tAppMemParam.tVerInfo.saVersion);

@@ -1,9 +1,9 @@
 .\objects\tasks.o: Middlewares\FreeRTOS\tasks.c
-.\objects\tasks.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
-.\objects\tasks.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\tasks.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdlib.h
+.\objects\tasks.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\string.h
 .\objects\tasks.o: .\Middlewares\FreeRTOS\include\FreeRTOS.h
-.\objects\tasks.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
-.\objects\tasks.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\tasks.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stddef.h
+.\objects\tasks.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdint.h
 .\objects\tasks.o: .\Application\FreeRTOSConfig.h
 .\objects\tasks.o: .\Application\board_config.h
 .\objects\tasks.o: .\Application\main.h
@@ -39,9 +39,9 @@
 .\objects\tasks.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_misc.h
 .\objects\tasks.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_enet.h
 .\objects\tasks.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_exmc.h
-.\objects\tasks.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
-.\objects\tasks.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
-.\objects\tasks.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\assert.h
+.\objects\tasks.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h
+.\objects\tasks.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdbool.h
+.\objects\tasks.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\assert.h
 .\objects\tasks.o: .\Middlewares\FreeRTOS\include\projdefs.h
 .\objects\tasks.o: .\Middlewares\FreeRTOS\include\portable.h
 .\objects\tasks.o: .\Middlewares\FreeRTOS\include\deprecated_definitions.h
@@ -50,7 +50,7 @@
 .\objects\tasks.o: .\Middlewares\SeggerRtt\SEGGER_SYSVIEW_FreeRTOS.h
 .\objects\tasks.o: .\Middlewares\SeggerRtt\SEGGER_SYSVIEW.h
 .\objects\tasks.o: .\Middlewares\SeggerRtt\SEGGER.h
-.\objects\tasks.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
+.\objects\tasks.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdarg.h
 .\objects\tasks.o: .\Middlewares\SeggerRtt\Global.h
 .\objects\tasks.o: .\Middlewares\SeggerRtt\SEGGER_SYSVIEW_ConfDefaults.h
 .\objects\tasks.o: .\Middlewares\SeggerRtt\SEGGER_SYSVIEW_Conf.h

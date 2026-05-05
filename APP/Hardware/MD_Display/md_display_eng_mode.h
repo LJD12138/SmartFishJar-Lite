@@ -5,6 +5,7 @@
 
 #if(boardENG_MODE_EN && boardDISPLAY_EN)
 
+//工程模式显示设置项
 typedef enum
 {
 	LTS_HIGH = 0,

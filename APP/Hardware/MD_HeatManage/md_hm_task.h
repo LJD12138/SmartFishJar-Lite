@@ -25,7 +25,12 @@ extern HM_T			tHM;
 
 bool bHM_TaskInit(void);
 FanWorkMode_E eFan_GetWorkMode(void);
+bool bFan_CycleUiMode(bool add);
+bool bFan_IsUiOverride(void);
 void vFan_ForceOpenFan(bool en);
+bool bHeat_SetUiForce(bool en);
+bool bHeat_ToggleUiForce(void);
+bool bHeat_IsUiForceOn(void);
 
 #if(boardLOW_POWER)
 void vFan_EnterLowPower(void);

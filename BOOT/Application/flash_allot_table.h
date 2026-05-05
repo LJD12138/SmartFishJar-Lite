@@ -14,7 +14,7 @@
 
 
 //GD32F303CBT6 	Flash:128K          					地址0x0800_0000--0x0801_FFFF
-//GD32F303RCT6  Flash:256K          					地址0x0800_0000--0x0803_FFFF  @
+//GD32F303RCT6  Flash:256K          					地址0x0800_0000--0x0803_FFFF
 
 #if(boardEASY_FLASH)
 //BOOT数据：  	30K                     				地址范围：0x0800_0000--0x0800_77FF

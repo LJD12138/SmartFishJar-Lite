@@ -3,15 +3,19 @@
 <title>Static Call Graph - [.\Objects\BOOT.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\BOOT.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Tue Apr 28 19:56:41 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Fri May 01 20:15:01 2026
 <BR><P>
-<H3>Maximum Stack Usage =        884 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =        832 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
-do_gc &rArr; move_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+do_gc &rArr; move_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 <P>
 <H3>
 Mutually Recursive functions
 </H3> <LI><a href="#[25]">ADC0_1_IRQHandler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[25]">ADC0_1_IRQHandler</a><BR>
+ <LI><a href="#[d]">BusFault_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[d]">BusFault_Handler</a><BR>
+ <LI><a href="#[b]">HardFault_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[b]">HardFault_Handler</a><BR>
+ <LI><a href="#[c]">MemManage_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[c]">MemManage_Handler</a><BR>
+ <LI><a href="#[e]">UsageFault_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[e]">UsageFault_Handler</a><BR>
 </UL>
 <P>
 <H3>
@@ -329,8 +333,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;align_write
 <LI><a href="#[112]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_write_ex
 <LI><a href="#[111]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_read_ex
-<LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_WriteNoCheck
-<LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_WriteBlocking
+<LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_WriteNoCheck
+<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_WriteBlocking
 <LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBaiku_UpdataCheck
 <LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBaiku_ProtoCreate
 <LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBoot_MemParamInit
@@ -370,7 +374,7 @@ Global Symbols
 
 <P><STRONG><a name="[8f]"></a>__aeabi_memclr4</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memseta.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;move_env
-<LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_DoInit
+<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_DoInit
 <LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_task_param_init
 <LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bUpdata_Init
 <LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vKey_ParamInit
@@ -523,13 +527,17 @@ Global Symbols
 
 <P><STRONG><a name="[169]"></a>__decompress1</STRONG> (Thumb, 86 bytes, Stack size unknown bytes, __dczerorl2.o(.text), UNUSED)
 
-<P><STRONG><a name="[d]"></a>BusFault_Handler</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, gd32f30x_it.o(i.BusFault_Handler))
+<P><STRONG><a name="[d]"></a>BusFault_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, gd32f30x_it.o(i.BusFault_Handler))
+<BR><BR>[Calls]<UL><LI><a href="#[d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BusFault_Handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BusFault_Handler
+</UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_gd32f30x_xd.o(RESET)
 </UL>
 <P><STRONG><a name="[10]"></a>DebugMon_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, gd32f30x_it.o(i.DebugMon_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_gd32f30x_xd.o(RESET)
 </UL>
-<P><STRONG><a name="[19]"></a>EXTI0_IRQHandler</STRONG> (Thumb, 22 bytes, Stack size 8 bytes, gd32f30x_it.o(i.EXTI0_IRQHandler))
+<P><STRONG><a name="[19]"></a>EXTI0_IRQHandler</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, gd32f30x_it.o(i.EXTI0_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = EXTI0_IRQHandler
 </UL>
 <BR>[Calls]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;exti_interrupt_flag_get
@@ -537,7 +545,50 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_gd32f30x_xd.o(RESET)
 </UL>
-<P><STRONG><a name="[3b]"></a>EXTI10_15_IRQHandler</STRONG> (Thumb, 22 bytes, Stack size 8 bytes, gd32f30x_it.o(i.EXTI10_15_IRQHandler))
+<P><STRONG><a name="[b]"></a>HardFault_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, gd32f30x_it.o(i.HardFault_Handler))
+<BR><BR>[Calls]<UL><LI><a href="#[b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HardFault_Handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HardFault_Handler
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_gd32f30x_xd.o(RESET)
+</UL>
+<P><STRONG><a name="[c]"></a>MemManage_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, gd32f30x_it.o(i.MemManage_Handler))
+<BR><BR>[Calls]<UL><LI><a href="#[c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MemManage_Handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MemManage_Handler
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_gd32f30x_xd.o(RESET)
+</UL>
+<P><STRONG><a name="[a]"></a>NMI_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, gd32f30x_it.o(i.NMI_Handler))
+<BR>[Address Reference Count : 1]<UL><LI> startup_gd32f30x_xd.o(RESET)
+</UL>
+<P><STRONG><a name="[11]"></a>PendSV_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, gd32f30x_it.o(i.PendSV_Handler))
+<BR>[Address Reference Count : 1]<UL><LI> startup_gd32f30x_xd.o(RESET)
+</UL>
+<P><STRONG><a name="[f]"></a>SVC_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, gd32f30x_it.o(i.SVC_Handler))
+<BR>[Address Reference Count : 1]<UL><LI> startup_gd32f30x_xd.o(RESET)
+</UL>
+<P><STRONG><a name="[12]"></a>SysTick_Handler</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, gd32f30x_it.o(i.SysTick_Handler))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = SysTick_Handler &rArr; vSys_Tick
+</UL>
+<BR>[Calls]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vSys_Tick
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_gd32f30x_xd.o(RESET)
+</UL>
+<P><STRONG><a name="[e]"></a>UsageFault_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, gd32f30x_it.o(i.UsageFault_Handler))
+<BR><BR>[Calls]<UL><LI><a href="#[e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UsageFault_Handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UsageFault_Handler
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_gd32f30x_xd.o(RESET)
+</UL>
+<P><STRONG><a name="[16a]"></a>__scatterload_null</STRONG> (Thumb, 2 bytes, Stack size unknown bytes, handlers.o(i.__scatterload_null), UNUSED)
+
+<P><STRONG><a name="[be]"></a>vPrint_MyPrintParamInit</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, print_api.o(i.vPrint_MyPrintParamInit))
+<BR><BR>[Called By]<UL><LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;b_print_task_param_init
+</UL>
+
+<P><STRONG><a name="[3b]"></a>EXTI10_15_IRQHandler</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, gd32f30x_it.o(i.EXTI10_15_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = EXTI10_15_IRQHandler
 </UL>
 <BR>[Calls]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;exti_interrupt_flag_get
@@ -545,10 +596,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_gd32f30x_xd.o(RESET)
 </UL>
-<P><STRONG><a name="[a]"></a>NMI_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, gd32f30x_it.o(i.NMI_Handler))
-<BR>[Address Reference Count : 1]<UL><LI> startup_gd32f30x_xd.o(RESET)
-</UL>
-<P><STRONG><a name="[1b]"></a>EXTI2_IRQHandler</STRONG> (Thumb, 18 bytes, Stack size 8 bytes, gd32f30x_it.o(i.EXTI2_IRQHandler))
+<P><STRONG><a name="[1b]"></a>EXTI2_IRQHandler</STRONG> (Thumb, 24 bytes, Stack size 8 bytes, gd32f30x_it.o(i.EXTI2_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = EXTI2_IRQHandler
 </UL>
 <BR>[Calls]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;exti_interrupt_flag_get
@@ -556,87 +604,68 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_gd32f30x_xd.o(RESET)
 </UL>
-<P><STRONG><a name="[b]"></a>HardFault_Handler</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, gd32f30x_it.o(i.HardFault_Handler))
-<BR>[Address Reference Count : 1]<UL><LI> startup_gd32f30x_xd.o(RESET)
-</UL>
-<P><STRONG><a name="[c]"></a>MemManage_Handler</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, gd32f30x_it.o(i.MemManage_Handler))
-<BR>[Address Reference Count : 1]<UL><LI> startup_gd32f30x_xd.o(RESET)
-</UL>
-<P><STRONG><a name="[11]"></a>PendSV_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, gd32f30x_it.o(i.PendSV_Handler))
-<BR>[Address Reference Count : 1]<UL><LI> startup_gd32f30x_xd.o(RESET)
-</UL>
-<P><STRONG><a name="[3c]"></a>RTC_Alarm_IRQHandler</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, gd32f30x_it.o(i.RTC_Alarm_IRQHandler))
+<P><STRONG><a name="[3c]"></a>RTC_Alarm_IRQHandler</STRONG> (Thumb, 40 bytes, Stack size 8 bytes, gd32f30x_it.o(i.RTC_Alarm_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = RTC_Alarm_IRQHandler
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;exti_interrupt_flag_clear
-<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;exti_interrupt_disable
-<LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rtc_flag_get
-<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rtc_flag_clear
+<LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;exti_interrupt_disable
+<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rtc_flag_get
+<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rtc_flag_clear
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_gd32f30x_xd.o(RESET)
 </UL>
-<P><STRONG><a name="[7e]"></a>SEGGER_RTT_Write</STRONG> (Thumb, 70 bytes, Stack size 24 bytes, segger_rtt.o(i.SEGGER_RTT_Write))
-<BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteBlocking &rArr; __aeabi_memcpy
+<P><STRONG><a name="[7f]"></a>SEGGER_RTT_Write</STRONG> (Thumb, 52 bytes, Stack size 24 bytes, segger_rtt.o(i.SEGGER_RTT_Write))
+<BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteBlocking &rArr; __aeabi_memcpy
 </UL>
-<BR>[Calls]<UL><LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteNoLock
-<LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_DoInit
+<BR>[Calls]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteNoLock
+<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_DoInit
 </UL>
-<BR>[Called By]<UL><LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_vprintf
-<LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_StoreChar
-</UL>
-
-<P><STRONG><a name="[80]"></a>SEGGER_RTT_WriteNoLock</STRONG> (Thumb, 126 bytes, Stack size 32 bytes, segger_rtt.o(i.SEGGER_RTT_WriteNoLock))
-<BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = SEGGER_RTT_WriteNoLock &rArr; _WriteBlocking &rArr; __aeabi_memcpy
-</UL>
-<BR>[Calls]<UL><LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_WriteNoCheck
-<LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_WriteBlocking
-<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_GetAvailWriteSpace
-</UL>
-<BR>[Called By]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_Write
+<BR>[Called By]<UL><LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_vprintf
+<LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_StoreChar
 </UL>
 
-<P><STRONG><a name="[84]"></a>SEGGER_RTT_printf</STRONG> (Thumb, 34 bytes, Stack size 32 bytes, segger_rtt_printf.o(i.SEGGER_RTT_printf))
-<BR><BR>[Stack]<UL><LI>Max Depth = 384<LI>Call Chain = SEGGER_RTT_printf &rArr; SEGGER_RTT_vprintf &rArr; _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteBlocking &rArr; __aeabi_memcpy
+<P><STRONG><a name="[81]"></a>SEGGER_RTT_WriteNoLock</STRONG> (Thumb, 102 bytes, Stack size 16 bytes, segger_rtt.o(i.SEGGER_RTT_WriteNoLock))
+<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = SEGGER_RTT_WriteNoLock &rArr; _WriteBlocking &rArr; __aeabi_memcpy
 </UL>
-<BR>[Calls]<UL><LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_vprintf
+<BR>[Calls]<UL><LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_WriteNoCheck
+<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_WriteBlocking
+<LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_GetAvailWriteSpace
+</UL>
+<BR>[Called By]<UL><LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_Write
+</UL>
+
+<P><STRONG><a name="[85]"></a>SEGGER_RTT_printf</STRONG> (Thumb, 22 bytes, Stack size 24 bytes, segger_rtt_printf.o(i.SEGGER_RTT_printf))
+<BR><BR>[Stack]<UL><LI>Max Depth = 320<LI>Call Chain = SEGGER_RTT_printf &rArr; SEGGER_RTT_vprintf &rArr; _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteBlocking &rArr; __aeabi_memcpy
+</UL>
+<BR>[Calls]<UL><LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_vprintf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fputc
 </UL>
 
-<P><STRONG><a name="[85]"></a>SEGGER_RTT_vprintf</STRONG> (Thumb, 522 bytes, Stack size 136 bytes, segger_rtt_printf.o(i.SEGGER_RTT_vprintf))
-<BR><BR>[Stack]<UL><LI>Max Depth = 352<LI>Call Chain = SEGGER_RTT_vprintf &rArr; _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteBlocking &rArr; __aeabi_memcpy
+<P><STRONG><a name="[86]"></a>SEGGER_RTT_vprintf</STRONG> (Thumb, 416 bytes, Stack size 120 bytes, segger_rtt_printf.o(i.SEGGER_RTT_vprintf))
+<BR><BR>[Stack]<UL><LI>Max Depth = 296<LI>Call Chain = SEGGER_RTT_vprintf &rArr; _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteBlocking &rArr; __aeabi_memcpy
 </UL>
-<BR>[Calls]<UL><LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_StoreChar
-<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_PrintUnsigned
-<LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_PrintInt
-<LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_Write
+<BR>[Calls]<UL><LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_StoreChar
+<LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_PrintUnsigned
+<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_PrintInt
+<LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_Write
 </UL>
-<BR>[Called By]<UL><LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_printf
+<BR>[Called By]<UL><LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_printf
 </UL>
 
-<P><STRONG><a name="[f]"></a>SVC_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, gd32f30x_it.o(i.SVC_Handler))
-<BR>[Address Reference Count : 1]<UL><LI> startup_gd32f30x_xd.o(RESET)
-</UL>
-<P><STRONG><a name="[130]"></a>SysParamInit</STRONG> (Thumb, 72 bytes, Stack size 0 bytes, board_config.o(i.SysParamInit))
+<P><STRONG><a name="[130]"></a>SysParamInit</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, board_config.o(i.SysParamInit))
 <BR><BR>[Called By]<UL><LI><a href="#[116]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vBoard_SysInit
 </UL>
 
-<P><STRONG><a name="[12]"></a>SysTick_Handler</STRONG> (Thumb, 8 bytes, Stack size 8 bytes, gd32f30x_it.o(i.SysTick_Handler))
-<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = SysTick_Handler &rArr; vSys_Tick &rArr; vUpdata_TickTimer
-</UL>
-<BR>[Calls]<UL><LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vSys_Tick
-</UL>
-<BR>[Address Reference Count : 1]<UL><LI> startup_gd32f30x_xd.o(RESET)
-</UL>
-<P><STRONG><a name="[50]"></a>SystemInit</STRONG> (Thumb, 156 bytes, Stack size 8 bytes, system_gd32f30x.o(i.SystemInit))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = SystemInit &rArr; system_clock_config
+<P><STRONG><a name="[50]"></a>SystemInit</STRONG> (Thumb, 118 bytes, Stack size 8 bytes, system_gd32f30x.o(i.SystemInit))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = SystemInit
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;system_clock_config
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_gd32f30x_xd.o(.text)
 </UL>
-<P><STRONG><a name="[38]"></a>USART0_IRQHandler</STRONG> (Thumb, 120 bytes, Stack size 8 bytes, print_iface.o(i.USART0_IRQHandler))
-<BR><BR>[Stack]<UL><LI>Max Depth = 84<LI>Call Chain = USART0_IRQHandler &rArr; lwrb_write &rArr; lwrb_write_ex &rArr; lwrb_get_free
+<P><STRONG><a name="[38]"></a>USART0_IRQHandler</STRONG> (Thumb, 110 bytes, Stack size 16 bytes, print_iface.o(i.USART0_IRQHandler))
+<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = USART0_IRQHandler &rArr; lwrb_write &rArr; lwrb_write_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_write
 <LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;usart_interrupt_flag_get
@@ -645,14 +674,11 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_gd32f30x_xd.o(RESET)
 </UL>
-<P><STRONG><a name="[e]"></a>UsageFault_Handler</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, gd32f30x_it.o(i.UsageFault_Handler))
-<BR>[Address Reference Count : 1]<UL><LI> startup_gd32f30x_xd.o(RESET)
-</UL>
 <P><STRONG><a name="[91]"></a>__0printf</STRONG> (Thumb, 22 bytes, Stack size 24 bytes, printfa.o(i.__0printf), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_printf_core
 </UL>
 
-<P><STRONG><a name="[16a]"></a>__1printf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0printf), UNUSED)
+<P><STRONG><a name="[16b]"></a>__1printf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0printf), UNUSED)
 
 <P><STRONG><a name="[12f]"></a>__2printf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0printf))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = __2printf
@@ -660,19 +686,19 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[116]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vBoard_SysInit
 </UL>
 
-<P><STRONG><a name="[16b]"></a>__c89printf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0printf), UNUSED)
+<P><STRONG><a name="[16c]"></a>__c89printf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0printf), UNUSED)
 
-<P><STRONG><a name="[16c]"></a>printf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0printf), UNUSED)
+<P><STRONG><a name="[16d]"></a>printf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0printf), UNUSED)
 
 <P><STRONG><a name="[93]"></a>__0vsnprintf</STRONG> (Thumb, 46 bytes, Stack size 24 bytes, printfa.o(i.__0vsnprintf), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_printf_core
 </UL>
 
-<P><STRONG><a name="[16d]"></a>__1vsnprintf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0vsnprintf), UNUSED)
+<P><STRONG><a name="[16e]"></a>__1vsnprintf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0vsnprintf), UNUSED)
 
-<P><STRONG><a name="[16e]"></a>__2vsnprintf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0vsnprintf), UNUSED)
+<P><STRONG><a name="[16f]"></a>__2vsnprintf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0vsnprintf), UNUSED)
 
-<P><STRONG><a name="[16f]"></a>__c89vsnprintf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0vsnprintf), UNUSED)
+<P><STRONG><a name="[170]"></a>__c89vsnprintf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0vsnprintf), UNUSED)
 
 <P><STRONG><a name="[122]"></a>vsnprintf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0vsnprintf))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = vsnprintf
@@ -688,11 +714,11 @@ Global Symbols
 <LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_printf_core
 </UL>
 
-<P><STRONG><a name="[170]"></a>__1vsprintf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0vsprintf), UNUSED)
+<P><STRONG><a name="[171]"></a>__1vsprintf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0vsprintf), UNUSED)
 
-<P><STRONG><a name="[171]"></a>__2vsprintf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0vsprintf), UNUSED)
+<P><STRONG><a name="[172]"></a>__2vsprintf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0vsprintf), UNUSED)
 
-<P><STRONG><a name="[172]"></a>__c89vsprintf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0vsprintf), UNUSED)
+<P><STRONG><a name="[173]"></a>__c89vsprintf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0vsprintf), UNUSED)
 
 <P><STRONG><a name="[ff]"></a>vsprintf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0vsprintf))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = vsprintf
@@ -704,14 +730,12 @@ Global Symbols
 <LI><a href="#[6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrintErr
 </UL>
 
-<P><STRONG><a name="[173]"></a>__scatterload_copy</STRONG> (Thumb, 14 bytes, Stack size unknown bytes, handlers.o(i.__scatterload_copy), UNUSED)
-
-<P><STRONG><a name="[174]"></a>__scatterload_null</STRONG> (Thumb, 2 bytes, Stack size unknown bytes, handlers.o(i.__scatterload_null), UNUSED)
+<P><STRONG><a name="[174]"></a>__scatterload_copy</STRONG> (Thumb, 14 bytes, Stack size unknown bytes, handlers.o(i.__scatterload_copy), UNUSED)
 
 <P><STRONG><a name="[175]"></a>__scatterload_zeroinit</STRONG> (Thumb, 14 bytes, Stack size unknown bytes, handlers.o(i.__scatterload_zeroinit), UNUSED)
 
-<P><STRONG><a name="[9e]"></a>bBaiKuProto_Reset</STRONG> (Thumb, 40 bytes, Stack size 16 bytes, baiku_proto_1.o(i.bBaiKuProto_Reset))
-<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = bBaiKuProto_Reset &rArr; cBaiku_ResetRxBuff &rArr; lwrb_reset
+<P><STRONG><a name="[9e]"></a>bBaiKuProto_Reset</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, baiku_proto_1.o(i.bBaiKuProto_Reset))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = bBaiKuProto_Reset &rArr; cBaiku_ResetRxBuff
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBaiku_ResetRxBuff
 </UL>
@@ -719,12 +743,12 @@ Global Symbols
 <LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cUpdata_ProtoSelect
 </UL>
 
-<P><STRONG><a name="[f4]"></a>bBoot_CmdExist</STRONG> (Thumb, 56 bytes, Stack size 0 bytes, boot_info.o(i.bBoot_CmdExist))
+<P><STRONG><a name="[f4]"></a>bBoot_CmdExist</STRONG> (Thumb, 44 bytes, Stack size 0 bytes, boot_info.o(i.bBoot_CmdExist))
 <BR><BR>[Called By]<UL><LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eBoot_InfoInit
 </UL>
 
-<P><STRONG><a name="[a0]"></a>bFlash_Gd32EraseSector</STRONG> (Thumb, 170 bytes, Stack size 32 bytes, flash_gd32.o(i.bFlash_Gd32EraseSector))
-<BR><BR>[Stack]<UL><LI>Max Depth = 156<LI>Call Chain = bFlash_Gd32EraseSector &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[a0]"></a>bFlash_Gd32EraseSector</STRONG> (Thumb, 154 bytes, Stack size 32 bytes, flash_gd32.o(i.bFlash_Gd32EraseSector))
+<BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = bFlash_Gd32EraseSector &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fmc_unlock
 <LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fmc_page_erase
@@ -736,8 +760,8 @@ Global Symbols
 <LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cFlash_EraseSector
 </UL>
 
-<P><STRONG><a name="[a6]"></a>bFlash_Gd32Write32Bit</STRONG> (Thumb, 144 bytes, Stack size 24 bytes, flash_gd32.o(i.bFlash_Gd32Write32Bit))
-<BR><BR>[Stack]<UL><LI>Max Depth = 148<LI>Call Chain = bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[a6]"></a>bFlash_Gd32Write32Bit</STRONG> (Thumb, 134 bytes, Stack size 24 bytes, flash_gd32.o(i.bFlash_Gd32Write32Bit))
+<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fmc_word_program
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fmc_unlock
@@ -753,8 +777,8 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[116]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vBoard_SysInit
 </UL>
 
-<P><STRONG><a name="[a8]"></a>bFlash_WriteDataToFlash</STRONG> (Thumb, 124 bytes, Stack size 16 bytes, flash_iface.o(i.bFlash_WriteDataToFlash))
-<BR><BR>[Stack]<UL><LI>Max Depth = 188<LI>Call Chain = bFlash_WriteDataToFlash &rArr; cFlash_Write8BitData &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[a8]"></a>bFlash_WriteDataToFlash</STRONG> (Thumb, 100 bytes, Stack size 24 bytes, flash_iface.o(i.bFlash_WriteDataToFlash))
+<BR><BR>[Stack]<UL><LI>Max Depth = 168<LI>Call Chain = bFlash_WriteDataToFlash &rArr; cFlash_Write8BitData &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrint
 <LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cFlash_Write8BitData
@@ -762,19 +786,19 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_proc_check_ok_rec_data_cd
 </UL>
 
-<P><STRONG><a name="[136]"></a>bFun_DataCompare</STRONG> (Thumb, 36 bytes, Stack size 12 bytes, function.o(i.bFun_DataCompare))
-<BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = bFun_DataCompare
+<P><STRONG><a name="[136]"></a>bFun_DataCompare</STRONG> (Thumb, 30 bytes, Stack size 8 bytes, function.o(i.bFun_DataCompare))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = bFun_DataCompare
 </UL>
 <BR>[Called By]<UL><LI><a href="#[135]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vKey_ProcKeyFunc
 </UL>
 
-<P><STRONG><a name="[b2]"></a>bPrint_CheckSendFinish</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, print_iface.o(i.bPrint_CheckSendFinish))
+<P><STRONG><a name="[b2]"></a>bPrint_CheckSendFinish</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, print_iface.o(i.bPrint_CheckSendFinish))
 <BR><BR>[Called By]<UL><LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bPrint_SendDataToUsart
 <LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_sys_queue_task_enter_app
 </UL>
 
 <P><STRONG><a name="[aa]"></a>bPrint_DataSendStart</STRONG> (Thumb, 62 bytes, Stack size 8 bytes, print_iface.o(i.bPrint_DataSendStart))
-<BR><BR>[Stack]<UL><LI>Max Depth = 84<LI>Call Chain = bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_read
 <LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;usart_interrupt_flag_clear
@@ -783,24 +807,24 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bPrint_SendDataToUsart
 </UL>
 
-<P><STRONG><a name="[ad]"></a>bPrint_QueueInit</STRONG> (Thumb, 44 bytes, Stack size 16 bytes, print_queue_task.o(i.bPrint_QueueInit))
-<BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = bPrint_QueueInit &rArr; cQueue_TaskInit &rArr; malloc
+<P><STRONG><a name="[ad]"></a>bPrint_QueueInit</STRONG> (Thumb, 42 bytes, Stack size 8 bytes, print_queue_task.o(i.bPrint_QueueInit))
+<BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = bPrint_QueueInit &rArr; cQueue_TaskInit &rArr; malloc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cQueue_TaskInit
 </UL>
 <BR>[Called By]<UL><LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bPrint_TaskInit
 </UL>
 
-<P><STRONG><a name="[af]"></a>bPrint_RecProtInit</STRONG> (Thumb, 30 bytes, Stack size 8 bytes, print_prot_frame.o(i.bPrint_RecProtInit))
-<BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = bPrint_RecProtInit &rArr; cBaiku_ProtoRecInit &rArr; malloc
+<P><STRONG><a name="[af]"></a>bPrint_RecProtInit</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, print_prot_frame.o(i.bPrint_RecProtInit))
+<BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = bPrint_RecProtInit &rArr; cBaiku_ProtoRecInit &rArr; malloc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBaiku_ProtoRecInit
 </UL>
 <BR>[Called By]<UL><LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bPrint_TaskInit
 </UL>
 
-<P><STRONG><a name="[b1]"></a>bPrint_SendDataToUsart</STRONG> (Thumb, 54 bytes, Stack size 8 bytes, print_task.o(i.bPrint_SendDataToUsart))
-<BR><BR>[Stack]<UL><LI>Max Depth = 92<LI>Call Chain = bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[b1]"></a>bPrint_SendDataToUsart</STRONG> (Thumb, 50 bytes, Stack size 8 bytes, print_task.o(i.bPrint_SendDataToUsart))
+<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_get_full
 <LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bPrint_DataSendStart
@@ -816,16 +840,16 @@ Global Symbols
 <LI><a href="#[1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;c_frame_trans_cd
 </UL>
 
-<P><STRONG><a name="[b4]"></a>bPrint_SendProtInit</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, print_prot_frame.o(i.bPrint_SendProtInit))
-<BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = bPrint_SendProtInit &rArr; cBaiku_ProtoTransInit &rArr; malloc
+<P><STRONG><a name="[b4]"></a>bPrint_SendProtInit</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, print_prot_frame.o(i.bPrint_SendProtInit))
+<BR><BR>[Stack]<UL><LI>Max Depth = 44<LI>Call Chain = bPrint_SendProtInit &rArr; cBaiku_ProtoTransInit &rArr; malloc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBaiku_ProtoTransInit
 </UL>
 <BR>[Called By]<UL><LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bPrint_TaskInit
 </UL>
 
-<P><STRONG><a name="[b6]"></a>bPrint_TaskInit</STRONG> (Thumb, 52 bytes, Stack size 8 bytes, print_task.o(i.bPrint_TaskInit))
-<BR><BR>[Stack]<UL><LI>Max Depth = 76<LI>Call Chain = bPrint_TaskInit &rArr; bPrint_QueueInit &rArr; cQueue_TaskInit &rArr; malloc
+<P><STRONG><a name="[b6]"></a>bPrint_TaskInit</STRONG> (Thumb, 54 bytes, Stack size 8 bytes, print_task.o(i.bPrint_TaskInit))
+<BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = bPrint_TaskInit &rArr; bPrint_QueueInit &rArr; cQueue_TaskInit &rArr; malloc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_init
 <LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bPrint_SendProtInit
@@ -836,7 +860,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[117]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vBoard_StartTask
 </UL>
 
-<P><STRONG><a name="[b9]"></a>bSys_QueueInit</STRONG> (Thumb, 96 bytes, Stack size 8 bytes, sys_queue_task.o(i.bSys_QueueInit))
+<P><STRONG><a name="[b9]"></a>bSys_QueueInit</STRONG> (Thumb, 78 bytes, Stack size 8 bytes, sys_queue_task.o(i.bSys_QueueInit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = bSys_QueueInit &rArr; cQueue_TaskInit &rArr; malloc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cQueue_TaskInit
@@ -844,8 +868,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vSys_TaskInit
 </UL>
 
-<P><STRONG><a name="[ba]"></a>bSys_SetDevState</STRONG> (Thumb, 206 bytes, Stack size 16 bytes, sys_task.o(i.bSys_SetDevState))
-<BR><BR>[Stack]<UL><LI>Max Depth = 140<LI>Call Chain = bSys_SetDevState &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[ba]"></a>bSys_SetDevState</STRONG> (Thumb, 132 bytes, Stack size 8 bytes, sys_task.o(i.bSys_SetDevState))
+<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = bSys_SetDevState &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrint
 </UL>
@@ -860,8 +884,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[116]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vBoard_SysInit
 </UL>
 
-<P><STRONG><a name="[bc]"></a>bXmodem_Reset</STRONG> (Thumb, 50 bytes, Stack size 8 bytes, xmodem_proto.o(i.bXmodem_Reset))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = bXmodem_Reset
+<P><STRONG><a name="[bc]"></a>bXmodem_Reset</STRONG> (Thumb, 46 bytes, Stack size 16 bytes, xmodem_proto.o(i.bXmodem_Reset))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = bXmodem_Reset
 </UL>
 <BR>[Calls]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr
 </UL>
@@ -869,14 +893,14 @@ Global Symbols
 <LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cUpdata_ProtoSelect
 </UL>
 
-<P><STRONG><a name="[c0]"></a>b_baiku_jump_step</STRONG> (Thumb, 90 bytes, Stack size 0 bytes, baiku_proto.o(i.b_baiku_jump_step))
+<P><STRONG><a name="[c0]"></a>b_baiku_jump_step</STRONG> (Thumb, 82 bytes, Stack size 0 bytes, baiku_proto.o(i.b_baiku_jump_step))
 <BR><BR>[Called By]<UL><LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBaiku_ResetRxBuff
 <LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBaiku_ProtoRecInit
 <LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBaiku_ProtoCheck
 </UL>
 
-<P><STRONG><a name="[bf]"></a>cBaiku_ProtoCheck</STRONG> (Thumb, 296 bytes, Stack size 24 bytes, baiku_proto.o(i.cBaiku_ProtoCheck))
-<BR><BR>[Stack]<UL><LI>Max Depth = 116<LI>Call Chain = cBaiku_ProtoCheck &rArr; c_baiku_proto_decrypt &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[bf]"></a>cBaiku_ProtoCheck</STRONG> (Thumb, 254 bytes, Stack size 32 bytes, baiku_proto.o(i.cBaiku_ProtoCheck))
+<BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = cBaiku_ProtoCheck &rArr; c_baiku_proto_decrypt &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_read
 <LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_get_full
@@ -887,7 +911,7 @@ Global Symbols
 <LI><a href="#[2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;c_frame_rec_cd
 </UL>
 
-<P><STRONG><a name="[c2]"></a>cBaiku_ProtoCreate</STRONG> (Thumb, 102 bytes, Stack size 24 bytes, baiku_proto.o(i.cBaiku_ProtoCreate))
+<P><STRONG><a name="[c2]"></a>cBaiku_ProtoCreate</STRONG> (Thumb, 88 bytes, Stack size 24 bytes, baiku_proto.o(i.cBaiku_ProtoCreate))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = cBaiku_ProtoCreate &rArr; ucCheck_SumReflect
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ucCheck_SumReflect
@@ -897,8 +921,8 @@ Global Symbols
 <LI><a href="#[1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;c_frame_trans_cd
 </UL>
 
-<P><STRONG><a name="[b0]"></a>cBaiku_ProtoRecInit</STRONG> (Thumb, 154 bytes, Stack size 32 bytes, baiku_proto.o(i.cBaiku_ProtoRecInit))
-<BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = cBaiku_ProtoRecInit &rArr; malloc
+<P><STRONG><a name="[b0]"></a>cBaiku_ProtoRecInit</STRONG> (Thumb, 130 bytes, Stack size 24 bytes, baiku_proto.o(i.cBaiku_ProtoRecInit))
+<BR><BR>[Stack]<UL><LI>Max Depth = 44<LI>Call Chain = cBaiku_ProtoRecInit &rArr; malloc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_reset
 <LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_init
@@ -909,8 +933,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bPrint_RecProtInit
 </UL>
 
-<P><STRONG><a name="[b5]"></a>cBaiku_ProtoTransInit</STRONG> (Thumb, 64 bytes, Stack size 24 bytes, baiku_proto.o(i.cBaiku_ProtoTransInit))
-<BR><BR>[Stack]<UL><LI>Max Depth = 44<LI>Call Chain = cBaiku_ProtoTransInit &rArr; malloc
+<P><STRONG><a name="[b5]"></a>cBaiku_ProtoTransInit</STRONG> (Thumb, 48 bytes, Stack size 16 bytes, baiku_proto.o(i.cBaiku_ProtoTransInit))
+<BR><BR>[Stack]<UL><LI>Max Depth = 36<LI>Call Chain = cBaiku_ProtoTransInit &rArr; malloc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;malloc
 <LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;free
@@ -918,8 +942,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bPrint_SendProtInit
 </UL>
 
-<P><STRONG><a name="[9f]"></a>cBaiku_ResetRxBuff</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, baiku_proto.o(i.cBaiku_ResetRxBuff))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = cBaiku_ResetRxBuff &rArr; lwrb_reset
+<P><STRONG><a name="[9f]"></a>cBaiku_ResetRxBuff</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, baiku_proto.o(i.cBaiku_ResetRxBuff))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = cBaiku_ResetRxBuff
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_reset
 <LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;b_baiku_jump_step
@@ -928,8 +952,8 @@ Global Symbols
 <LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cUpdata_ChSelect
 </UL>
 
-<P><STRONG><a name="[c6]"></a>cBaiku_UpdataCheck</STRONG> (Thumb, 228 bytes, Stack size 32 bytes, baiku_proto.o(i.cBaiku_UpdataCheck))
-<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = cBaiku_UpdataCheck &rArr; ucCheck_SumReflect
+<P><STRONG><a name="[c6]"></a>cBaiku_UpdataCheck</STRONG> (Thumb, 202 bytes, Stack size 24 bytes, baiku_proto.o(i.cBaiku_UpdataCheck))
+<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = cBaiku_UpdataCheck &rArr; ucCheck_SumReflect
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ucCheck_SumReflect
 <LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
@@ -937,8 +961,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;c_frame_rec_cd
 </UL>
 
-<P><STRONG><a name="[c7]"></a>cBoot_CtrlUpdata</STRONG> (Thumb, 138 bytes, Stack size 16 bytes, boot_info.o(i.cBoot_CtrlUpdata))
-<BR><BR>[Stack]<UL><LI>Max Depth = 716<LI>Call Chain = cBoot_CtrlUpdata &rArr; cBoot_UpdataMemParam &rArr; ef_set_env_blob &rArr; set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[c7]"></a>cBoot_CtrlUpdata</STRONG> (Thumb, 112 bytes, Stack size 16 bytes, boot_info.o(i.cBoot_CtrlUpdata))
+<BR><BR>[Stack]<UL><LI>Max Depth = 648<LI>Call Chain = cBoot_CtrlUpdata &rArr; cBoot_UpdataMemParam &rArr; ef_set_env_blob &rArr; set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrint
 <LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBoot_UpdataMemParam
@@ -951,7 +975,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[ca]"></a>cBoot_GetMemParam</STRONG> (Thumb, 158 bytes, Stack size 16 bytes, boot_info.o(i.cBoot_GetMemParam))
-<BR><BR>[Stack]<UL><LI>Max Depth = 644<LI>Call Chain = cBoot_GetMemParam &rArr; ef_get_env_blob &rArr; get_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<BR><BR>[Stack]<UL><LI>Max Depth = 600<LI>Call Chain = cBoot_GetMemParam &rArr; ef_get_env_blob &rArr; get_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_get_env_blob
 <LI><a href="#[cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strcmp
@@ -959,8 +983,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eBoot_InfoInit
 </UL>
 
-<P><STRONG><a name="[cd]"></a>cBoot_MemParamInit</STRONG> (Thumb, 110 bytes, Stack size 8 bytes, boot_info.o(i.cBoot_MemParamInit))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = cBoot_MemParamInit &rArr; strcmp
+<P><STRONG><a name="[cd]"></a>cBoot_MemParamInit</STRONG> (Thumb, 100 bytes, Stack size 24 bytes, boot_info.o(i.cBoot_MemParamInit))
+<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = cBoot_MemParamInit &rArr; strcmp
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strcmp
 <LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
@@ -969,8 +993,8 @@ Global Symbols
 <LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eBoot_InfoInit
 </UL>
 
-<P><STRONG><a name="[c9]"></a>cBoot_UpdataMemParam</STRONG> (Thumb, 106 bytes, Stack size 16 bytes, boot_info.o(i.cBoot_UpdataMemParam))
-<BR><BR>[Stack]<UL><LI>Max Depth = 700<LI>Call Chain = cBoot_UpdataMemParam &rArr; ef_set_env_blob &rArr; set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[c9]"></a>cBoot_UpdataMemParam</STRONG> (Thumb, 108 bytes, Stack size 8 bytes, boot_info.o(i.cBoot_UpdataMemParam))
+<BR><BR>[Stack]<UL><LI>Max Depth = 632<LI>Call Chain = cBoot_UpdataMemParam &rArr; ef_set_env_blob &rArr; set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_set_env_blob
 <LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_env_set_default
@@ -980,16 +1004,16 @@ Global Symbols
 <LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBoot_CtrlUpdata
 </UL>
 
-<P><STRONG><a name="[d0]"></a>cFlash_EraseSector</STRONG> (Thumb, 26 bytes, Stack size 16 bytes, flash_iface.o(i.cFlash_EraseSector))
-<BR><BR>[Stack]<UL><LI>Max Depth = 172<LI>Call Chain = cFlash_EraseSector &rArr; bFlash_Gd32EraseSector &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[d0]"></a>cFlash_EraseSector</STRONG> (Thumb, 18 bytes, Stack size 8 bytes, flash_iface.o(i.cFlash_EraseSector))
+<BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = cFlash_EraseSector &rArr; bFlash_Gd32EraseSector &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bFlash_Gd32EraseSector
 </UL>
 <BR>[Called By]<UL><LI><a href="#[131]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vFlash_WriteDataToFlashInit
 </UL>
 
-<P><STRONG><a name="[a9]"></a>cFlash_Write8BitData</STRONG> (Thumb, 84 bytes, Stack size 24 bytes, flash_iface.o(i.cFlash_Write8BitData))
-<BR><BR>[Stack]<UL><LI>Max Depth = 172<LI>Call Chain = cFlash_Write8BitData &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[a9]"></a>cFlash_Write8BitData</STRONG> (Thumb, 76 bytes, Stack size 16 bytes, flash_iface.o(i.cFlash_Write8BitData))
+<BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = cFlash_Write8BitData &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrint
 <LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bFlash_Gd32Write32Bit
@@ -997,8 +1021,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bFlash_WriteDataToFlash
 </UL>
 
-<P><STRONG><a name="[c8]"></a>cQueue_AddQueueTask</STRONG> (Thumb, 240 bytes, Stack size 48 bytes, queue_task.o(i.cQueue_AddQueueTask))
-<BR><BR>[Stack]<UL><LI>Max Depth = 124<LI>Call Chain = cQueue_AddQueueTask &rArr; lwrb_write &rArr; lwrb_write_ex &rArr; lwrb_get_free
+<P><STRONG><a name="[c8]"></a>cQueue_AddQueueTask</STRONG> (Thumb, 216 bytes, Stack size 48 bytes, queue_task.o(i.cQueue_AddQueueTask))
+<BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = cQueue_AddQueueTask &rArr; lwrb_write &rArr; lwrb_write_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_find
 <LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_write
@@ -1010,7 +1034,7 @@ Global Symbols
 <LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_sys_queue_task_init
 </UL>
 
-<P><STRONG><a name="[14a]"></a>cQueue_GotoStep</STRONG> (Thumb, 148 bytes, Stack size 16 bytes, queue_task.o(i.cQueue_GotoStep))
+<P><STRONG><a name="[14a]"></a>cQueue_GotoStep</STRONG> (Thumb, 130 bytes, Stack size 16 bytes, queue_task.o(i.cQueue_GotoStep))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = cQueue_GotoStep
 </UL>
 <BR>[Called By]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_print_queue_task_main
@@ -1021,7 +1045,7 @@ Global Symbols
 <LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_sys_queue_task_enter_app
 </UL>
 
-<P><STRONG><a name="[ae]"></a>cQueue_TaskInit</STRONG> (Thumb, 198 bytes, Stack size 32 bytes, queue_task.o(i.cQueue_TaskInit))
+<P><STRONG><a name="[ae]"></a>cQueue_TaskInit</STRONG> (Thumb, 180 bytes, Stack size 32 bytes, queue_task.o(i.cQueue_TaskInit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = cQueue_TaskInit &rArr; malloc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_reset
@@ -1029,12 +1053,12 @@ Global Symbols
 <LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;malloc
 <LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;free
 </UL>
-<BR>[Called By]<UL><LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bSys_QueueInit
-<LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bPrint_QueueInit
+<BR>[Called By]<UL><LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bPrint_QueueInit
+<LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bSys_QueueInit
 </UL>
 
-<P><STRONG><a name="[d2]"></a>cSys_JumpToApp</STRONG> (Thumb, 98 bytes, Stack size 8 bytes, sys_queue_task.o(i.cSys_JumpToApp))
-<BR><BR>[Stack]<UL><LI>Max Depth = 724<LI>Call Chain = cSys_JumpToApp &rArr; cBoot_CtrlUpdata &rArr; cBoot_UpdataMemParam &rArr; ef_set_env_blob &rArr; set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[d2]"></a>cSys_JumpToApp</STRONG> (Thumb, 90 bytes, Stack size 8 bytes, sys_queue_task.o(i.cSys_JumpToApp))
+<BR><BR>[Stack]<UL><LI>Max Depth = 656<LI>Call Chain = cSys_JumpToApp &rArr; cBoot_CtrlUpdata &rArr; cBoot_UpdataMemParam &rArr; ef_set_env_blob &rArr; set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vSys_MsDelay
 <LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBoot_CtrlUpdata
@@ -1043,8 +1067,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_sys_queue_task_enter_app
 </UL>
 
-<P><STRONG><a name="[d5]"></a>cUpdata_ChSelect</STRONG> (Thumb, 118 bytes, Stack size 16 bytes, sys_queue_task_updata.o(i.cUpdata_ChSelect))
-<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = cUpdata_ChSelect &rArr; cUpdata_ProtoSelect &rArr; bBaiKuProto_Reset &rArr; cBaiku_ResetRxBuff &rArr; lwrb_reset
+<P><STRONG><a name="[d5]"></a>cUpdata_ChSelect</STRONG> (Thumb, 100 bytes, Stack size 24 bytes, sys_queue_task_updata.o(i.cUpdata_ChSelect))
+<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = cUpdata_ChSelect &rArr; cUpdata_ProtoSelect &rArr; bXmodem_Reset
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_reset
 <LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBaiku_ResetRxBuff
@@ -1056,8 +1080,8 @@ Global Symbols
 <LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_sys_queue_task_enter_app
 </UL>
 
-<P><STRONG><a name="[d6]"></a>cUpdata_ProtoSelect</STRONG> (Thumb, 60 bytes, Stack size 8 bytes, sys_queue_task_updata.o(i.cUpdata_ProtoSelect))
-<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = cUpdata_ProtoSelect &rArr; bBaiKuProto_Reset &rArr; cBaiku_ResetRxBuff &rArr; lwrb_reset
+<P><STRONG><a name="[d6]"></a>cUpdata_ProtoSelect</STRONG> (Thumb, 48 bytes, Stack size 8 bytes, sys_queue_task_updata.o(i.cUpdata_ProtoSelect))
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = cUpdata_ProtoSelect &rArr; bXmodem_Reset
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bXmodem_Reset
 <LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bBaiKuProto_Reset
@@ -1066,8 +1090,8 @@ Global Symbols
 <LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cUpdata_ChSelect
 </UL>
 
-<P><STRONG><a name="[c1]"></a>c_baiku_proto_decrypt</STRONG> (Thumb, 136 bytes, Stack size 16 bytes, baiku_proto.o(i.c_baiku_proto_decrypt))
-<BR><BR>[Stack]<UL><LI>Max Depth = 92<LI>Call Chain = c_baiku_proto_decrypt &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[c1]"></a>c_baiku_proto_decrypt</STRONG> (Thumb, 116 bytes, Stack size 16 bytes, baiku_proto.o(i.c_baiku_proto_decrypt))
+<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = c_baiku_proto_decrypt &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_read
 <LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ucCheck_SumReflect
@@ -1075,19 +1099,19 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBaiku_ProtoCheck
 </UL>
 
-<P><STRONG><a name="[14b]"></a>c_cycle_relay_data</STRONG> (Thumb, 42 bytes, Stack size 0 bytes, print_prot_frame.o(i.c_cycle_relay_data))
+<P><STRONG><a name="[14b]"></a>c_cycle_relay_data</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, print_prot_frame.o(i.c_cycle_relay_data))
 <BR><BR>[Called By]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_print_queue_task_main
 </UL>
 
-<P><STRONG><a name="[121]"></a>c_print_start_check</STRONG> (Thumb, 58 bytes, Stack size 0 bytes, print_api.o(i.c_print_start_check))
+<P><STRONG><a name="[121]"></a>c_print_start_check</STRONG> (Thumb, 60 bytes, Stack size 0 bytes, print_api.o(i.c_print_start_check))
 <BR><BR>[Called By]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrint
 <LI><a href="#[7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrintWarn
 <LI><a href="#[8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrintTips
 <LI><a href="#[6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrintErr
 </UL>
 
-<P><STRONG><a name="[da]"></a>c_relay84_set_proto</STRONG> (Thumb, 80 bytes, Stack size 16 bytes, print_prot_frame.o(i.c_relay84_set_proto))
-<BR><BR>[Stack]<UL><LI>Max Depth = 132<LI>Call Chain = c_relay84_set_proto &rArr; c_print_data_trans &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[da]"></a>c_relay84_set_proto</STRONG> (Thumb, 78 bytes, Stack size 8 bytes, print_prot_frame.o(i.c_relay84_set_proto))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = c_relay84_set_proto &rArr; c_print_data_trans &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;c_print_data_trans
 <LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cUpdata_ChSelect
@@ -1095,8 +1119,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_print_queue_task_main
 </UL>
 
-<P><STRONG><a name="[db]"></a>c_relay88_sys_set</STRONG> (Thumb, 142 bytes, Stack size 24 bytes, print_prot_frame.o(i.c_relay88_sys_set))
-<BR><BR>[Stack]<UL><LI>Max Depth = 740<LI>Call Chain = c_relay88_sys_set &rArr; eBoot_InfoInit &rArr; cBoot_UpdataMemParam &rArr; ef_set_env_blob &rArr; set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[db]"></a>c_relay88_sys_set</STRONG> (Thumb, 130 bytes, Stack size 24 bytes, print_prot_frame.o(i.c_relay88_sys_set))
+<BR><BR>[Stack]<UL><LI>Max Depth = 672<LI>Call Chain = c_relay88_sys_set &rArr; eBoot_InfoInit &rArr; cBoot_UpdataMemParam &rArr; ef_set_env_blob &rArr; set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eBoot_InfoInit
 <LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cQueue_AddQueueTask
@@ -1107,8 +1131,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_print_queue_task_main
 </UL>
 
-<P><STRONG><a name="[dc]"></a>eBoot_InfoInit</STRONG> (Thumb, 268 bytes, Stack size 16 bytes, boot_info.o(i.eBoot_InfoInit))
-<BR><BR>[Stack]<UL><LI>Max Depth = 716<LI>Call Chain = eBoot_InfoInit &rArr; cBoot_UpdataMemParam &rArr; ef_set_env_blob &rArr; set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[dc]"></a>eBoot_InfoInit</STRONG> (Thumb, 216 bytes, Stack size 16 bytes, boot_info.o(i.eBoot_InfoInit))
+<BR><BR>[Stack]<UL><LI>Max Depth = 648<LI>Call Chain = eBoot_InfoInit &rArr; cBoot_UpdataMemParam &rArr; ef_set_env_blob &rArr; set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrint
 <LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBoot_MemParamInit
@@ -1122,8 +1146,8 @@ Global Symbols
 <LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_sys_queue_task_init
 </UL>
 
-<P><STRONG><a name="[f7]"></a>easyflash_init</STRONG> (Thumb, 62 bytes, Stack size 16 bytes, easyflash.o(i.easyflash_init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 804<LI>Call Chain = easyflash_init &rArr; ef_env_init &rArr; ef_load_env &rArr; ef_env_set_default &rArr; create_env_blob &rArr; new_env &rArr; gc_collect &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[f7]"></a>easyflash_init</STRONG> (Thumb, 60 bytes, Stack size 24 bytes, easyflash.o(i.easyflash_init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 768<LI>Call Chain = easyflash_init &rArr; ef_env_init &rArr; ef_load_env &rArr; ef_env_set_default &rArr; create_env_blob &rArr; new_env &rArr; gc_collect &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_port_init
 <LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_log_info
@@ -1132,8 +1156,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[116]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vBoard_SysInit
 </UL>
 
-<P><STRONG><a name="[eb]"></a>ef_calc_crc32</STRONG> (Thumb, 40 bytes, Stack size 12 bytes, ef_utils.o(i.ef_calc_crc32))
-<BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = ef_calc_crc32
+<P><STRONG><a name="[eb]"></a>ef_calc_crc32</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, ef_utils.o(i.ef_calc_crc32))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = ef_calc_crc32
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;update_env_cache
 <LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_env
@@ -1141,16 +1165,16 @@ Global Symbols
 <LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;create_env_blob
 </UL>
 
-<P><STRONG><a name="[f9]"></a>ef_env_init</STRONG> (Thumb, 102 bytes, Stack size 24 bytes, ef_env.o(i.ef_env_init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 788<LI>Call Chain = ef_env_init &rArr; ef_load_env &rArr; ef_env_set_default &rArr; create_env_blob &rArr; new_env &rArr; gc_collect &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[f9]"></a>ef_env_init</STRONG> (Thumb, 74 bytes, Stack size 16 bytes, ef_env.o(i.ef_env_init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 744<LI>Call Chain = ef_env_init &rArr; ef_load_env &rArr; ef_env_set_default &rArr; create_env_blob &rArr; new_env &rArr; gc_collect &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_load_env
 </UL>
 <BR>[Called By]<UL><LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;easyflash_init
 </UL>
 
-<P><STRONG><a name="[ce]"></a>ef_env_set_default</STRONG> (Thumb, 190 bytes, Stack size 48 bytes, ef_env.o(i.ef_env_set_default))
-<BR><BR>[Stack]<UL><LI>Max Depth = 660<LI>Call Chain = ef_env_set_default &rArr; create_env_blob &rArr; new_env &rArr; gc_collect &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[ce]"></a>ef_env_set_default</STRONG> (Thumb, 134 bytes, Stack size 48 bytes, ef_env.o(i.ef_env_set_default))
+<BR><BR>[Stack]<UL><LI>Max Depth = 616<LI>Call Chain = ef_env_set_default &rArr; create_env_blob &rArr; new_env &rArr; gc_collect &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;format_sector
 <LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;create_env_blob
@@ -1162,8 +1186,8 @@ Global Symbols
 <LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBoot_UpdataMemParam
 </UL>
 
-<P><STRONG><a name="[cc]"></a>ef_get_env_blob</STRONG> (Thumb, 60 bytes, Stack size 24 bytes, ef_env.o(i.ef_get_env_blob))
-<BR><BR>[Stack]<UL><LI>Max Depth = 628<LI>Call Chain = ef_get_env_blob &rArr; get_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[cc]"></a>ef_get_env_blob</STRONG> (Thumb, 58 bytes, Stack size 24 bytes, ef_env.o(i.ef_get_env_blob))
+<BR><BR>[Stack]<UL><LI>Max Depth = 584<LI>Call Chain = ef_get_env_blob &rArr; get_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[fd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_env
 <LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_log_info
@@ -1173,8 +1197,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBoot_GetMemParam
 </UL>
 
-<P><STRONG><a name="[fa]"></a>ef_load_env</STRONG> (Thumb, 118 bytes, Stack size 104 bytes, ef_env.o(i.ef_load_env))
-<BR><BR>[Stack]<UL><LI>Max Depth = 764<LI>Call Chain = ef_load_env &rArr; ef_env_set_default &rArr; create_env_blob &rArr; new_env &rArr; gc_collect &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[fa]"></a>ef_load_env</STRONG> (Thumb, 106 bytes, Stack size 112 bytes, ef_env.o(i.ef_load_env))
+<BR><BR>[Stack]<UL><LI>Max Depth = 728<LI>Call Chain = ef_load_env &rArr; ef_env_set_default &rArr; create_env_blob &rArr; new_env &rArr; gc_collect &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sector_iterator
 <LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gc_collect
@@ -1187,8 +1211,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_env_init
 </UL>
 
-<P><STRONG><a name="[dd]"></a>ef_log_info</STRONG> (Thumb, 36 bytes, Stack size 24 bytes, ef_port.o(i.ef_log_info))
-<BR><BR>[Stack]<UL><LI>Max Depth = 148<LI>Call Chain = ef_log_info &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[dd]"></a>ef_log_info</STRONG> (Thumb, 28 bytes, Stack size 24 bytes, ef_port.o(i.ef_log_info))
+<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = ef_log_info &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrint
 <LI><a href="#[ff]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vsprintf
@@ -1217,8 +1241,8 @@ Global Symbols
 <LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_env_set_default
 </UL>
 
-<P><STRONG><a name="[100]"></a>ef_port_erase</STRONG> (Thumb, 34 bytes, Stack size 16 bytes, ef_port.o(i.ef_port_erase))
-<BR><BR>[Stack]<UL><LI>Max Depth = 172<LI>Call Chain = ef_port_erase &rArr; bFlash_Gd32EraseSector &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[100]"></a>ef_port_erase</STRONG> (Thumb, 24 bytes, Stack size 8 bytes, ef_port.o(i.ef_port_erase))
+<BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = ef_port_erase &rArr; bFlash_Gd32EraseSector &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bFlash_Gd32EraseSector
 </UL>
@@ -1226,7 +1250,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[f8]"></a>ef_port_init</STRONG> (Thumb, 34 bytes, Stack size 16 bytes, ef_port.o(i.ef_port_init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = ef_port_init &rArr; cBoot_MemParamInit &rArr; strcmp
+<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = ef_port_init &rArr; cBoot_MemParamInit &rArr; strcmp
 </UL>
 <BR>[Calls]<UL><LI><a href="#[101]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;usBoot_GetMemParamSize
 <LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBoot_MemParamInit
@@ -1234,8 +1258,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;easyflash_init
 </UL>
 
-<P><STRONG><a name="[e6]"></a>ef_port_read</STRONG> (Thumb, 28 bytes, Stack size 24 bytes, ef_port.o(i.ef_port_read))
-<BR><BR>[Stack]<UL><LI>Max Depth = 172<LI>Call Chain = ef_port_read &rArr; vFlash_Gd32Read32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[e6]"></a>ef_port_read</STRONG> (Thumb, 12 bytes, Stack size 8 bytes, ef_port.o(i.ef_port_read))
+<BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = ef_port_read &rArr; vFlash_Gd32Read32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vFlash_Gd32Read32Bit
 </UL>
@@ -1249,8 +1273,8 @@ Global Symbols
 <LI><a href="#[e5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;continue_ff_addr
 </UL>
 
-<P><STRONG><a name="[9b]"></a>ef_port_write</STRONG> (Thumb, 66 bytes, Stack size 32 bytes, ef_port.o(i.ef_port_write))
-<BR><BR>[Stack]<UL><LI>Max Depth = 180<LI>Call Chain = ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[9b]"></a>ef_port_write</STRONG> (Thumb, 56 bytes, Stack size 24 bytes, ef_port.o(i.ef_port_write))
+<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bFlash_Gd32Write32Bit
 <LI><a href="#[103]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
@@ -1264,8 +1288,8 @@ Global Symbols
 <LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;align_write
 </UL>
 
-<P><STRONG><a name="[cf]"></a>ef_set_env_blob</STRONG> (Thumb, 54 bytes, Stack size 24 bytes, ef_env.o(i.ef_set_env_blob))
-<BR><BR>[Stack]<UL><LI>Max Depth = 684<LI>Call Chain = ef_set_env_blob &rArr; set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[cf]"></a>ef_set_env_blob</STRONG> (Thumb, 50 bytes, Stack size 16 bytes, ef_env.o(i.ef_set_env_blob))
+<BR><BR>[Stack]<UL><LI>Max Depth = 624<LI>Call Chain = ef_set_env_blob &rArr; set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[104]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_env
 <LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_log_info
@@ -1275,7 +1299,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBoot_UpdataMemParam
 </UL>
 
-<P><STRONG><a name="[7d]"></a>exti_interrupt_disable</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, gd32f30x_exti.o(i.exti_interrupt_disable))
+<P><STRONG><a name="[7e]"></a>exti_interrupt_disable</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, gd32f30x_exti.o(i.exti_interrupt_disable))
 <BR><BR>[Called By]<UL><LI><a href="#[3c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RTC_Alarm_IRQHandler
 </UL>
 
@@ -1286,13 +1310,13 @@ Global Symbols
 <LI><a href="#[19]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI0_IRQHandler
 </UL>
 
-<P><STRONG><a name="[79]"></a>exti_interrupt_flag_get</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, gd32f30x_exti.o(i.exti_interrupt_flag_get))
+<P><STRONG><a name="[79]"></a>exti_interrupt_flag_get</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, gd32f30x_exti.o(i.exti_interrupt_flag_get))
 <BR><BR>[Called By]<UL><LI><a href="#[1b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI2_IRQHandler
 <LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI10_15_IRQHandler
 <LI><a href="#[19]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI0_IRQHandler
 </UL>
 
-<P><STRONG><a name="[10c]"></a>fmc_bank0_ready_wait</STRONG> (Thumb, 34 bytes, Stack size 4 bytes, gd32f30x_fmc.o(i.fmc_bank0_ready_wait))
+<P><STRONG><a name="[10c]"></a>fmc_bank0_ready_wait</STRONG> (Thumb, 26 bytes, Stack size 4 bytes, gd32f30x_fmc.o(i.fmc_bank0_ready_wait))
 <BR><BR>[Stack]<UL><LI>Max Depth = 4<LI>Call Chain = fmc_bank0_ready_wait
 </UL>
 <BR>[Calls]<UL><LI><a href="#[10d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fmc_bank0_state_get
@@ -1301,11 +1325,11 @@ Global Symbols
 <LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fmc_page_erase
 </UL>
 
-<P><STRONG><a name="[10d]"></a>fmc_bank0_state_get</STRONG> (Thumb, 44 bytes, Stack size 0 bytes, gd32f30x_fmc.o(i.fmc_bank0_state_get))
+<P><STRONG><a name="[10d]"></a>fmc_bank0_state_get</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, gd32f30x_fmc.o(i.fmc_bank0_state_get))
 <BR><BR>[Called By]<UL><LI><a href="#[10c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fmc_bank0_ready_wait
 </UL>
 
-<P><STRONG><a name="[10e]"></a>fmc_bank1_ready_wait</STRONG> (Thumb, 34 bytes, Stack size 4 bytes, gd32f30x_fmc.o(i.fmc_bank1_ready_wait))
+<P><STRONG><a name="[10e]"></a>fmc_bank1_ready_wait</STRONG> (Thumb, 26 bytes, Stack size 4 bytes, gd32f30x_fmc.o(i.fmc_bank1_ready_wait))
 <BR><BR>[Stack]<UL><LI>Max Depth = 4<LI>Call Chain = fmc_bank1_ready_wait
 </UL>
 <BR>[Calls]<UL><LI><a href="#[10f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fmc_bank1_state_get
@@ -1314,22 +1338,22 @@ Global Symbols
 <LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fmc_page_erase
 </UL>
 
-<P><STRONG><a name="[10f]"></a>fmc_bank1_state_get</STRONG> (Thumb, 44 bytes, Stack size 0 bytes, gd32f30x_fmc.o(i.fmc_bank1_state_get))
+<P><STRONG><a name="[10f]"></a>fmc_bank1_state_get</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, gd32f30x_fmc.o(i.fmc_bank1_state_get))
 <BR><BR>[Called By]<UL><LI><a href="#[10e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fmc_bank1_ready_wait
 </UL>
 
-<P><STRONG><a name="[a3]"></a>fmc_flag_clear</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, gd32f30x_fmc.o(i.fmc_flag_clear))
+<P><STRONG><a name="[a3]"></a>fmc_flag_clear</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, gd32f30x_fmc.o(i.fmc_flag_clear))
 <BR><BR>[Called By]<UL><LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bFlash_Gd32Write32Bit
 <LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bFlash_Gd32EraseSector
 </UL>
 
-<P><STRONG><a name="[a5]"></a>fmc_lock</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, gd32f30x_fmc.o(i.fmc_lock))
+<P><STRONG><a name="[a5]"></a>fmc_lock</STRONG> (Thumb, 30 bytes, Stack size 0 bytes, gd32f30x_fmc.o(i.fmc_lock))
 <BR><BR>[Called By]<UL><LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bFlash_Gd32Write32Bit
 <LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bFlash_Gd32EraseSector
 </UL>
 
-<P><STRONG><a name="[a4]"></a>fmc_page_erase</STRONG> (Thumb, 210 bytes, Stack size 12 bytes, gd32f30x_fmc.o(i.fmc_page_erase))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = fmc_page_erase &rArr; fmc_bank1_ready_wait
+<P><STRONG><a name="[a4]"></a>fmc_page_erase</STRONG> (Thumb, 164 bytes, Stack size 16 bytes, gd32f30x_fmc.o(i.fmc_page_erase))
+<BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = fmc_page_erase &rArr; fmc_bank1_ready_wait
 </UL>
 <BR>[Calls]<UL><LI><a href="#[10e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fmc_bank1_ready_wait
 <LI><a href="#[10c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fmc_bank0_ready_wait
@@ -1337,13 +1361,13 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bFlash_Gd32EraseSector
 </UL>
 
-<P><STRONG><a name="[a2]"></a>fmc_unlock</STRONG> (Thumb, 52 bytes, Stack size 0 bytes, gd32f30x_fmc.o(i.fmc_unlock))
+<P><STRONG><a name="[a2]"></a>fmc_unlock</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, gd32f30x_fmc.o(i.fmc_unlock))
 <BR><BR>[Called By]<UL><LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bFlash_Gd32Write32Bit
 <LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bFlash_Gd32EraseSector
 </UL>
 
-<P><STRONG><a name="[a7]"></a>fmc_word_program</STRONG> (Thumb, 166 bytes, Stack size 16 bytes, gd32f30x_fmc.o(i.fmc_word_program))
-<BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = fmc_word_program &rArr; fmc_bank1_ready_wait
+<P><STRONG><a name="[a7]"></a>fmc_word_program</STRONG> (Thumb, 134 bytes, Stack size 20 bytes, gd32f30x_fmc.o(i.fmc_word_program))
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = fmc_word_program &rArr; fmc_bank1_ready_wait
 </UL>
 <BR>[Calls]<UL><LI><a href="#[10e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fmc_bank1_ready_wait
 <LI><a href="#[10c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fmc_bank0_ready_wait
@@ -1351,10 +1375,10 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bFlash_Gd32Write32Bit
 </UL>
 
-<P><STRONG><a name="[52]"></a>fputc</STRONG> (Thumb, 20 bytes, Stack size 16 bytes, seeger_print.o(i.fputc))
-<BR><BR>[Stack]<UL><LI>Max Depth = 400<LI>Call Chain = fputc &rArr; SEGGER_RTT_printf &rArr; SEGGER_RTT_vprintf &rArr; _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteBlocking &rArr; __aeabi_memcpy
+<P><STRONG><a name="[52]"></a>fputc</STRONG> (Thumb, 18 bytes, Stack size 8 bytes, seeger_print.o(i.fputc))
+<BR><BR>[Stack]<UL><LI>Max Depth = 328<LI>Call Chain = fputc &rArr; SEGGER_RTT_printf &rArr; SEGGER_RTT_vprintf &rArr; _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteBlocking &rArr; __aeabi_memcpy
 </UL>
-<BR>[Calls]<UL><LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_printf
+<BR>[Calls]<UL><LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_printf
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> printfa.o(i.__0printf)
 </UL>
@@ -1367,32 +1391,28 @@ Global Symbols
 <LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cQueue_TaskInit
 </UL>
 
-<P><STRONG><a name="[133]"></a>gpio_init</STRONG> (Thumb, 188 bytes, Stack size 20 bytes, gd32f30x_gpio.o(i.gpio_init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = gpio_init
+<P><STRONG><a name="[133]"></a>gpio_init</STRONG> (Thumb, 164 bytes, Stack size 28 bytes, gd32f30x_gpio.o(i.gpio_init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = gpio_init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[114]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vGPIO_Init
 <LI><a href="#[13b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_print_gpio_init
 <LI><a href="#[13a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_key_gpio_init
 </UL>
 
-<P><STRONG><a name="[d1]"></a>lwrb_find</STRONG> (Thumb, 188 bytes, Stack size 48 bytes, lwrb_ex.o(i.lwrb_find))
-<BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = lwrb_find &rArr; lwrb_get_full
+<P><STRONG><a name="[d1]"></a>lwrb_find</STRONG> (Thumb, 164 bytes, Stack size 40 bytes, lwrb_ex.o(i.lwrb_find))
+<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = lwrb_find
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_get_full
 </UL>
 <BR>[Called By]<UL><LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cQueue_AddQueueTask
 </UL>
 
-<P><STRONG><a name="[113]"></a>lwrb_get_free</STRONG> (Thumb, 46 bytes, Stack size 12 bytes, lwrb.o(i.lwrb_get_free))
-<BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = lwrb_get_free
-</UL>
-<BR>[Called By]<UL><LI><a href="#[112]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_write_ex
+<P><STRONG><a name="[113]"></a>lwrb_get_free</STRONG> (Thumb, 36 bytes, Stack size 0 bytes, lwrb.o(i.lwrb_get_free))
+<BR><BR>[Called By]<UL><LI><a href="#[112]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_write_ex
 </UL>
 
-<P><STRONG><a name="[b3]"></a>lwrb_get_full</STRONG> (Thumb, 46 bytes, Stack size 12 bytes, lwrb.o(i.lwrb_get_full))
-<BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = lwrb_get_full
-</UL>
-<BR>[Called By]<UL><LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_find
+<P><STRONG><a name="[b3]"></a>lwrb_get_full</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, lwrb.o(i.lwrb_get_full))
+<BR><BR>[Called By]<UL><LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_find
 <LI><a href="#[111]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_read_ex
 <LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBaiku_ProtoCheck
 <LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bPrint_SendDataToUsart
@@ -1412,8 +1432,8 @@ Global Symbols
 <LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cQueue_TaskInit
 </UL>
 
-<P><STRONG><a name="[ab]"></a>lwrb_read</STRONG> (Thumb, 36 bytes, Stack size 24 bytes, lwrb.o(i.lwrb_read))
-<BR><BR>[Stack]<UL><LI>Max Depth = 76<LI>Call Chain = lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[ab]"></a>lwrb_read</STRONG> (Thumb, 24 bytes, Stack size 16 bytes, lwrb.o(i.lwrb_read))
+<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[111]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_read_ex
 </UL>
@@ -1425,8 +1445,8 @@ Global Symbols
 <LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;b_task_manage_func_cb
 </UL>
 
-<P><STRONG><a name="[111]"></a>lwrb_read_ex</STRONG> (Thumb, 182 bytes, Stack size 40 bytes, lwrb.o(i.lwrb_read_ex))
-<BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[111]"></a>lwrb_read_ex</STRONG> (Thumb, 148 bytes, Stack size 32 bytes, lwrb.o(i.lwrb_read_ex))
+<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_get_full
 <LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
@@ -1434,10 +1454,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_read
 </UL>
 
-<P><STRONG><a name="[bd]"></a>lwrb_reset</STRONG> (Thumb, 40 bytes, Stack size 8 bytes, lwrb.o(i.lwrb_reset))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = lwrb_reset
-</UL>
-<BR>[Called By]<UL><LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBaiku_ResetRxBuff
+<P><STRONG><a name="[bd]"></a>lwrb_reset</STRONG> (Thumb, 36 bytes, Stack size 0 bytes, lwrb.o(i.lwrb_reset))
+<BR><BR>[Called By]<UL><LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBaiku_ResetRxBuff
 <LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBaiku_ProtoRecInit
 <LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cQueue_TaskInit
 <LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cQueue_AddQueueTask
@@ -1448,8 +1466,8 @@ Global Symbols
 <LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;b_task_manage_func_cb
 </UL>
 
-<P><STRONG><a name="[8d]"></a>lwrb_write</STRONG> (Thumb, 36 bytes, Stack size 24 bytes, lwrb.o(i.lwrb_write))
-<BR><BR>[Stack]<UL><LI>Max Depth = 76<LI>Call Chain = lwrb_write &rArr; lwrb_write_ex &rArr; lwrb_get_free
+<P><STRONG><a name="[8d]"></a>lwrb_write</STRONG> (Thumb, 24 bytes, Stack size 16 bytes, lwrb.o(i.lwrb_write))
+<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = lwrb_write &rArr; lwrb_write_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[112]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_write_ex
 </UL>
@@ -1463,8 +1481,8 @@ Global Symbols
 <LI><a href="#[1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;c_frame_trans_cd
 </UL>
 
-<P><STRONG><a name="[112]"></a>lwrb_write_ex</STRONG> (Thumb, 182 bytes, Stack size 40 bytes, lwrb.o(i.lwrb_write_ex))
-<BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = lwrb_write_ex &rArr; lwrb_get_free
+<P><STRONG><a name="[112]"></a>lwrb_write_ex</STRONG> (Thumb, 144 bytes, Stack size 32 bytes, lwrb.o(i.lwrb_write_ex))
+<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = lwrb_write_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[113]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_get_free
 <LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
@@ -1472,8 +1490,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_write
 </UL>
 
-<P><STRONG><a name="[4f]"></a>main</STRONG> (Thumb, 86 bytes, Stack size 0 bytes, main.o(i.main))
-<BR><BR>[Stack]<UL><LI>Max Depth = 812<LI>Call Chain = main &rArr; vBoard_SysInit &rArr; easyflash_init &rArr; ef_env_init &rArr; ef_load_env &rArr; ef_env_set_default &rArr; create_env_blob &rArr; new_env &rArr; gc_collect &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[4f]"></a>main</STRONG> (Thumb, 74 bytes, Stack size 0 bytes, main.o(i.main))
+<BR><BR>[Stack]<UL><LI>Max Depth = 776<LI>Call Chain = main &rArr; vBoard_SysInit &rArr; easyflash_init &rArr; ef_env_init &rArr; ef_load_env &rArr; ef_env_set_default &rArr; create_env_blob &rArr; new_env &rArr; gc_collect &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTimer_Task
 <LI><a href="#[115]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vSys_TickConfig
@@ -1495,8 +1513,8 @@ Global Symbols
 <LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cQueue_TaskInit
 </UL>
 
-<P><STRONG><a name="[11e]"></a>nvic_irq_enable</STRONG> (Thumb, 186 bytes, Stack size 24 bytes, gd32f30x_misc.o(i.nvic_irq_enable))
-<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = nvic_irq_enable
+<P><STRONG><a name="[11e]"></a>nvic_irq_enable</STRONG> (Thumb, 150 bytes, Stack size 16 bytes, gd32f30x_misc.o(i.nvic_irq_enable))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = nvic_irq_enable
 </UL>
 <BR>[Calls]<UL><LI><a href="#[11f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nvic_priority_group_set
 </UL>
@@ -1507,37 +1525,37 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[11e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nvic_irq_enable
 </UL>
 
-<P><STRONG><a name="[125]"></a>rcu_clock_freq_get</STRONG> (Thumb, 310 bytes, Stack size 84 bytes, gd32f30x_rcu.o(i.rcu_clock_freq_get))
-<BR><BR>[Stack]<UL><LI>Max Depth = 84<LI>Call Chain = rcu_clock_freq_get
+<P><STRONG><a name="[125]"></a>rcu_clock_freq_get</STRONG> (Thumb, 224 bytes, Stack size 48 bytes, gd32f30x_rcu.o(i.rcu_clock_freq_get))
+<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = rcu_clock_freq_get
 </UL>
 <BR>[Called By]<UL><LI><a href="#[124]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;usart_baudrate_set
 </UL>
 
-<P><STRONG><a name="[132]"></a>rcu_periph_clock_enable</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, gd32f30x_rcu.o(i.rcu_periph_clock_enable))
+<P><STRONG><a name="[132]"></a>rcu_periph_clock_enable</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, gd32f30x_rcu.o(i.rcu_periph_clock_enable))
 <BR><BR>[Called By]<UL><LI><a href="#[114]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vGPIO_Init
 <LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_print_usart_init
 <LI><a href="#[13b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_print_gpio_init
 <LI><a href="#[13a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_key_gpio_init
 </UL>
 
-<P><STRONG><a name="[128]"></a>rcu_periph_reset_disable</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, gd32f30x_rcu.o(i.rcu_periph_reset_disable))
+<P><STRONG><a name="[128]"></a>rcu_periph_reset_disable</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, gd32f30x_rcu.o(i.rcu_periph_reset_disable))
 <BR><BR>[Called By]<UL><LI><a href="#[126]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;usart_deinit
 </UL>
 
-<P><STRONG><a name="[127]"></a>rcu_periph_reset_enable</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, gd32f30x_rcu.o(i.rcu_periph_reset_enable))
+<P><STRONG><a name="[127]"></a>rcu_periph_reset_enable</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, gd32f30x_rcu.o(i.rcu_periph_reset_enable))
 <BR><BR>[Called By]<UL><LI><a href="#[126]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;usart_deinit
 </UL>
 
-<P><STRONG><a name="[7c]"></a>rtc_flag_clear</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, gd32f30x_rtc.o(i.rtc_flag_clear))
+<P><STRONG><a name="[7d]"></a>rtc_flag_clear</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, gd32f30x_rtc.o(i.rtc_flag_clear))
 <BR><BR>[Called By]<UL><LI><a href="#[3c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RTC_Alarm_IRQHandler
 </UL>
 
-<P><STRONG><a name="[7b]"></a>rtc_flag_get</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, gd32f30x_rtc.o(i.rtc_flag_get))
+<P><STRONG><a name="[7c]"></a>rtc_flag_get</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, gd32f30x_rtc.o(i.rtc_flag_get))
 <BR><BR>[Called By]<UL><LI><a href="#[3c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RTC_Alarm_IRQHandler
 </UL>
 
-<P><STRONG><a name="[a1]"></a>sMyPrint</STRONG> (Thumb, 108 bytes, Stack size 32 bytes, print_api.o(i.sMyPrint))
-<BR><BR>[Stack]<UL><LI>Max Depth = 124<LI>Call Chain = sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[a1]"></a>sMyPrint</STRONG> (Thumb, 86 bytes, Stack size 32 bytes, print_api.o(i.sMyPrint))
+<BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_write
 <LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bPrint_SendDataToUsart
@@ -1549,7 +1567,6 @@ Global Symbols
 <LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vFlash_Gd32Read32Bit
 <LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bFlash_Gd32Write32Bit
 <LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bFlash_Gd32EraseSector
-<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bSys_SetDevState
 <LI><a href="#[140]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vSys_TickTimer
 <LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eBoot_InfoInit
 <LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBoot_CtrlUpdata
@@ -1564,14 +1581,15 @@ Global Symbols
 <LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vXmodem_Proto
 <LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vBaiKuProto_Proto
 <LI><a href="#[149]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_print_logo
-<LI><a href="#[137]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_key_shot_press
-<LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_key_long_press
+<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bSys_SetDevState
+<LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_key_shot_press
+<LI><a href="#[137]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_key_long_press
 <LI><a href="#[135]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vKey_ProcKeyFunc
 <LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cFlash_Write8BitData
 </UL>
 
-<P><STRONG><a name="[6]"></a>sMyPrintErr</STRONG> (Thumb, 170 bytes, Stack size 56 bytes, print_api.o(i.sMyPrintErr))
-<BR><BR>[Stack]<UL><LI>Max Depth = 148<LI>Call Chain = sMyPrintErr &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[6]"></a>sMyPrintErr</STRONG> (Thumb, 144 bytes, Stack size 48 bytes, print_api.o(i.sMyPrintErr))
+<BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = sMyPrintErr &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_write
 <LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bPrint_SendDataToUsart
@@ -1582,8 +1600,8 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> print_api.o(.data)
 </UL>
-<P><STRONG><a name="[8]"></a>sMyPrintTips</STRONG> (Thumb, 170 bytes, Stack size 56 bytes, print_api.o(i.sMyPrintTips))
-<BR><BR>[Stack]<UL><LI>Max Depth = 148<LI>Call Chain = sMyPrintTips &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[8]"></a>sMyPrintTips</STRONG> (Thumb, 144 bytes, Stack size 48 bytes, print_api.o(i.sMyPrintTips))
+<BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = sMyPrintTips &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_write
 <LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bPrint_SendDataToUsart
@@ -1594,8 +1612,8 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> print_api.o(.data)
 </UL>
-<P><STRONG><a name="[7]"></a>sMyPrintWarn</STRONG> (Thumb, 170 bytes, Stack size 56 bytes, print_api.o(i.sMyPrintWarn))
-<BR><BR>[Stack]<UL><LI>Max Depth = 148<LI>Call Chain = sMyPrintWarn &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[7]"></a>sMyPrintWarn</STRONG> (Thumb, 144 bytes, Stack size 48 bytes, print_api.o(i.sMyPrintWarn))
+<BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = sMyPrintWarn &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_write
 <LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bPrint_SendDataToUsart
@@ -1606,7 +1624,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> print_api.o(.data)
 </UL>
-<P><STRONG><a name="[c3]"></a>ucCheck_SumReflect</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, check.o(i.ucCheck_SumReflect))
+<P><STRONG><a name="[c3]"></a>ucCheck_SumReflect</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, check.o(i.ucCheck_SumReflect))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = ucCheck_SumReflect
 </UL>
 <BR>[Called By]<UL><LI><a href="#[c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;c_baiku_proto_decrypt
@@ -1618,18 +1636,18 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_port_init
 </UL>
 
-<P><STRONG><a name="[e4]"></a>usCheck_GetCrc16Tab</STRONG> (Thumb, 42 bytes, Stack size 16 bytes, check.o(i.usCheck_GetCrc16Tab))
+<P><STRONG><a name="[e4]"></a>usCheck_GetCrc16Tab</STRONG> (Thumb, 36 bytes, Stack size 16 bytes, check.o(i.usCheck_GetCrc16Tab))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = usCheck_GetCrc16Tab
 </UL>
 <BR>[Called By]<UL><LI><a href="#[e3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chk_crc16
 </UL>
 
-<P><STRONG><a name="[146]"></a>us_get_frame_len</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, xmodem_proto.o(i.us_get_frame_len))
+<P><STRONG><a name="[146]"></a>us_get_frame_len</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, xmodem_proto.o(i.us_get_frame_len))
 <BR><BR>[Called By]<UL><LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vXmodem_Proto
 </UL>
 
-<P><STRONG><a name="[124]"></a>usart_baudrate_set</STRONG> (Thumb, 136 bytes, Stack size 32 bytes, gd32f30x_usart.o(i.usart_baudrate_set))
-<BR><BR>[Stack]<UL><LI>Max Depth = 116<LI>Call Chain = usart_baudrate_set &rArr; rcu_clock_freq_get
+<P><STRONG><a name="[124]"></a>usart_baudrate_set</STRONG> (Thumb, 102 bytes, Stack size 16 bytes, gd32f30x_usart.o(i.usart_baudrate_set))
+<BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = usart_baudrate_set &rArr; rcu_clock_freq_get
 </UL>
 <BR>[Calls]<UL><LI><a href="#[125]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rcu_clock_freq_get
 </UL>
@@ -1658,17 +1676,13 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_print_usart_init
 </UL>
 
-<P><STRONG><a name="[8e]"></a>usart_interrupt_disable</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, gd32f30x_usart.o(i.usart_interrupt_disable))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = usart_interrupt_disable
-</UL>
-<BR>[Called By]<UL><LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART0_IRQHandler
+<P><STRONG><a name="[8e]"></a>usart_interrupt_disable</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, gd32f30x_usart.o(i.usart_interrupt_disable))
+<BR><BR>[Called By]<UL><LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART0_IRQHandler
 <LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_print_usart_init
 </UL>
 
-<P><STRONG><a name="[ac]"></a>usart_interrupt_enable</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, gd32f30x_usart.o(i.usart_interrupt_enable))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = usart_interrupt_enable
-</UL>
-<BR>[Called By]<UL><LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_print_usart_init
+<P><STRONG><a name="[ac]"></a>usart_interrupt_enable</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, gd32f30x_usart.o(i.usart_interrupt_enable))
+<BR><BR>[Called By]<UL><LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_print_usart_init
 <LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bPrint_DataSendStart
 </UL>
 
@@ -1678,8 +1692,8 @@ Global Symbols
 <LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bPrint_DataSendStart
 </UL>
 
-<P><STRONG><a name="[8b]"></a>usart_interrupt_flag_get</STRONG> (Thumb, 56 bytes, Stack size 16 bytes, gd32f30x_usart.o(i.usart_interrupt_flag_get))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = usart_interrupt_flag_get
+<P><STRONG><a name="[8b]"></a>usart_interrupt_flag_get</STRONG> (Thumb, 50 bytes, Stack size 12 bytes, gd32f30x_usart.o(i.usart_interrupt_flag_get))
+<BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = usart_interrupt_flag_get
 </UL>
 <BR>[Called By]<UL><LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART0_IRQHandler
 </UL>
@@ -1704,8 +1718,8 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_print_usart_init
 </UL>
 
-<P><STRONG><a name="[129]"></a>vBaiKuProto_Proto</STRONG> (Thumb, 276 bytes, Stack size 16 bytes, baiku_proto_1.o(i.vBaiKuProto_Proto))
-<BR><BR>[Stack]<UL><LI>Max Depth = 140<LI>Call Chain = vBaiKuProto_Proto &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[129]"></a>vBaiKuProto_Proto</STRONG> (Thumb, 270 bytes, Stack size 16 bytes, baiku_proto_1.o(i.vBaiKuProto_Proto))
+<BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = vBaiKuProto_Proto &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrint
 <LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_set_work_state
@@ -1716,12 +1730,12 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_sys_queue_task_updata
 </UL>
 
-<P><STRONG><a name="[142]"></a>vBaiKuProto_TickTime</STRONG> (Thumb, 52 bytes, Stack size 0 bytes, baiku_proto_1.o(i.vBaiKuProto_TickTime))
+<P><STRONG><a name="[141]"></a>vBaiKuProto_TickTime</STRONG> (Thumb, 46 bytes, Stack size 0 bytes, baiku_proto_1.o(i.vBaiKuProto_TickTime))
 <BR><BR>[Called By]<UL><LI><a href="#[13e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vUpdata_TickTimer
 </UL>
 
 <P><STRONG><a name="[117]"></a>vBoard_StartTask</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, board_config.o(i.vBoard_StartTask))
-<BR><BR>[Stack]<UL><LI>Max Depth = 84<LI>Call Chain = vBoard_StartTask &rArr; bPrint_TaskInit &rArr; bPrint_QueueInit &rArr; cQueue_TaskInit &rArr; malloc
+<BR><BR>[Stack]<UL><LI>Max Depth = 76<LI>Call Chain = vBoard_StartTask &rArr; vSys_TaskInit &rArr; bSys_QueueInit &rArr; cQueue_TaskInit &rArr; malloc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vSys_TaskInit
 <LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vKey_TaskInit
@@ -1731,7 +1745,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[116]"></a>vBoard_SysInit</STRONG> (Thumb, 40 bytes, Stack size 8 bytes, board_config.o(i.vBoard_SysInit))
-<BR><BR>[Stack]<UL><LI>Max Depth = 812<LI>Call Chain = vBoard_SysInit &rArr; easyflash_init &rArr; ef_env_init &rArr; ef_load_env &rArr; ef_env_set_default &rArr; create_env_blob &rArr; new_env &rArr; gc_collect &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<BR><BR>[Stack]<UL><LI>Max Depth = 776<LI>Call Chain = vBoard_SysInit &rArr; easyflash_init &rArr; ef_env_init &rArr; ef_load_env &rArr; ef_env_set_default &rArr; create_env_blob &rArr; new_env &rArr; gc_collect &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;easyflash_init
 <LI><a href="#[12e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPrint_Init
@@ -1744,16 +1758,16 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[102]"></a>vFlash_Gd32Read32Bit</STRONG> (Thumb, 102 bytes, Stack size 24 bytes, flash_gd32.o(i.vFlash_Gd32Read32Bit))
-<BR><BR>[Stack]<UL><LI>Max Depth = 148<LI>Call Chain = vFlash_Gd32Read32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[102]"></a>vFlash_Gd32Read32Bit</STRONG> (Thumb, 92 bytes, Stack size 24 bytes, flash_gd32.o(i.vFlash_Gd32Read32Bit))
+<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = vFlash_Gd32Read32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrint
 </UL>
 <BR>[Called By]<UL><LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_port_read
 </UL>
 
-<P><STRONG><a name="[131]"></a>vFlash_WriteDataToFlashInit</STRONG> (Thumb, 40 bytes, Stack size 8 bytes, flash_iface.o(i.vFlash_WriteDataToFlashInit))
-<BR><BR>[Stack]<UL><LI>Max Depth = 180<LI>Call Chain = vFlash_WriteDataToFlashInit &rArr; cFlash_EraseSector &rArr; bFlash_Gd32EraseSector &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[131]"></a>vFlash_WriteDataToFlashInit</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, flash_iface.o(i.vFlash_WriteDataToFlashInit))
+<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = vFlash_WriteDataToFlashInit &rArr; cFlash_EraseSector &rArr; bFlash_Gd32EraseSector &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrint
 <LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cFlash_EraseSector
@@ -1761,8 +1775,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_rec_start_cd
 </UL>
 
-<P><STRONG><a name="[114]"></a>vGPIO_Init</STRONG> (Thumb, 212 bytes, Stack size 8 bytes, gpio_init.o(i.vGPIO_Init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = vGPIO_Init &rArr; gpio_init
+<P><STRONG><a name="[114]"></a>vGPIO_Init</STRONG> (Thumb, 194 bytes, Stack size 24 bytes, gpio_init.o(i.vGPIO_Init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = vGPIO_Init &rArr; gpio_init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_init
 <LI><a href="#[132]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rcu_periph_clock_enable
@@ -1771,16 +1785,14 @@ Global Symbols
 <LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[134]"></a>vKey_ParamInit</STRONG> (Thumb, 18 bytes, Stack size 8 bytes, key_task.o(i.vKey_ParamInit))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = vKey_ParamInit
-</UL>
-<BR>[Calls]<UL><LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
+<P><STRONG><a name="[134]"></a>vKey_ParamInit</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, key_task.o(i.vKey_ParamInit))
+<BR><BR>[Calls]<UL><LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[135]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vKey_ProcKeyFunc
 </UL>
 
-<P><STRONG><a name="[135]"></a>vKey_ProcKeyFunc</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, key_func.o(i.vKey_ProcKeyFunc))
-<BR><BR>[Stack]<UL><LI>Max Depth = 132<LI>Call Chain = vKey_ProcKeyFunc &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[135]"></a>vKey_ProcKeyFunc</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, key_func.o(i.vKey_ProcKeyFunc))
+<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = vKey_ProcKeyFunc &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[136]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bFun_DataCompare
 <LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrint
@@ -1789,19 +1801,19 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vKey_Task
 </UL>
 
-<P><STRONG><a name="[119]"></a>vKey_Task</STRONG> (Thumb, 544 bytes, Stack size 8 bytes, key_task.o(i.vKey_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 140<LI>Call Chain = vKey_Task &rArr; v_key_shot_press &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[119]"></a>vKey_Task</STRONG> (Thumb, 410 bytes, Stack size 24 bytes, key_task.o(i.vKey_Task))
+<BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = vKey_Task &rArr; v_key_shot_press &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrint
-<LI><a href="#[137]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_key_shot_press
-<LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_key_long_press
+<LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_key_shot_press
+<LI><a href="#[137]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_key_long_press
 <LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_key_check_other_is_tri
 <LI><a href="#[135]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vKey_ProcKeyFunc
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[12c]"></a>vKey_TaskInit</STRONG> (Thumb, 8 bytes, Stack size 8 bytes, key_task.o(i.vKey_TaskInit))
+<P><STRONG><a name="[12c]"></a>vKey_TaskInit</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, key_task.o(i.vKey_TaskInit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 36<LI>Call Chain = vKey_TaskInit &rArr; v_key_gpio_init &rArr; gpio_init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[13a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_key_gpio_init
@@ -1809,16 +1821,16 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[117]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vBoard_StartTask
 </UL>
 
-<P><STRONG><a name="[d3]"></a>vPrint_DeInit</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, print_iface.o(i.vPrint_DeInit))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = vPrint_DeInit &rArr; usart_deinit
+<P><STRONG><a name="[d3]"></a>vPrint_DeInit</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, print_iface.o(i.vPrint_DeInit))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = vPrint_DeInit &rArr; usart_deinit
 </UL>
 <BR>[Calls]<UL><LI><a href="#[126]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;usart_deinit
 </UL>
 <BR>[Called By]<UL><LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cSys_JumpToApp
 </UL>
 
-<P><STRONG><a name="[12e]"></a>vPrint_Init</STRONG> (Thumb, 12 bytes, Stack size 8 bytes, print_iface.o(i.vPrint_Init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 132<LI>Call Chain = vPrint_Init &rArr; v_print_usart_init &rArr; usart_baudrate_set &rArr; rcu_clock_freq_get
+<P><STRONG><a name="[12e]"></a>vPrint_Init</STRONG> (Thumb, 14 bytes, Stack size 8 bytes, print_iface.o(i.vPrint_Init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = vPrint_Init &rArr; v_print_usart_init &rArr; usart_baudrate_set &rArr; rcu_clock_freq_get
 </UL>
 <BR>[Calls]<UL><LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_print_usart_init
 <LI><a href="#[13b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_print_gpio_init
@@ -1826,24 +1838,20 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[116]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vBoard_SysInit
 </UL>
 
-<P><STRONG><a name="[be]"></a>vPrint_MyPrintParamInit</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, print_api.o(i.vPrint_MyPrintParamInit))
-<BR><BR>[Called By]<UL><LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;b_print_task_param_init
-</UL>
-
-<P><STRONG><a name="[11b]"></a>vPrint_Task</STRONG> (Thumb, 112 bytes, Stack size 8 bytes, print_task.o(i.vPrint_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = vPrint_Task &rArr; b_print_task_param_init &rArr; lwrb_reset
+<P><STRONG><a name="[11b]"></a>vPrint_Task</STRONG> (Thumb, 52 bytes, Stack size 0 bytes, print_task.o(i.vPrint_Task))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = vPrint_Task &rArr; b_print_task_param_init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;b_print_task_param_init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[d4]"></a>vSys_MsDelay</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, systick.o(i.vSys_MsDelay))
+<P><STRONG><a name="[d4]"></a>vSys_MsDelay</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, systick.o(i.vSys_MsDelay))
 <BR><BR>[Called By]<UL><LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cSys_JumpToApp
 </UL>
 
-<P><STRONG><a name="[118]"></a>vSys_Task</STRONG> (Thumb, 112 bytes, Stack size 16 bytes, sys_task.o(i.vSys_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = vSys_Task &rArr; lwrb_get_full
+<P><STRONG><a name="[118]"></a>vSys_Task</STRONG> (Thumb, 80 bytes, Stack size 8 bytes, sys_task.o(i.vSys_Task))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = vSys_Task &rArr; v_task_param_init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_get_full
 <LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_task_param_init
@@ -1851,58 +1859,56 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[12b]"></a>vSys_TaskInit</STRONG> (Thumb, 18 bytes, Stack size 8 bytes, sys_task.o(i.vSys_TaskInit))
+<P><STRONG><a name="[12b]"></a>vSys_TaskInit</STRONG> (Thumb, 20 bytes, Stack size 8 bytes, sys_task.o(i.vSys_TaskInit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = vSys_TaskInit &rArr; bSys_QueueInit &rArr; cQueue_TaskInit &rArr; malloc
 </UL>
-<BR>[Calls]<UL><LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bSys_QueueInit
-<LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_task_param_init
+<BR>[Calls]<UL><LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_task_param_init
+<LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bSys_QueueInit
 </UL>
 <BR>[Called By]<UL><LI><a href="#[117]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vBoard_StartTask
 </UL>
 
-<P><STRONG><a name="[89]"></a>vSys_Tick</STRONG> (Thumb, 80 bytes, Stack size 8 bytes, systick.o(i.vSys_Tick))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = vSys_Tick &rArr; vUpdata_TickTimer
+<P><STRONG><a name="[7b]"></a>vSys_Tick</STRONG> (Thumb, 58 bytes, Stack size 16 bytes, systick.o(i.vSys_Tick))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = vSys_Tick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[13e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vUpdata_TickTimer
 </UL>
 <BR>[Called By]<UL><LI><a href="#[12]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SysTick_Handler
 </UL>
 
-<P><STRONG><a name="[115]"></a>vSys_TickConfig</STRONG> (Thumb, 74 bytes, Stack size 8 bytes, systick.o(i.vSys_TickConfig))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = vSys_TickConfig &rArr; NVIC_SetPriority
+<P><STRONG><a name="[115]"></a>vSys_TickConfig</STRONG> (Thumb, 70 bytes, Stack size 16 bytes, systick.o(i.vSys_TickConfig))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = vSys_TickConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[13f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_SetPriority
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[140]"></a>vSys_TickTimer</STRONG> (Thumb, 198 bytes, Stack size 8 bytes, sys_task.o(i.vSys_TickTimer))
-<BR><BR>[Stack]<UL><LI>Max Depth = 132<LI>Call Chain = vSys_TickTimer &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[140]"></a>vSys_TickTimer</STRONG> (Thumb, 154 bytes, Stack size 8 bytes, sys_task.o(i.vSys_TickTimer))
+<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = vSys_TickTimer &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrint
 </UL>
 <BR>[Called By]<UL><LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTimer_Task
 </UL>
 
-<P><STRONG><a name="[11a]"></a>vTimer_Task</STRONG> (Thumb, 30 bytes, Stack size 8 bytes, timer_task.o(i.vTimer_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 140<LI>Call Chain = vTimer_Task &rArr; vSys_TickTimer &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[11a]"></a>vTimer_Task</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, timer_task.o(i.vTimer_Task))
+<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = vTimer_Task &rArr; vSys_TickTimer &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[140]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vSys_TickTimer
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[13e]"></a>vUpdata_TickTimer</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, sys_queue_task_updata.o(i.vUpdata_TickTimer))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = vUpdata_TickTimer
+<P><STRONG><a name="[13e]"></a>vUpdata_TickTimer</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, sys_queue_task_updata.o(i.vUpdata_TickTimer))
+<BR><BR>[Calls]<UL><LI><a href="#[142]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vXmodem_TickTime
+<LI><a href="#[141]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vBaiKuProto_TickTime
 </UL>
-<BR>[Calls]<UL><LI><a href="#[141]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vXmodem_TickTime
-<LI><a href="#[142]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vBaiKuProto_TickTime
-</UL>
-<BR>[Called By]<UL><LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vSys_Tick
+<BR>[Called By]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vSys_Tick
 </UL>
 
-<P><STRONG><a name="[143]"></a>vXmodem_Proto</STRONG> (Thumb, 558 bytes, Stack size 16 bytes, xmodem_proto.o(i.vXmodem_Proto))
-<BR><BR>[Stack]<UL><LI>Max Depth = 188<LI>Call Chain = vXmodem_Proto &rArr; e_rec_proc &rArr; chk_add8 &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[143]"></a>vXmodem_Proto</STRONG> (Thumb, 492 bytes, Stack size 16 bytes, xmodem_proto.o(i.vXmodem_Proto))
+<BR><BR>[Stack]<UL><LI>Max Depth = 168<LI>Call Chain = vXmodem_Proto &rArr; e_rec_proc &rArr; chk_add8 &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrint
 <LI><a href="#[146]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;us_get_frame_len
@@ -1915,12 +1921,12 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_sys_queue_task_updata
 </UL>
 
-<P><STRONG><a name="[141]"></a>vXmodem_TickTime</STRONG> (Thumb, 44 bytes, Stack size 0 bytes, xmodem_proto.o(i.vXmodem_TickTime))
+<P><STRONG><a name="[142]"></a>vXmodem_TickTime</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, xmodem_proto.o(i.vXmodem_TickTime))
 <BR><BR>[Called By]<UL><LI><a href="#[13e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vUpdata_TickTimer
 </UL>
 
-<P><STRONG><a name="[5f]"></a>v_print_queue_task_main</STRONG> (Thumb, 146 bytes, Stack size 16 bytes, print_queue_task_main.o(i.v_print_queue_task_main))
-<BR><BR>[Stack]<UL><LI>Max Depth = 756<LI>Call Chain = v_print_queue_task_main &rArr; c_relay88_sys_set &rArr; eBoot_InfoInit &rArr; cBoot_UpdataMemParam &rArr; ef_set_env_blob &rArr; set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[5f]"></a>v_print_queue_task_main</STRONG> (Thumb, 122 bytes, Stack size 16 bytes, print_queue_task_main.o(i.v_print_queue_task_main))
+<BR><BR>[Stack]<UL><LI>Max Depth = 688<LI>Call Chain = v_print_queue_task_main &rArr; c_relay88_sys_set &rArr; eBoot_InfoInit &rArr; cBoot_UpdataMemParam &rArr; ef_set_env_blob &rArr; set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_get_full
 <LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBaiku_ProtoCheck
@@ -1932,8 +1938,8 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> print_queue_task.o(i.b_task_manage_func_cb)
 </UL>
-<P><STRONG><a name="[5b]"></a>v_sys_queue_task_enter_app</STRONG> (Thumb, 204 bytes, Stack size 8 bytes, sys_queue_task_enter_app.o(i.v_sys_queue_task_enter_app))
-<BR><BR>[Stack]<UL><LI>Max Depth = 732<LI>Call Chain = v_sys_queue_task_enter_app &rArr; cSys_JumpToApp &rArr; cBoot_CtrlUpdata &rArr; cBoot_UpdataMemParam &rArr; ef_set_env_blob &rArr; set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[5b]"></a>v_sys_queue_task_enter_app</STRONG> (Thumb, 166 bytes, Stack size 16 bytes, sys_queue_task_enter_app.o(i.v_sys_queue_task_enter_app))
+<BR><BR>[Stack]<UL><LI>Max Depth = 672<LI>Call Chain = v_sys_queue_task_enter_app &rArr; cSys_JumpToApp &rArr; cBoot_CtrlUpdata &rArr; cBoot_UpdataMemParam &rArr; ef_set_env_blob &rArr; set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBoot_CtrlUpdata
 <LI><a href="#[14a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cQueue_GotoStep
@@ -1943,17 +1949,17 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> sys_queue_task.o(i.b_task_manage_func_cb)
 </UL>
-<P><STRONG><a name="[5c]"></a>v_sys_queue_task_err</STRONG> (Thumb, 140 bytes, Stack size 8 bytes, sys_queue_task_err.o(i.v_sys_queue_task_err))
-<BR><BR>[Stack]<UL><LI>Max Depth = 148<LI>Call Chain = v_sys_queue_task_err &rArr; bSys_SetDevState &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[5c]"></a>v_sys_queue_task_err</STRONG> (Thumb, 134 bytes, Stack size 8 bytes, sys_queue_task_err.o(i.v_sys_queue_task_err))
+<BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = v_sys_queue_task_err &rArr; bSys_SetDevState &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_get_full
-<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bSys_SetDevState
 <LI><a href="#[14a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cQueue_GotoStep
+<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bSys_SetDevState
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> sys_queue_task.o(i.b_task_manage_func_cb)
 </UL>
-<P><STRONG><a name="[5a]"></a>v_sys_queue_task_init</STRONG> (Thumb, 190 bytes, Stack size 16 bytes, sys_queue_task_init.o(i.v_sys_queue_task_init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 732<LI>Call Chain = v_sys_queue_task_init &rArr; eBoot_InfoInit &rArr; cBoot_UpdataMemParam &rArr; ef_set_env_blob &rArr; set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[5a]"></a>v_sys_queue_task_init</STRONG> (Thumb, 142 bytes, Stack size 16 bytes, sys_queue_task_init.o(i.v_sys_queue_task_init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 664<LI>Call Chain = v_sys_queue_task_init &rArr; eBoot_InfoInit &rArr; cBoot_UpdataMemParam &rArr; ef_set_env_blob &rArr; set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eBoot_InfoInit
 <LI><a href="#[14a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cQueue_GotoStep
@@ -1962,15 +1968,15 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> sys_queue_task.o(i.b_task_manage_func_cb)
 </UL>
-<P><STRONG><a name="[5d]"></a>v_sys_queue_task_reset</STRONG> (Thumb, 118 bytes, Stack size 8 bytes, sys_queue_task_reset.o(i.v_sys_queue_task_reset))
+<P><STRONG><a name="[5d]"></a>v_sys_queue_task_reset</STRONG> (Thumb, 106 bytes, Stack size 8 bytes, sys_queue_task_reset.o(i.v_sys_queue_task_reset))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = v_sys_queue_task_reset &rArr; cQueue_GotoStep
 </UL>
 <BR>[Calls]<UL><LI><a href="#[14a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cQueue_GotoStep
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> sys_queue_task.o(i.b_task_manage_func_cb)
 </UL>
-<P><STRONG><a name="[5e]"></a>v_sys_queue_task_updata</STRONG> (Thumb, 186 bytes, Stack size 8 bytes, sys_queue_task_updata.o(i.v_sys_queue_task_updata))
-<BR><BR>[Stack]<UL><LI>Max Depth = 196<LI>Call Chain = v_sys_queue_task_updata &rArr; vXmodem_Proto &rArr; e_rec_proc &rArr; chk_add8 &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[5e]"></a>v_sys_queue_task_updata</STRONG> (Thumb, 150 bytes, Stack size 16 bytes, sys_queue_task_updata.o(i.v_sys_queue_task_updata))
+<BR><BR>[Stack]<UL><LI>Max Depth = 184<LI>Call Chain = v_sys_queue_task_updata &rArr; vXmodem_Proto &rArr; e_rec_proc &rArr; chk_add8 &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_reset
 <LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_get_full
@@ -1984,78 +1990,74 @@ Global Symbols
 <H3>
 Local Symbols
 </H3>
-<P><STRONG><a name="[123]"></a>system_clock_8m_irc8m</STRONG> (Thumb, 104 bytes, Stack size 0 bytes, system_gd32f30x.o(i.system_clock_8m_irc8m))
+<P><STRONG><a name="[123]"></a>system_clock_8m_irc8m</STRONG> (Thumb, 70 bytes, Stack size 0 bytes, system_gd32f30x.o(i.system_clock_8m_irc8m))
 <BR><BR>[Called By]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;system_clock_config
 </UL>
 
-<P><STRONG><a name="[8a]"></a>system_clock_config</STRONG> (Thumb, 8 bytes, Stack size 8 bytes, system_gd32f30x.o(i.system_clock_config))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = system_clock_config
-</UL>
-<BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;system_clock_8m_irc8m
+<P><STRONG><a name="[8a]"></a>system_clock_config</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, system_gd32f30x.o(i.system_clock_config))
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;system_clock_8m_irc8m
 </UL>
 <BR>[Called By]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemInit
 </UL>
 
-<P><STRONG><a name="[7f]"></a>_DoInit</STRONG> (Thumb, 82 bytes, Stack size 16 bytes, segger_rtt.o(i._DoInit))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = _DoInit
+<P><STRONG><a name="[80]"></a>_DoInit</STRONG> (Thumb, 80 bytes, Stack size 8 bytes, segger_rtt.o(i._DoInit))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = _DoInit
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
-<BR>[Called By]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_Write
+<BR>[Called By]<UL><LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_Write
 </UL>
 
-<P><STRONG><a name="[81]"></a>_GetAvailWriteSpace</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, segger_rtt.o(i._GetAvailWriteSpace))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = _GetAvailWriteSpace
-</UL>
-<BR>[Called By]<UL><LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteNoLock
+<P><STRONG><a name="[82]"></a>_GetAvailWriteSpace</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, segger_rtt.o(i._GetAvailWriteSpace))
+<BR><BR>[Called By]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteNoLock
 </UL>
 
-<P><STRONG><a name="[83]"></a>_WriteBlocking</STRONG> (Thumb, 118 bytes, Stack size 40 bytes, segger_rtt.o(i._WriteBlocking))
-<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = _WriteBlocking &rArr; __aeabi_memcpy
+<P><STRONG><a name="[84]"></a>_WriteBlocking</STRONG> (Thumb, 92 bytes, Stack size 32 bytes, segger_rtt.o(i._WriteBlocking))
+<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = _WriteBlocking &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
 </UL>
-<BR>[Called By]<UL><LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteNoLock
+<BR>[Called By]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteNoLock
 </UL>
 
-<P><STRONG><a name="[82]"></a>_WriteNoCheck</STRONG> (Thumb, 88 bytes, Stack size 32 bytes, segger_rtt.o(i._WriteNoCheck))
-<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = _WriteNoCheck &rArr; __aeabi_memcpy
+<P><STRONG><a name="[83]"></a>_WriteNoCheck</STRONG> (Thumb, 68 bytes, Stack size 24 bytes, segger_rtt.o(i._WriteNoCheck))
+<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = _WriteNoCheck &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
 </UL>
-<BR>[Called By]<UL><LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteNoLock
+<BR>[Called By]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteNoLock
 </UL>
 
-<P><STRONG><a name="[87]"></a>_PrintInt</STRONG> (Thumb, 236 bytes, Stack size 48 bytes, segger_rtt_printf.o(i._PrintInt))
-<BR><BR>[Stack]<UL><LI>Max Depth = 216<LI>Call Chain = _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteBlocking &rArr; __aeabi_memcpy
+<P><STRONG><a name="[88]"></a>_PrintInt</STRONG> (Thumb, 216 bytes, Stack size 48 bytes, segger_rtt_printf.o(i._PrintInt))
+<BR><BR>[Stack]<UL><LI>Max Depth = 176<LI>Call Chain = _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteBlocking &rArr; __aeabi_memcpy
 </UL>
-<BR>[Calls]<UL><LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_StoreChar
-<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_PrintUnsigned
+<BR>[Calls]<UL><LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_StoreChar
+<LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_PrintUnsigned
 </UL>
-<BR>[Called By]<UL><LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_vprintf
-</UL>
-
-<P><STRONG><a name="[88]"></a>_PrintUnsigned</STRONG> (Thumb, 230 bytes, Stack size 48 bytes, segger_rtt_printf.o(i._PrintUnsigned))
-<BR><BR>[Stack]<UL><LI>Max Depth = 168<LI>Call Chain = _PrintUnsigned &rArr; _StoreChar &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteBlocking &rArr; __aeabi_memcpy
-</UL>
-<BR>[Calls]<UL><LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_StoreChar
-</UL>
-<BR>[Called By]<UL><LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_vprintf
-<LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_PrintInt
+<BR>[Called By]<UL><LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_vprintf
 </UL>
 
-<P><STRONG><a name="[86]"></a>_StoreChar</STRONG> (Thumb, 68 bytes, Stack size 16 bytes, segger_rtt_printf.o(i._StoreChar))
-<BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = _StoreChar &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteBlocking &rArr; __aeabi_memcpy
+<P><STRONG><a name="[89]"></a>_PrintUnsigned</STRONG> (Thumb, 210 bytes, Stack size 40 bytes, segger_rtt_printf.o(i._PrintUnsigned))
+<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = _PrintUnsigned &rArr; _StoreChar &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteBlocking &rArr; __aeabi_memcpy
 </UL>
-<BR>[Calls]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_Write
+<BR>[Calls]<UL><LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_StoreChar
 </UL>
-<BR>[Called By]<UL><LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_vprintf
-<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_PrintUnsigned
-<LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_PrintInt
+<BR>[Called By]<UL><LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_vprintf
+<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_PrintInt
 </UL>
 
-<P><STRONG><a name="[9a]"></a>align_write</STRONG> (Thumb, 92 bytes, Stack size 32 bytes, ef_env.o(i.align_write))
-<BR><BR>[Stack]<UL><LI>Max Depth = 212<LI>Call Chain = align_write &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[87]"></a>_StoreChar</STRONG> (Thumb, 62 bytes, Stack size 8 bytes, segger_rtt_printf.o(i._StoreChar))
+<BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = _StoreChar &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteBlocking &rArr; __aeabi_memcpy
+</UL>
+<BR>[Calls]<UL><LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_Write
+</UL>
+<BR>[Called By]<UL><LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_vprintf
+<LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_PrintUnsigned
+<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_PrintInt
+</UL>
+
+<P><STRONG><a name="[9a]"></a>align_write</STRONG> (Thumb, 78 bytes, Stack size 32 bytes, ef_env.o(i.align_write))
+<BR><BR>[Stack]<UL><LI>Max Depth = 184<LI>Call Chain = align_write &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_port_write
 <LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memset
@@ -2064,8 +2066,8 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;create_env_blob
 </UL>
 
-<P><STRONG><a name="[9c]"></a>alloc_env</STRONG> (Thumb, 116 bytes, Stack size 40 bytes, ef_env.o(i.alloc_env))
-<BR><BR>[Stack]<UL><LI>Max Depth = 508<LI>Call Chain = alloc_env &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[9c]"></a>alloc_env</STRONG> (Thumb, 104 bytes, Stack size 48 bytes, ef_env.o(i.alloc_env))
+<BR><BR>[Stack]<UL><LI>Max Depth = 472<LI>Call Chain = alloc_env &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sector_iterator
 </UL>
@@ -2073,13 +2075,11 @@ Local Symbols
 <LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;move_env
 </UL>
 
-<P><STRONG><a name="[56]"></a>alloc_env_cb</STRONG> (Thumb, 50 bytes, Stack size 16 bytes, ef_env.o(i.alloc_env_cb))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = alloc_env_cb
-</UL>
+<P><STRONG><a name="[56]"></a>alloc_env_cb</STRONG> (Thumb, 42 bytes, Stack size 0 bytes, ef_env.o(i.alloc_env_cb))
 <BR>[Address Reference Count : 1]<UL><LI> ef_env.o(i.alloc_env)
 </UL>
-<P><STRONG><a name="[62]"></a>check_and_recovery_env_cb</STRONG> (Thumb, 74 bytes, Stack size 40 bytes, ef_env.o(i.check_and_recovery_env_cb))
-<BR><BR>[Stack]<UL><LI>Max Depth = 836<LI>Call Chain = check_and_recovery_env_cb &rArr; move_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[62]"></a>check_and_recovery_env_cb</STRONG> (Thumb, 70 bytes, Stack size 32 bytes, ef_env.o(i.check_and_recovery_env_cb))
+<BR><BR>[Stack]<UL><LI>Max Depth = 784<LI>Call Chain = check_and_recovery_env_cb &rArr; move_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_status
 <LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;move_env
@@ -2087,15 +2087,15 @@ Local Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> ef_env.o(i.ef_load_env)
 </UL>
-<P><STRONG><a name="[61]"></a>check_and_recovery_gc_cb</STRONG> (Thumb, 32 bytes, Stack size 16 bytes, ef_env.o(i.check_and_recovery_gc_cb))
-<BR><BR>[Stack]<UL><LI>Max Depth = 524<LI>Call Chain = check_and_recovery_gc_cb &rArr; gc_collect &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[61]"></a>check_and_recovery_gc_cb</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, ef_env.o(i.check_and_recovery_gc_cb))
+<BR><BR>[Stack]<UL><LI>Max Depth = 480<LI>Call Chain = check_and_recovery_gc_cb &rArr; gc_collect &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gc_collect
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> ef_env.o(i.ef_load_env)
 </UL>
-<P><STRONG><a name="[60]"></a>check_sec_hdr_cb</STRONG> (Thumb, 48 bytes, Stack size 24 bytes, ef_env.o(i.check_sec_hdr_cb))
-<BR><BR>[Stack]<UL><LI>Max Depth = 260<LI>Call Chain = check_sec_hdr_cb &rArr; format_sector &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[60]"></a>check_sec_hdr_cb</STRONG> (Thumb, 40 bytes, Stack size 16 bytes, ef_env.o(i.check_sec_hdr_cb))
+<BR><BR>[Stack]<UL><LI>Max Depth = 224<LI>Call Chain = check_sec_hdr_cb &rArr; format_sector &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;format_sector
 <LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_log_info
@@ -2103,15 +2103,15 @@ Local Symbols
 <BR>[Address Reference Count : 1]<UL><LI> ef_env.o(i.ef_load_env)
 </UL>
 <P><STRONG><a name="[e5]"></a>continue_ff_addr</STRONG> (Thumb, 102 bytes, Stack size 64 bytes, ef_env.o(i.continue_ff_addr))
-<BR><BR>[Stack]<UL><LI>Max Depth = 236<LI>Call Chain = continue_ff_addr &rArr; ef_port_read &rArr; vFlash_Gd32Read32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<BR><BR>[Stack]<UL><LI>Max Depth = 200<LI>Call Chain = continue_ff_addr &rArr; ef_port_read &rArr; vFlash_Gd32Read32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_port_read
 </UL>
 <BR>[Called By]<UL><LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_sector_meta_data
 </UL>
 
-<P><STRONG><a name="[e7]"></a>create_env_blob</STRONG> (Thumb, 424 bytes, Stack size 80 bytes, ef_env.o(i.create_env_blob))
-<BR><BR>[Stack]<UL><LI>Max Depth = 612<LI>Call Chain = create_env_blob &rArr; new_env &rArr; gc_collect &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[e7]"></a>create_env_blob</STRONG> (Thumb, 396 bytes, Stack size 72 bytes, ef_env.o(i.create_env_blob))
+<BR><BR>[Stack]<UL><LI>Max Depth = 568<LI>Call Chain = create_env_blob &rArr; new_env &rArr; gc_collect &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_status
 <LI><a href="#[ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_env_hdr
@@ -2129,8 +2129,8 @@ Local Symbols
 <LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_env_set_default
 </UL>
 
-<P><STRONG><a name="[ef]"></a>del_env</STRONG> (Thumb, 176 bytes, Stack size 104 bytes, ef_env.o(i.del_env))
-<BR><BR>[Stack]<UL><LI>Max Depth = 628<LI>Call Chain = del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[ef]"></a>del_env</STRONG> (Thumb, 166 bytes, Stack size 104 bytes, ef_env.o(i.del_env))
+<BR><BR>[Stack]<UL><LI>Max Depth = 584<LI>Call Chain = del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_status
 <LI><a href="#[ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;update_env_cache
@@ -2142,8 +2142,8 @@ Local Symbols
 <LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;move_env
 </UL>
 
-<P><STRONG><a name="[65]"></a>do_gc</STRONG> (Thumb, 118 bytes, Stack size 88 bytes, ef_env.o(i.do_gc))
-<BR><BR>[Stack]<UL><LI>Max Depth = 884<LI>Call Chain = do_gc &rArr; move_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[65]"></a>do_gc</STRONG> (Thumb, 102 bytes, Stack size 80 bytes, ef_env.o(i.do_gc))
+<BR><BR>[Stack]<UL><LI>Max Depth = 832<LI>Call Chain = do_gc &rArr; move_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_status
 <LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_env
@@ -2153,8 +2153,8 @@ Local Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> ef_env.o(i.gc_collect)
 </UL>
-<P><STRONG><a name="[fe]"></a>env_iterator</STRONG> (Thumb, 122 bytes, Stack size 48 bytes, ef_env.o(i.env_iterator))
-<BR><BR>[Stack]<UL><LI>Max Depth = 484<LI>Call Chain = env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[fe]"></a>env_iterator</STRONG> (Thumb, 98 bytes, Stack size 48 bytes, ef_env.o(i.env_iterator))
+<BR><BR>[Stack]<UL><LI>Max Depth = 440<LI>Call Chain = env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_sector_meta_data
 <LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_env
@@ -2165,8 +2165,8 @@ Local Symbols
 <LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_load_env
 </UL>
 
-<P><STRONG><a name="[f0]"></a>find_env</STRONG> (Thumb, 70 bytes, Stack size 24 bytes, ef_env.o(i.find_env))
-<BR><BR>[Stack]<UL><LI>Max Depth = 524<LI>Call Chain = find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[f0]"></a>find_env</STRONG> (Thumb, 68 bytes, Stack size 24 bytes, ef_env.o(i.find_env))
+<BR><BR>[Stack]<UL><LI>Max Depth = 480<LI>Call Chain = find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;update_env_cache
 <LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_env
@@ -2179,8 +2179,8 @@ Local Symbols
 <LI><a href="#[ef]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;del_env
 </UL>
 
-<P><STRONG><a name="[63]"></a>find_env_cb</STRONG> (Thumb, 70 bytes, Stack size 32 bytes, ef_env.o(i.find_env_cb))
-<BR><BR>[Stack]<UL><LI>Max Depth = 44<LI>Call Chain = find_env_cb &rArr; strncmp
+<P><STRONG><a name="[63]"></a>find_env_cb</STRONG> (Thumb, 60 bytes, Stack size 16 bytes, ef_env.o(i.find_env_cb))
+<BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = find_env_cb &rArr; strncmp
 </UL>
 <BR>[Calls]<UL><LI><a href="#[109]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strncmp
 <LI><a href="#[e8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strlen
@@ -2188,7 +2188,7 @@ Local Symbols
 <BR>[Address Reference Count : 1]<UL><LI> ef_env.o(i.find_env_no_cache)
 </UL>
 <P><STRONG><a name="[108]"></a>find_env_no_cache</STRONG> (Thumb, 28 bytes, Stack size 16 bytes, ef_env.o(i.find_env_no_cache))
-<BR><BR>[Stack]<UL><LI>Max Depth = 500<LI>Call Chain = find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<BR><BR>[Stack]<UL><LI>Max Depth = 456<LI>Call Chain = find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;env_iterator
 </UL>
@@ -2197,7 +2197,7 @@ Local Symbols
 </UL>
 
 <P><STRONG><a name="[10a]"></a>find_next_env_addr</STRONG> (Thumb, 130 bytes, Stack size 64 bytes, ef_env.o(i.find_next_env_addr))
-<BR><BR>[Stack]<UL><LI>Max Depth = 236<LI>Call Chain = find_next_env_addr &rArr; ef_port_read &rArr; vFlash_Gd32Read32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<BR><BR>[Stack]<UL><LI>Max Depth = 200<LI>Call Chain = find_next_env_addr &rArr; ef_port_read &rArr; vFlash_Gd32Read32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[10b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_sector_from_cache
 <LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_port_read
@@ -2205,8 +2205,8 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[f3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_next_env_addr
 </UL>
 
-<P><STRONG><a name="[e1]"></a>format_sector</STRONG> (Thumb, 104 bytes, Stack size 56 bytes, ef_env.o(i.format_sector))
-<BR><BR>[Stack]<UL><LI>Max Depth = 236<LI>Call Chain = format_sector &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[e1]"></a>format_sector</STRONG> (Thumb, 98 bytes, Stack size 56 bytes, ef_env.o(i.format_sector))
+<BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = format_sector &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;update_sector_cache
 <LI><a href="#[110]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_status
@@ -2219,13 +2219,11 @@ Local Symbols
 <LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_env_set_default
 </UL>
 
-<P><STRONG><a name="[64]"></a>gc_check_cb</STRONG> (Thumb, 22 bytes, Stack size 8 bytes, ef_env.o(i.gc_check_cb))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = gc_check_cb
-</UL>
+<P><STRONG><a name="[64]"></a>gc_check_cb</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, ef_env.o(i.gc_check_cb))
 <BR>[Address Reference Count : 1]<UL><LI> ef_env.o(i.gc_collect)
 </UL>
-<P><STRONG><a name="[e0]"></a>gc_collect</STRONG> (Thumb, 62 bytes, Stack size 40 bytes, ef_env.o(i.gc_collect))
-<BR><BR>[Stack]<UL><LI>Max Depth = 508<LI>Call Chain = gc_collect &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[e0]"></a>gc_collect</STRONG> (Thumb, 58 bytes, Stack size 48 bytes, ef_env.o(i.gc_collect))
+<BR><BR>[Stack]<UL><LI>Max Depth = 472<LI>Call Chain = gc_collect &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sector_iterator
 </UL>
@@ -2235,8 +2233,8 @@ Local Symbols
 <LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_load_env
 </UL>
 
-<P><STRONG><a name="[fd]"></a>get_env</STRONG> (Thumb, 72 bytes, Stack size 80 bytes, ef_env.o(i.get_env))
-<BR><BR>[Stack]<UL><LI>Max Depth = 604<LI>Call Chain = get_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[fd]"></a>get_env</STRONG> (Thumb, 64 bytes, Stack size 80 bytes, ef_env.o(i.get_env))
+<BR><BR>[Stack]<UL><LI>Max Depth = 560<LI>Call Chain = get_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[f0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;find_env
 <LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_port_read
@@ -2244,8 +2242,8 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_get_env_blob
 </UL>
 
-<P><STRONG><a name="[107]"></a>get_env_from_cache</STRONG> (Thumb, 164 bytes, Stack size 56 bytes, ef_env.o(i.get_env_from_cache))
-<BR><BR>[Stack]<UL><LI>Max Depth = 228<LI>Call Chain = get_env_from_cache &rArr; ef_port_read &rArr; vFlash_Gd32Read32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[107]"></a>get_env_from_cache</STRONG> (Thumb, 118 bytes, Stack size 64 bytes, ef_env.o(i.get_env_from_cache))
+<BR><BR>[Stack]<UL><LI>Max Depth = 200<LI>Call Chain = get_env_from_cache &rArr; ef_port_read &rArr; vFlash_Gd32Read32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_port_read
 <LI><a href="#[eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_calc_crc32
@@ -2254,8 +2252,8 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[f0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;find_env
 </UL>
 
-<P><STRONG><a name="[f3]"></a>get_next_env_addr</STRONG> (Thumb, 106 bytes, Stack size 16 bytes, ef_env.o(i.get_next_env_addr))
-<BR><BR>[Stack]<UL><LI>Max Depth = 252<LI>Call Chain = get_next_env_addr &rArr; find_next_env_addr &rArr; ef_port_read &rArr; vFlash_Gd32Read32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[f3]"></a>get_next_env_addr</STRONG> (Thumb, 86 bytes, Stack size 16 bytes, ef_env.o(i.get_next_env_addr))
+<BR><BR>[Stack]<UL><LI>Max Depth = 216<LI>Call Chain = get_next_env_addr &rArr; find_next_env_addr &rArr; ef_port_read &rArr; vFlash_Gd32Read32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[10a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;find_next_env_addr
 </UL>
@@ -2264,26 +2262,28 @@ Local Symbols
 <LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;do_gc
 </UL>
 
-<P><STRONG><a name="[106]"></a>get_next_sector_addr</STRONG> (Thumb, 58 bytes, Stack size 0 bytes, ef_env.o(i.get_next_sector_addr))
+<P><STRONG><a name="[106]"></a>get_next_sector_addr</STRONG> (Thumb, 46 bytes, Stack size 0 bytes, ef_env.o(i.get_next_sector_addr))
 <BR><BR>[Called By]<UL><LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sector_iterator
 <LI><a href="#[fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;env_iterator
 </UL>
 
-<P><STRONG><a name="[10b]"></a>get_sector_from_cache</STRONG> (Thumb, 44 bytes, Stack size 0 bytes, ef_env.o(i.get_sector_from_cache))
-<BR><BR>[Called By]<UL><LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_sector_meta_data
+<P><STRONG><a name="[10b]"></a>get_sector_from_cache</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, ef_env.o(i.get_sector_from_cache))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = get_sector_from_cache
+</UL>
+<BR>[Called By]<UL><LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_sector_meta_data
 <LI><a href="#[10a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;find_next_env_addr
 </UL>
 
-<P><STRONG><a name="[120]"></a>get_status</STRONG> (Thumb, 42 bytes, Stack size 12 bytes, ef_env.o(i.get_status))
-<BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = get_status
+<P><STRONG><a name="[120]"></a>get_status</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, ef_env.o(i.get_status))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = get_status
 </UL>
 <BR>[Called By]<UL><LI><a href="#[f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_status
 <LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_sector_meta_data
 <LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_env
 </UL>
 
-<P><STRONG><a name="[de]"></a>move_env</STRONG> (Thumb, 258 bytes, Stack size 168 bytes, ef_env.o(i.move_env))
-<BR><BR>[Stack]<UL><LI>Max Depth = 796<LI>Call Chain = move_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[de]"></a>move_env</STRONG> (Thumb, 252 bytes, Stack size 168 bytes, ef_env.o(i.move_env))
+<BR><BR>[Stack]<UL><LI>Max Depth = 752<LI>Call Chain = move_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_status
 <LI><a href="#[ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;update_sector_cache
@@ -2301,8 +2301,8 @@ Local Symbols
 <LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_and_recovery_env_cb
 </UL>
 
-<P><STRONG><a name="[e9]"></a>new_env</STRONG> (Thumb, 50 bytes, Stack size 24 bytes, ef_env.o(i.new_env))
-<BR><BR>[Stack]<UL><LI>Max Depth = 532<LI>Call Chain = new_env &rArr; gc_collect &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[e9]"></a>new_env</STRONG> (Thumb, 46 bytes, Stack size 24 bytes, ef_env.o(i.new_env))
+<BR><BR>[Stack]<UL><LI>Max Depth = 496<LI>Call Chain = new_env &rArr; gc_collect &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gc_collect
 <LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;alloc_env
@@ -2311,16 +2311,16 @@ Local Symbols
 <LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;create_env_blob
 </UL>
 
-<P><STRONG><a name="[11d]"></a>new_env_by_kv</STRONG> (Thumb, 38 bytes, Stack size 24 bytes, ef_env.o(i.new_env_by_kv))
-<BR><BR>[Stack]<UL><LI>Max Depth = 556<LI>Call Chain = new_env_by_kv &rArr; new_env &rArr; gc_collect &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[11d]"></a>new_env_by_kv</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, ef_env.o(i.new_env_by_kv))
+<BR><BR>[Stack]<UL><LI>Max Depth = 496<LI>Call Chain = new_env_by_kv &rArr; new_env &rArr; gc_collect &rArr; sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;new_env
 </UL>
 <BR>[Called By]<UL><LI><a href="#[104]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_env
 </UL>
 
-<P><STRONG><a name="[f2]"></a>read_env</STRONG> (Thumb, 256 bytes, Stack size 104 bytes, ef_env.o(i.read_env))
-<BR><BR>[Stack]<UL><LI>Max Depth = 316<LI>Call Chain = read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[f2]"></a>read_env</STRONG> (Thumb, 232 bytes, Stack size 104 bytes, ef_env.o(i.read_env))
+<BR><BR>[Stack]<UL><LI>Max Depth = 272<LI>Call Chain = read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_status
 <LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_status
@@ -2333,8 +2333,8 @@ Local Symbols
 <LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;do_gc
 </UL>
 
-<P><STRONG><a name="[105]"></a>read_sector_meta_data</STRONG> (Thumb, 302 bytes, Stack size 120 bytes, ef_env.o(i.read_sector_meta_data))
-<BR><BR>[Stack]<UL><LI>Max Depth = 436<LI>Call Chain = read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[105]"></a>read_sector_meta_data</STRONG> (Thumb, 278 bytes, Stack size 120 bytes, ef_env.o(i.read_sector_meta_data))
+<BR><BR>[Stack]<UL><LI>Max Depth = 392<LI>Call Chain = read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;update_sector_cache
 <LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_env
@@ -2349,8 +2349,8 @@ Local Symbols
 <LI><a href="#[fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;env_iterator
 </UL>
 
-<P><STRONG><a name="[f1]"></a>read_status</STRONG> (Thumb, 42 bytes, Stack size 16 bytes, ef_env.o(i.read_status))
-<BR><BR>[Stack]<UL><LI>Max Depth = 188<LI>Call Chain = read_status &rArr; ef_port_read &rArr; vFlash_Gd32Read32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[f1]"></a>read_status</STRONG> (Thumb, 44 bytes, Stack size 16 bytes, ef_env.o(i.read_status))
+<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = read_status &rArr; ef_port_read &rArr; vFlash_Gd32Read32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_status
 <LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_port_read
@@ -2358,8 +2358,8 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[ef]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;del_env
 </UL>
 
-<P><STRONG><a name="[9d]"></a>sector_iterator</STRONG> (Thumb, 96 bytes, Stack size 32 bytes, ef_env.o(i.sector_iterator))
-<BR><BR>[Stack]<UL><LI>Max Depth = 468<LI>Call Chain = sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[9d]"></a>sector_iterator</STRONG> (Thumb, 84 bytes, Stack size 32 bytes, ef_env.o(i.sector_iterator))
+<BR><BR>[Stack]<UL><LI>Max Depth = 424<LI>Call Chain = sector_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_sector_meta_data
 <LI><a href="#[106]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_next_sector_addr
@@ -2369,13 +2369,13 @@ Local Symbols
 <LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_load_env
 </UL>
 
-<P><STRONG><a name="[55]"></a>sector_statistics_cb</STRONG> (Thumb, 46 bytes, Stack size 12 bytes, ef_env.o(i.sector_statistics_cb))
-<BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = sector_statistics_cb
+<P><STRONG><a name="[55]"></a>sector_statistics_cb</STRONG> (Thumb, 42 bytes, Stack size 8 bytes, ef_env.o(i.sector_statistics_cb))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = sector_statistics_cb
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> ef_env.o(i.alloc_env)
 </UL>
-<P><STRONG><a name="[104]"></a>set_env</STRONG> (Thumb, 136 bytes, Stack size 32 bytes, ef_env.o(i.set_env))
-<BR><BR>[Stack]<UL><LI>Max Depth = 660<LI>Call Chain = set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[104]"></a>set_env</STRONG> (Thumb, 134 bytes, Stack size 24 bytes, ef_env.o(i.set_env))
+<BR><BR>[Stack]<UL><LI>Max Depth = 608<LI>Call Chain = set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[11d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;new_env_by_kv
 <LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gc_collect
@@ -2387,8 +2387,8 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_set_env_blob
 </UL>
 
-<P><STRONG><a name="[110]"></a>set_status</STRONG> (Thumb, 48 bytes, Stack size 24 bytes, ef_env.o(i.set_status))
-<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = set_status
+<P><STRONG><a name="[110]"></a>set_status</STRONG> (Thumb, 42 bytes, Stack size 16 bytes, ef_env.o(i.set_status))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = set_status
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memset
 </UL>
@@ -2396,8 +2396,8 @@ Local Symbols
 <LI><a href="#[e1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;format_sector
 </UL>
 
-<P><STRONG><a name="[ee]"></a>update_env_cache</STRONG> (Thumb, 254 bytes, Stack size 40 bytes, ef_env.o(i.update_env_cache))
-<BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = update_env_cache &rArr; ef_calc_crc32
+<P><STRONG><a name="[ee]"></a>update_env_cache</STRONG> (Thumb, 168 bytes, Stack size 32 bytes, ef_env.o(i.update_env_cache))
+<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = update_env_cache &rArr; ef_calc_crc32
 </UL>
 <BR>[Calls]<UL><LI><a href="#[eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_calc_crc32
 </UL>
@@ -2407,8 +2407,8 @@ Local Symbols
 <LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;create_env_blob
 </UL>
 
-<P><STRONG><a name="[ea]"></a>update_sec_status</STRONG> (Thumb, 96 bytes, Stack size 32 bytes, ef_env.o(i.update_sec_status))
-<BR><BR>[Stack]<UL><LI>Max Depth = 244<LI>Call Chain = update_sec_status &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[ea]"></a>update_sec_status</STRONG> (Thumb, 90 bytes, Stack size 32 bytes, ef_env.o(i.update_sec_status))
+<BR><BR>[Stack]<UL><LI>Max Depth = 200<LI>Call Chain = update_sec_status &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_status
 <LI><a href="#[ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;update_sector_cache
@@ -2417,8 +2417,8 @@ Local Symbols
 <LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;create_env_blob
 </UL>
 
-<P><STRONG><a name="[ed]"></a>update_sector_cache</STRONG> (Thumb, 112 bytes, Stack size 12 bytes, ef_env.o(i.update_sector_cache))
-<BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = update_sector_cache
+<P><STRONG><a name="[ed]"></a>update_sector_cache</STRONG> (Thumb, 92 bytes, Stack size 16 bytes, ef_env.o(i.update_sector_cache))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = update_sector_cache
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ea]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;update_sec_status
 <LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_sector_meta_data
@@ -2427,8 +2427,8 @@ Local Symbols
 <LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;create_env_blob
 </UL>
 
-<P><STRONG><a name="[ec]"></a>write_env_hdr</STRONG> (Thumb, 48 bytes, Stack size 16 bytes, ef_env.o(i.write_env_hdr))
-<BR><BR>[Stack]<UL><LI>Max Depth = 228<LI>Call Chain = write_env_hdr &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[ec]"></a>write_env_hdr</STRONG> (Thumb, 42 bytes, Stack size 16 bytes, ef_env.o(i.write_env_hdr))
+<BR><BR>[Stack]<UL><LI>Max Depth = 184<LI>Call Chain = write_env_hdr &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_status
 <LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_port_write
@@ -2436,8 +2436,8 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;create_env_blob
 </UL>
 
-<P><STRONG><a name="[df]"></a>write_status</STRONG> (Thumb, 70 bytes, Stack size 32 bytes, ef_env.o(i.write_status))
-<BR><BR>[Stack]<UL><LI>Max Depth = 212<LI>Call Chain = write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[df]"></a>write_status</STRONG> (Thumb, 48 bytes, Stack size 16 bytes, ef_env.o(i.write_status))
+<BR><BR>[Stack]<UL><LI>Max Depth = 168<LI>Call Chain = write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[110]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_status
 <LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ef_port_write
@@ -2452,18 +2452,16 @@ Local Symbols
 <LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_and_recovery_env_cb
 </UL>
 
-<P><STRONG><a name="[f5]"></a>v_print_info</STRONG> (Thumb, 66 bytes, Stack size 8 bytes, boot_info.o(i.v_print_info))
-<BR><BR>[Stack]<UL><LI>Max Depth = 132<LI>Call Chain = v_print_info &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[f5]"></a>v_print_info</STRONG> (Thumb, 62 bytes, Stack size 8 bytes, boot_info.o(i.v_print_info))
+<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = v_print_info &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrint
 </UL>
 <BR>[Called By]<UL><LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eBoot_InfoInit
 </UL>
 
-<P><STRONG><a name="[13f]"></a>NVIC_SetPriority</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, systick.o(i.NVIC_SetPriority))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = NVIC_SetPriority
-</UL>
-<BR>[Called By]<UL><LI><a href="#[115]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vSys_TickConfig
+<P><STRONG><a name="[13f]"></a>NVIC_SetPriority</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, systick.o(i.NVIC_SetPriority))
+<BR><BR>[Called By]<UL><LI><a href="#[115]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vSys_TickConfig
 </UL>
 
 <P><STRONG><a name="[13d]"></a>v_task_param_init</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, sys_task.o(i.v_task_param_init))
@@ -2475,8 +2473,8 @@ Local Symbols
 <LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vSys_Task
 </UL>
 
-<P><STRONG><a name="[59]"></a>b_task_manage_func_cb</STRONG> (Thumb, 226 bytes, Stack size 8 bytes, sys_queue_task.o(i.b_task_manage_func_cb))
-<BR><BR>[Stack]<UL><LI>Max Depth = 84<LI>Call Chain = b_task_manage_func_cb &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[59]"></a>b_task_manage_func_cb</STRONG> (Thumb, 192 bytes, Stack size 16 bytes, sys_queue_task.o(i.b_task_manage_func_cb))
+<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = b_task_manage_func_cb &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_reset
 <LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_read
@@ -2484,21 +2482,21 @@ Local Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> sys_queue_task.o(i.bSys_QueueInit)
 </UL>
-<P><STRONG><a name="[149]"></a>v_print_logo</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, sys_queue_task_init.o(i.v_print_logo))
-<BR><BR>[Stack]<UL><LI>Max Depth = 132<LI>Call Chain = v_print_logo &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[149]"></a>v_print_logo</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, sys_queue_task_init.o(i.v_print_logo))
+<BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = v_print_logo &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrint
 </UL>
 <BR>[Called By]<UL><LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_sys_queue_task_init
 </UL>
 
-<P><STRONG><a name="[12a]"></a>b_send_cmd</STRONG> (Thumb, 44 bytes, Stack size 16 bytes, baiku_proto_1.o(i.b_send_cmd))
+<P><STRONG><a name="[12a]"></a>b_send_cmd</STRONG> (Thumb, 46 bytes, Stack size 16 bytes, baiku_proto_1.o(i.b_send_cmd))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = b_send_cmd
 </UL>
 <BR>[Called By]<UL><LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vBaiKuProto_Proto
 </UL>
 
-<P><STRONG><a name="[d8]"></a>c_rec_proc</STRONG> (Thumb, 204 bytes, Stack size 16 bytes, baiku_proto_1.o(i.c_rec_proc))
+<P><STRONG><a name="[d8]"></a>c_rec_proc</STRONG> (Thumb, 196 bytes, Stack size 16 bytes, baiku_proto_1.o(i.c_rec_proc))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = c_rec_proc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_set_work_state
@@ -2506,13 +2504,13 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vBaiKuProto_Proto
 </UL>
 
-<P><STRONG><a name="[d9]"></a>v_set_work_state</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, baiku_proto_1.o(i.v_set_work_state))
+<P><STRONG><a name="[d9]"></a>v_set_work_state</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, baiku_proto_1.o(i.v_set_work_state))
 <BR><BR>[Called By]<UL><LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;c_rec_proc
 <LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vBaiKuProto_Proto
 </UL>
 
-<P><STRONG><a name="[2]"></a>c_frame_rec_cd</STRONG> (Thumb, 562 bytes, Stack size 40 bytes, updata_main.o(i.c_frame_rec_cd))
-<BR><BR>[Stack]<UL><LI>Max Depth = 164<LI>Call Chain = c_frame_rec_cd &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[2]"></a>c_frame_rec_cd</STRONG> (Thumb, 470 bytes, Stack size 64 bytes, updata_main.o(i.c_frame_rec_cd))
+<BR><BR>[Stack]<UL><LI>Max Depth = 168<LI>Call Chain = c_frame_rec_cd &rArr; cBaiku_ProtoCheck &rArr; c_baiku_proto_decrypt &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_read
 <LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_get_full
@@ -2524,8 +2522,8 @@ Local Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> updata_main.o(.data)
 </UL>
-<P><STRONG><a name="[1]"></a>c_frame_trans_cd</STRONG> (Thumb, 154 bytes, Stack size 32 bytes, updata_main.o(i.c_frame_trans_cd))
-<BR><BR>[Stack]<UL><LI>Max Depth = 124<LI>Call Chain = c_frame_trans_cd &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[1]"></a>c_frame_trans_cd</STRONG> (Thumb, 116 bytes, Stack size 32 bytes, updata_main.o(i.c_frame_trans_cd))
+<BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = c_frame_trans_cd &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_write
 <LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBaiku_ProtoCreate
@@ -2535,58 +2533,58 @@ Local Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> updata_main.o(.data)
 </UL>
-<P><STRONG><a name="[3]"></a>v_proc_check_ok_rec_data_cd</STRONG> (Thumb, 122 bytes, Stack size 24 bytes, updata_main.o(i.v_proc_check_ok_rec_data_cd))
-<BR><BR>[Stack]<UL><LI>Max Depth = 212<LI>Call Chain = v_proc_check_ok_rec_data_cd &rArr; bFlash_WriteDataToFlash &rArr; cFlash_Write8BitData &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[3]"></a>v_proc_check_ok_rec_data_cd</STRONG> (Thumb, 112 bytes, Stack size 24 bytes, updata_main.o(i.v_proc_check_ok_rec_data_cd))
+<BR><BR>[Stack]<UL><LI>Max Depth = 192<LI>Call Chain = v_proc_check_ok_rec_data_cd &rArr; bFlash_WriteDataToFlash &rArr; cFlash_Write8BitData &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrint
 <LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bFlash_WriteDataToFlash
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> updata_main.o(.data)
 </UL>
-<P><STRONG><a name="[5]"></a>v_rec_end_cd</STRONG> (Thumb, 156 bytes, Stack size 8 bytes, updata_main.o(i.v_rec_end_cd))
-<BR><BR>[Stack]<UL><LI>Max Depth = 724<LI>Call Chain = v_rec_end_cd &rArr; cBoot_CtrlUpdata &rArr; cBoot_UpdataMemParam &rArr; ef_set_env_blob &rArr; set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[5]"></a>v_rec_end_cd</STRONG> (Thumb, 142 bytes, Stack size 24 bytes, updata_main.o(i.v_rec_end_cd))
+<BR><BR>[Stack]<UL><LI>Max Depth = 672<LI>Call Chain = v_rec_end_cd &rArr; cBoot_CtrlUpdata &rArr; cBoot_UpdataMemParam &rArr; ef_set_env_blob &rArr; set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrint
 <LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBoot_CtrlUpdata
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> updata_main.o(.data)
 </UL>
-<P><STRONG><a name="[4]"></a>v_rec_start_cd</STRONG> (Thumb, 22 bytes, Stack size 8 bytes, updata_main.o(i.v_rec_start_cd))
-<BR><BR>[Stack]<UL><LI>Max Depth = 724<LI>Call Chain = v_rec_start_cd &rArr; cBoot_CtrlUpdata &rArr; cBoot_UpdataMemParam &rArr; ef_set_env_blob &rArr; set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[4]"></a>v_rec_start_cd</STRONG> (Thumb, 24 bytes, Stack size 8 bytes, updata_main.o(i.v_rec_start_cd))
+<BR><BR>[Stack]<UL><LI>Max Depth = 656<LI>Call Chain = v_rec_start_cd &rArr; cBoot_CtrlUpdata &rArr; cBoot_UpdataMemParam &rArr; ef_set_env_blob &rArr; set_env &rArr; del_env &rArr; find_env &rArr; find_env_no_cache &rArr; env_iterator &rArr; read_sector_meta_data &rArr; read_env &rArr; write_status &rArr; ef_port_write &rArr; bFlash_Gd32Write32Bit &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBoot_CtrlUpdata
 <LI><a href="#[131]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vFlash_WriteDataToFlashInit
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> updata_main.o(.data)
 </UL>
-<P><STRONG><a name="[145]"></a>b_send_cmd</STRONG> (Thumb, 66 bytes, Stack size 16 bytes, xmodem_proto.o(i.b_send_cmd))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = b_send_cmd
+<P><STRONG><a name="[145]"></a>b_send_cmd</STRONG> (Thumb, 64 bytes, Stack size 8 bytes, xmodem_proto.o(i.b_send_cmd))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = b_send_cmd
 </UL>
 <BR>[Called By]<UL><LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vXmodem_Proto
 </UL>
 
-<P><STRONG><a name="[e2]"></a>chk_add8</STRONG> (Thumb, 64 bytes, Stack size 24 bytes, xmodem_proto.o(i.chk_add8))
-<BR><BR>[Stack]<UL><LI>Max Depth = 148<LI>Call Chain = chk_add8 &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[e2]"></a>chk_add8</STRONG> (Thumb, 54 bytes, Stack size 16 bytes, xmodem_proto.o(i.chk_add8))
+<BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = chk_add8 &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrint
 </UL>
 <BR>[Called By]<UL><LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;e_rec_proc
 </UL>
 
-<P><STRONG><a name="[e3]"></a>chk_crc16</STRONG> (Thumb, 28 bytes, Stack size 16 bytes, xmodem_proto.o(i.chk_crc16))
-<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = chk_crc16 &rArr; usCheck_GetCrc16Tab
+<P><STRONG><a name="[e3]"></a>chk_crc16</STRONG> (Thumb, 20 bytes, Stack size 8 bytes, xmodem_proto.o(i.chk_crc16))
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = chk_crc16 &rArr; usCheck_GetCrc16Tab
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;usCheck_GetCrc16Tab
 </UL>
 <BR>[Called By]<UL><LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;e_rec_proc
 </UL>
 
-<P><STRONG><a name="[147]"></a>e_get_rec_state</STRONG> (Thumb, 60 bytes, Stack size 0 bytes, xmodem_proto.o(i.e_get_rec_state))
+<P><STRONG><a name="[147]"></a>e_get_rec_state</STRONG> (Thumb, 62 bytes, Stack size 0 bytes, xmodem_proto.o(i.e_get_rec_state))
 <BR><BR>[Called By]<UL><LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vXmodem_Proto
 </UL>
 
-<P><STRONG><a name="[f6]"></a>e_rec_proc</STRONG> (Thumb, 450 bytes, Stack size 24 bytes, xmodem_proto.o(i.e_rec_proc))
-<BR><BR>[Stack]<UL><LI>Max Depth = 172<LI>Call Chain = e_rec_proc &rArr; chk_add8 &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[f6]"></a>e_rec_proc</STRONG> (Thumb, 368 bytes, Stack size 32 bytes, xmodem_proto.o(i.e_rec_proc))
+<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = e_rec_proc &rArr; chk_add8 &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chk_crc16
 <LI><a href="#[e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chk_add8
@@ -2594,12 +2592,12 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vXmodem_Proto
 </UL>
 
-<P><STRONG><a name="[144]"></a>v_set_work_state</STRONG> (Thumb, 58 bytes, Stack size 0 bytes, xmodem_proto.o(i.v_set_work_state))
+<P><STRONG><a name="[144]"></a>v_set_work_state</STRONG> (Thumb, 42 bytes, Stack size 0 bytes, xmodem_proto.o(i.v_set_work_state))
 <BR><BR>[Called By]<UL><LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vXmodem_Proto
 </UL>
 
-<P><STRONG><a name="[b8]"></a>b_print_task_param_init</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, print_task.o(i.b_print_task_param_init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = b_print_task_param_init &rArr; lwrb_reset
+<P><STRONG><a name="[b8]"></a>b_print_task_param_init</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, print_task.o(i.b_print_task_param_init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = b_print_task_param_init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_reset
 <LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPrint_MyPrintParamInit
@@ -2608,8 +2606,8 @@ Local Symbols
 <LI><a href="#[11b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPrint_Task
 </UL>
 
-<P><STRONG><a name="[13b]"></a>v_print_gpio_init</STRONG> (Thumb, 88 bytes, Stack size 8 bytes, print_iface.o(i.v_print_gpio_init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = v_print_gpio_init &rArr; gpio_init
+<P><STRONG><a name="[13b]"></a>v_print_gpio_init</STRONG> (Thumb, 82 bytes, Stack size 16 bytes, print_iface.o(i.v_print_gpio_init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 44<LI>Call Chain = v_print_gpio_init &rArr; gpio_init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_init
 <LI><a href="#[132]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rcu_periph_clock_enable
@@ -2617,8 +2615,8 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[12e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPrint_Init
 </UL>
 
-<P><STRONG><a name="[13c]"></a>v_print_usart_init</STRONG> (Thumb, 136 bytes, Stack size 8 bytes, print_iface.o(i.v_print_usart_init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 124<LI>Call Chain = v_print_usart_init &rArr; usart_baudrate_set &rArr; rcu_clock_freq_get
+<P><STRONG><a name="[13c]"></a>v_print_usart_init</STRONG> (Thumb, 140 bytes, Stack size 8 bytes, print_iface.o(i.v_print_usart_init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = v_print_usart_init &rArr; usart_baudrate_set &rArr; rcu_clock_freq_get
 </UL>
 <BR>[Calls]<UL><LI><a href="#[11e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nvic_irq_enable
 <LI><a href="#[132]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rcu_periph_clock_enable
@@ -2639,8 +2637,8 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[12e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPrint_Init
 </UL>
 
-<P><STRONG><a name="[d7]"></a>c_print_data_trans</STRONG> (Thumb, 72 bytes, Stack size 24 bytes, print_prot_frame.o(i.c_print_data_trans))
-<BR><BR>[Stack]<UL><LI>Max Depth = 116<LI>Call Chain = c_print_data_trans &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[d7]"></a>c_print_data_trans</STRONG> (Thumb, 50 bytes, Stack size 16 bytes, print_prot_frame.o(i.c_print_data_trans))
+<BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = c_print_data_trans &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_write
 <LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cBaiku_ProtoCreate
@@ -2650,8 +2648,8 @@ Local Symbols
 <LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;c_relay84_set_proto
 </UL>
 
-<P><STRONG><a name="[58]"></a>b_task_manage_func_cb</STRONG> (Thumb, 130 bytes, Stack size 16 bytes, print_queue_task.o(i.b_task_manage_func_cb))
-<BR><BR>[Stack]<UL><LI>Max Depth = 92<LI>Call Chain = b_task_manage_func_cb &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[58]"></a>b_task_manage_func_cb</STRONG> (Thumb, 120 bytes, Stack size 24 bytes, print_queue_task.o(i.b_task_manage_func_cb))
+<BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = b_task_manage_func_cb &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_reset
 <LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwrb_read
@@ -2659,20 +2657,20 @@ Local Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> print_queue_task.o(i.bPrint_QueueInit)
 </UL>
-<P><STRONG><a name="[57]"></a>v_add_task_return_func_cb</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, print_queue_task.o(i.v_add_task_return_func_cb))
+<P><STRONG><a name="[57]"></a>v_add_task_return_func_cb</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, print_queue_task.o(i.v_add_task_return_func_cb))
 <BR>[Address Reference Count : 1]<UL><LI> print_queue_task.o(i.bPrint_QueueInit)
 </UL>
-<P><STRONG><a name="[66]"></a>bKey_PowerIsPress</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, key_task.o(i.bKey_PowerIsPress))
+<P><STRONG><a name="[66]"></a>bKey_PowerIsPress</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, key_task.o(i.bKey_PowerIsPress))
 <BR>[Address Reference Count : 1]<UL><LI> key_task.o(i.v_key_gpio_init)
 </UL>
-<P><STRONG><a name="[139]"></a>v_key_check_other_is_tri</STRONG> (Thumb, 58 bytes, Stack size 8 bytes, key_task.o(i.v_key_check_other_is_tri))
+<P><STRONG><a name="[139]"></a>v_key_check_other_is_tri</STRONG> (Thumb, 56 bytes, Stack size 8 bytes, key_task.o(i.v_key_check_other_is_tri))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = v_key_check_other_is_tri
 </UL>
 <BR>[Called By]<UL><LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vKey_Task
 </UL>
 
 <P><STRONG><a name="[13a]"></a>v_key_gpio_init</STRONG> (Thumb, 44 bytes, Stack size 8 bytes, key_task.o(i.v_key_gpio_init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = v_key_gpio_init &rArr; gpio_init
+<BR><BR>[Stack]<UL><LI>Max Depth = 36<LI>Call Chain = v_key_gpio_init &rArr; gpio_init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_init
 <LI><a href="#[132]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rcu_periph_clock_enable
@@ -2681,20 +2679,20 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vKey_TaskInit
 </UL>
 
-<P><STRONG><a name="[138]"></a>v_key_long_press</STRONG> (Thumb, 62 bytes, Stack size 8 bytes, key_task.o(i.v_key_long_press))
-<BR><BR>[Stack]<UL><LI>Max Depth = 132<LI>Call Chain = v_key_long_press &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[137]"></a>v_key_long_press</STRONG> (Thumb, 56 bytes, Stack size 8 bytes, key_task.o(i.v_key_long_press))
+<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = v_key_long_press &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrint
 </UL>
 <BR>[Called By]<UL><LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vKey_Task
 </UL>
 
-<P><STRONG><a name="[148]"></a>v_key_register</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, key_task.o(i.v_key_register))
+<P><STRONG><a name="[148]"></a>v_key_register</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, key_task.o(i.v_key_register))
 <BR><BR>[Called By]<UL><LI><a href="#[13a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;v_key_gpio_init
 </UL>
 
-<P><STRONG><a name="[137]"></a>v_key_shot_press</STRONG> (Thumb, 62 bytes, Stack size 8 bytes, key_task.o(i.v_key_shot_press))
-<BR><BR>[Stack]<UL><LI>Max Depth = 132<LI>Call Chain = v_key_shot_press &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; lwrb_get_full
+<P><STRONG><a name="[138]"></a>v_key_shot_press</STRONG> (Thumb, 56 bytes, Stack size 8 bytes, key_task.o(i.v_key_shot_press))
+<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = v_key_shot_press &rArr; sMyPrint &rArr; bPrint_SendDataToUsart &rArr; bPrint_DataSendStart &rArr; lwrb_read &rArr; lwrb_read_ex &rArr; __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sMyPrint
 </UL>

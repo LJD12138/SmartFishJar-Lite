@@ -1,40 +1,54 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "build",
-            "type": "shell",
-            "command": "${command:eide.project.build}",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "flash",
-            "type": "shell",
-            "command": "${command:eide.project.uploadToDevice}",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "build and flash",
-            "type": "shell",
-            "command": "${command:eide.project.buildAndFlash}",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "rebuild",
-            "type": "shell",
-            "command": "${command:eide.project.rebuild}",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "clean",
-            "type": "shell",
-            "command": "${command:eide.project.clean}",
-            "group": "build",
-            "problemMatcher": []
-        }
-    ]
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "build",
+			"type": "shell",
+			"command": "${command:eide.project.build}",
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "flash",
+			"type": "shell",
+			"command": "${command:eide.project.uploadToDevice}",
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "build and flash",
+			"type": "shell",
+			"command": "${command:eide.project.buildAndFlash}",
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "rebuild",
+			"type": "shell",
+			"command": "${command:eide.project.rebuild}",
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "clean",
+			"type": "shell",
+			"command": "${command:eide.project.clean}",
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "uv4 build",
+			"type": "shell",
+			"command": "C:\\Users\\Administrator\\AppData\\Local\\Keil_v5\\UV4\\UV4.exe",
+			"args": [
+				"-j0",
+				"-b",
+				"BOOT.uvprojx",
+				"-o",
+				"build\\BOOT\\uv4_build.log"
+			],
+			"isBackground": false,
+			"group": "build"
+		}
+	]
 }

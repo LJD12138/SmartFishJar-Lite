@@ -1,9 +1,9 @@
 .\objects\ef_env.o: Middlewares\EasyFlash\src\ef_env.c
-.\objects\ef_env.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\ef_env.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\string.h
 .\objects\ef_env.o: .\Middlewares\EasyFlash\inc\easyflash.h
-.\objects\ef_env.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
-.\objects\ef_env.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
-.\objects\ef_env.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\ef_env.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdint.h
+.\objects\ef_env.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stddef.h
+.\objects\ef_env.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdbool.h
 .\objects\ef_env.o: .\Middlewares\EasyFlash\inc\ef_cfg.h
 .\objects\ef_env.o: .\Application\board_config.h
 .\objects\ef_env.o: .\Application\main.h
@@ -39,9 +39,9 @@
 .\objects\ef_env.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_misc.h
 .\objects\ef_env.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_enet.h
 .\objects\ef_env.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_exmc.h
-.\objects\ef_env.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
-.\objects\ef_env.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
-.\objects\ef_env.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\assert.h
+.\objects\ef_env.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h
+.\objects\ef_env.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdlib.h
+.\objects\ef_env.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\assert.h
 .\objects\ef_env.o: .\ComFunc\..\..\BOOT\Application\flash_allot_table.h
 .\objects\ef_env.o: .\ComFunc\..\..\BOOT\Application\board_config.h
 .\objects\ef_env.o: .\Middlewares\EasyFlash\inc\ef_def.h

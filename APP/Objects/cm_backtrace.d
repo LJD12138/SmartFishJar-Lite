@@ -2,10 +2,10 @@
 .\objects\cm_backtrace.o: .\Middlewares\CmBacktrace\cm_backtrace.h
 .\objects\cm_backtrace.o: .\Middlewares\CmBacktrace\cmb_def.h
 .\objects\cm_backtrace.o: .\Middlewares\CmBacktrace\cmb_cfg.h
-.\objects\cm_backtrace.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
-.\objects\cm_backtrace.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\objects\cm_backtrace.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdint.h
+.\objects\cm_backtrace.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdlib.h
 .\objects\cm_backtrace.o: .\Middlewares\FreeRTOS\include\FreeRTOS.h
-.\objects\cm_backtrace.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\cm_backtrace.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stddef.h
 .\objects\cm_backtrace.o: .\Application\FreeRTOSConfig.h
 .\objects\cm_backtrace.o: .\Application\board_config.h
 .\objects\cm_backtrace.o: .\Application\main.h
@@ -41,10 +41,10 @@
 .\objects\cm_backtrace.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_misc.h
 .\objects\cm_backtrace.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_enet.h
 .\objects\cm_backtrace.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_exmc.h
-.\objects\cm_backtrace.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
-.\objects\cm_backtrace.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
-.\objects\cm_backtrace.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
-.\objects\cm_backtrace.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\assert.h
+.\objects\cm_backtrace.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h
+.\objects\cm_backtrace.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdbool.h
+.\objects\cm_backtrace.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\string.h
+.\objects\cm_backtrace.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\assert.h
 .\objects\cm_backtrace.o: .\Middlewares\FreeRTOS\include\projdefs.h
 .\objects\cm_backtrace.o: .\Middlewares\FreeRTOS\include\portable.h
 .\objects\cm_backtrace.o: .\Middlewares\FreeRTOS\include\deprecated_definitions.h
@@ -53,7 +53,7 @@
 .\objects\cm_backtrace.o: .\Middlewares\SeggerRtt\SEGGER_SYSVIEW_FreeRTOS.h
 .\objects\cm_backtrace.o: .\Middlewares\SeggerRtt\SEGGER_SYSVIEW.h
 .\objects\cm_backtrace.o: .\Middlewares\SeggerRtt\SEGGER.h
-.\objects\cm_backtrace.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
+.\objects\cm_backtrace.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdarg.h
 .\objects\cm_backtrace.o: .\Middlewares\SeggerRtt\Global.h
 .\objects\cm_backtrace.o: .\Middlewares\SeggerRtt\SEGGER_SYSVIEW_ConfDefaults.h
 .\objects\cm_backtrace.o: .\Middlewares\SeggerRtt\SEGGER_SYSVIEW_Conf.h

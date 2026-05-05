@@ -93,6 +93,7 @@ typedef struct
 }AppParam_T;
 #pragma pack()
 
+#if(boardUSER_BOOT)
 #pragma pack(2)
 typedef struct
 {
@@ -101,6 +102,7 @@ typedef struct
 }BootMemParam_T;
 #pragma pack()
 extern BootMemParam_T  	tBootMemParam;
+#endif  //boardUSER_BOOT
 
 #pragma pack(2)
 typedef struct
@@ -135,14 +137,18 @@ extern const ef_env default_env_set[];
 #endif
 
 void vApp_JumpToBoot(uint32_t cmd);
-s8 cApp_BootInfoInit(void);
 s8 cApp_AppInfoInit(void);
 s8 cApp_MemParamInit(const char* id_str);
 s16 cApp_UpdataMemParam(const char* id_str);
 s16 cApp_GetMemParam(const char* id_str);
 u16 usApp_GetMemParamSize(void);
+
+#if(boardUSER_BOOT)
+s8 cApp_BootInfoInit(void);
 s16 cApp_BootUpdataMemParam(const char* id_str);
 s16 cApp_BootGetMemParam(const char* id_str);
+#endif  //boardUSER_BOOT
+
 void vApp_Test(void);
 #endif  
 
