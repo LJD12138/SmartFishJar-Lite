@@ -11,6 +11,10 @@
 #include "MD_Bms/md_bms_task.h"
 #endif
 
+#if(boardDISPLAY_EN)
+#include "MD_Display/md_display_task.h"
+#endif  //boardDISPLAY_EN
+
 #include "gpio_init.h"
 
 #define     	sysTASK_BOOTING_CYCLE_TIME					10 //任务时间
@@ -88,9 +92,25 @@ void v_sys_queue_task_booting(Task_T *tp_task)
 			cQueue_GotoStep(tp_task, STEP_NEXT);  //下一步
 			#endif
 		}
-		
-		//************************************步骤五:开启完成**********************************************
+
+		//************************************步骤3:等待显示完成**********************************************
 		case 3:
+		{
+			#if(boardDISPLAY_EN)
+			if(tDisp.eDevState == DS_WORK || 
+				tDisp.eDevState == DS_ERR ||
+				G_TestMode == true) //测试模式
+				cQueue_GotoStep(tp_task, STEP_NEXT);  //下一步
+			else
+				break;
+			#else
+			cQueue_GotoStep(tp_task, STEP_NEXT);  //下一步
+			#endif
+		}
+		break;
+		
+		//************************************步骤4:开启完成**********************************************
+		case 4:
 		{
 			bSys_SetDevState(DS_WORK, false);//进入工作
 

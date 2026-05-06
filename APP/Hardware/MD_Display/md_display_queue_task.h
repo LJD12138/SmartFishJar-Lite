@@ -28,6 +28,7 @@ void v_disp_queue_task_err(Task_T *tp_task);
 
 #if(boardUPDATA)
 void v_disp_queue_task_updata(Task_T *tp_task);
+void vDisp_RenderUpgradePage(void);
 #endif  //boardUPDATA
 
 #if(boardENG_MODE_EN)

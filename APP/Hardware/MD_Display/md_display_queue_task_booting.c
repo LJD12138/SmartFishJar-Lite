@@ -9,30 +9,14 @@
 #include "Sys/sys_task.h"
 #include "Print/print_task.h"
 
+#include <stdio.h>
+
 
 #define     dispTASK_BOOTING_CYCLE_TIME         100 //任务时间
 
-/***********************************************************************************************************************
------函数功能    获取启动进度
------说明(备注)  根据系统初始化完成位计算启动进度, 用于判断是否需要重绘
------传入参数    none
------输出参数    none
------返回值      启动进度百分比
-************************************************************************************************************************/
-static u16 us_disp_booting_progress(void)
-{
-    u16 state = tSysInfo.uInit.State;
-    u16 done_count = 0;
-    u16 total_count = 15;
+bool b_disp_render_booting_page(void);
 
-    while(state)
-    {
-        done_count += (u16)(state & 0x0001U);
-        state >>= 1;
-    }
 
-    return (u16)((done_count * 100U) / total_count);
-}
 
 /***********************************************************************************************************************
 -----函数功能    启动中显示任务
@@ -43,10 +27,9 @@ static u16 us_disp_booting_progress(void)
 ************************************************************************************************************************/
 void v_disp_queue_task_booting(Task_T *tp_task)
 {
-    static u16 s_last_progress = 0xFFFFU;
-
     switch (tp_task->ucStep)
     {
+        //初始化
         case 0:
         {
             if(tDisp.eDevState != DS_BOOTING)
@@ -55,35 +38,27 @@ void v_disp_queue_task_booting(Task_T *tp_task)
 
             if(g_bDispPageDirty && tDispPageCtx.usDirtyMask == DDM_FULL)
                 vDisp_Init();
-            
-            cQueue_GotoStep(tp_task, STEP_NEXT);
-        }
 
-        case 1:
-        {
             bDisp_Switch(ST_ON, true);
             cQueue_GotoStep(tp_task, STEP_NEXT);
         }
 
+        //加载动画
+        case 1:
+        {
+            if(b_disp_render_booting_page() == true)
+            {
+                bDisp_SetDevState(DS_WORK);
+                cQueue_GotoStep(tp_task, STEP_NEXT);
+            }
+        }
+        break;
+
+        //等待新任务
         case 2:
         {
-            u16 progress = us_disp_booting_progress();
-
-            if(progress != s_last_progress)
-            {
-                s_last_progress = progress;
-                tDispPageCtx.usDirtyMask |= DDM_CONTENT;
-                g_bDispPageDirty = true;
-            }
-
-            if(g_bDispPageDirty)
-                vDisp_RenderUi();
-
-            if(lwrb_get_full(&tp_task->tQueueBuff))
-            {
-				s_last_progress = 0xFFFFU;
+            if(lwrb_get_full(&tp_task->tQueueBuff) > 0)
                 cQueue_GotoStep(tp_task, STEP_END);
-			}
         }
         break;
 
@@ -96,3 +71,26 @@ void v_disp_queue_task_booting(Task_T *tp_task)
     vTaskDelay(dispTASK_BOOTING_CYCLE_TIME);
     #endif  //boardUSE_OS
 }
+
+/***********************************************************************************************************************
+-----函数功能    渲染启动中页面
+-----说明(备注)  启动页只属于启动队列, 由统一渲染入口分发到这里执行
+-----传入参数    none
+-----输出参数    none
+-----返回值      true:动画完成  false:继续显示
+************************************************************************************************************************/
+bool b_disp_render_booting_page(void)
+{
+
+    vDisp_DrawPageFrame("P10 BOOTING");
+    vDisp_DrawStatusTag("BOOT");
+    u8g2_SetFont(&u8g2, u8g2_font_6x10_tr);
+    u8g2_DrawStr(&u8g2, 26, 24, "Booting...");
+
+    vDisp_Refresh();
+    tDispPageCtx.usDirtyMask = DDM_NONE;
+    g_bDispPageDirty = false;
+
+    return true;
+}
+

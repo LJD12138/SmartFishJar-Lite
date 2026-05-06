@@ -1,10 +1,10 @@
 .\objects\mui_u8g2.o: Middlewares\U8g2\mui_u8g2.c
 .\objects\mui_u8g2.o: Middlewares\U8g2\mui.h
-.\objects\mui_u8g2.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stddef.h
-.\objects\mui_u8g2.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdint.h
-.\objects\mui_u8g2.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\string.h
+.\objects\mui_u8g2.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\mui_u8g2.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\mui_u8g2.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\objects\mui_u8g2.o: Middlewares\U8g2\u8g2.h
 .\objects\mui_u8g2.o: Middlewares\U8g2\u8x8.h
-.\objects\mui_u8g2.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdarg.h
-.\objects\mui_u8g2.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\limits.h
+.\objects\mui_u8g2.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
+.\objects\mui_u8g2.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\limits.h
 .\objects\mui_u8g2.o: Middlewares\U8g2\mui_u8g2.h

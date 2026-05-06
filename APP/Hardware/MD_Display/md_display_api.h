@@ -37,6 +37,48 @@ extern "C" {
 
 
 /* ==========================================types=======================================*/
+//页面渲染共享快照, 在统一渲染入口开始时刷新一次
+typedef struct
+{
+	s16 sWaterTemp;
+	s16 sWaterTemp1;
+	s16 sWaterTemp2;
+	s16 sBoardTemp5V;
+	s16 sBoardTemp12V;
+	u16 usInitProgress;
+	u16 usErrCode;
+	u16 usAutoOffCnt;
+	u16 usLightAdc;
+	u16 us12VVolt;
+	u16 usVinVolt;
+	u16 usVinCurrMa;
+	u16 usVinPowerW;
+	u16 usHeatCurrMa;
+	u16 usPumpCurrMa;
+	u16 usO2CurrMa;
+	u16 usLightPowerW;
+	u16 usHeatPowerW;
+	u16 usPumpPowerW;
+	u16 usO2PowerW;
+	u16 usLightCurrMa;
+	u16 usLightWarm;
+	u16 usO2PumpSpeed;
+	u16 usPumpSpeed;
+	u16 usFanMode;
+	u8 ucUpgradePercent;
+	u8 ucBuzOff;
+	u8 ucForceClose;
+	const char *pcLightMode;
+	const char *pcPumpMode;
+	const char *pcO2PumpMode;
+	const char *pcHeatMode;
+	const char *pcUpgradeStage;
+	const char *pcUpgradeNote;
+	const char *pcErrModule;
+	const char *pcErrMode;
+	const char *pcErrAction;
+	const char *pcAlarmDesc;
+}DispUiSnapshot_T;
 
 
 /* ==========================================extern======================================*/
@@ -57,7 +99,13 @@ void vDisp_SetPower(bool on);
 void vDisp_SetContrast(u8 value);
 void vDisp_ClearBuffer(void);
 void vDisp_UiTest(void);
-void vDisp_RenderUi(void);
+bool bDisp_RenderUi(void);
+void vDisp_ClearRegion(u8 x, u8 y, u8 w, u8 h);
+void vDisp_DrawPageFrame(const char *title);
+void vDisp_DrawFullTopBar(const char *title, const char *tag);
+void vDisp_DrawStatusTag(const char *label);
+void vDisp_DrawHintLine(void);
+const DispUiSnapshot_T *ptDisp_GetUiSnapshot(void);
 
 #ifdef __cplusplus
 }
@@ -66,3 +114,4 @@ void vDisp_RenderUi(void);
 #endif //boardDISPLAY_EN
 
 #endif  //MD_DISPLAY_API_H
+

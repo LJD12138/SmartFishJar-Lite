@@ -213,10 +213,15 @@ void v_sys_queue_task_init(Task_T *tp_task)
 			#endif  //boardKEY_EN
 
 			else if(
+				true
 				#if(boardBMS_EN)
 				tSysInfo.uInit.tFinish.bIF_BmsTask
 				#else
-				true
+					#if(boardDISPLAY_EN)
+					&& tSysInfo.uInit.tFinish.bIF_DispTask
+					#else
+					&& true
+					#endif  //boardDISPLAY_EN
 				#endif  //boardBMS_EN
 				)
 			{

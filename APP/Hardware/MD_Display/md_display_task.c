@@ -76,21 +76,9 @@ static void v_disp_page_set_hint(const char *msg);
 static void v_disp_apply_setting_runtime(void);
 static bool b_disp_save_setting_cache(void);
 static bool b_disp_toggle_alarm_buzzer(void);
-static bool b_disp_cycle_actuator(DispQuickItem_E item);
 static bool b_disp_adjust_setting_item(DispSettingItem_E item, bool add);
 static bool b_disp_is_work_page(DispPageId_E page_id);
-static DispSettingItem_E e_disp_focus_to_setting_item(DispFocusId_E focus_id);
-static DispQuickItem_E e_disp_focus_to_quick_item(DispFocusId_E focus_id);
 static void v_disp_home_update_visible_window(void);
-static void v_disp_home_reset_focus(void);
-static u8 uc_disp_home_item_count(DispHomeTabId_E tab_id);
-static bool b_disp_home_select_prev_tab(void);
-static bool b_disp_home_select_next_tab(void);
-static bool b_disp_home_focus_prev_item(void);
-static bool b_disp_home_focus_next_item(void);
-static bool b_disp_home_adjust_current(bool add);
-static bool b_disp_home_activate_or_confirm(void);
-static bool b_disp_home_save_setting(void);
 static void v_disp_text_scroll_reset(void);
 static void v_disp_home_save_restore_point(void);
 static void v_disp_home_restore_from_point(void);
@@ -258,7 +246,7 @@ static void v_disp_setting_cache_load_default(void)
 
 /***********************************************************************************************************************
 -----函数功能    设置页面提示
------说明(备注)  设置底部短提示并标记内容和软键区域刷新
+-----说明(备注)  设置底部短提示并标记内容和底部提示区域刷新
 -----传入参数    msg:提示字符串
 -----输出参数    none
 -----返回值      none
@@ -269,7 +257,7 @@ static void v_disp_page_set_hint(const char *msg)
 	if(msg != NULL)
 		strncpy(tDispPageCtx.acHint, msg, sizeof(tDispPageCtx.acHint) - 1U);
 	tDispPageCtx.usHintCnt = 3U;
-	tDispPageCtx.usDirtyMask |= DDM_CONTENT | DDM_SOFTKEY;
+	tDispPageCtx.usDirtyMask |= DDM_CONTENT | DDM_BOTTOM;
 	g_bDispPageDirty = true;
 }
 
@@ -352,72 +340,6 @@ static bool b_disp_toggle_alarm_buzzer(void)
 }
 
 /***********************************************************************************************************************
------函数功能    快捷控制执行器
------说明(备注)  根据快捷项目循环切换对应执行器模式
------传入参数    item:快捷控制项
------输出参数    none
------返回值      true:成功 false:失败
-************************************************************************************************************************/
-static bool b_disp_cycle_actuator(DispQuickItem_E item)
-{
-	switch(item)
-	{
-		case DQI_LIGHT:
-			#if(boardLIGHT_EN)
-			vLight_CircSelectMode();
-			v_disp_page_set_hint("LIGHT SET");
-			return true;
-			#else
-			return false;
-			#endif
-
-		case DQI_O2PUMP:
-			#if(boardO2PUMP_EN)
-			switch(tO2Pump.eMode)
-			{
-				case O2PUMP_OFF:  bO2Pump_SetMode(O2PUMP_LOW); break;
-				case O2PUMP_LOW:  bO2Pump_SetMode(O2PUMP_MID); break;
-				case O2PUMP_MID:  bO2Pump_SetMode(O2PUMP_HIGH); break;
-				default:          bO2Pump_SetMode(O2PUMP_OFF); break;
-			}
-			v_disp_page_set_hint("O2 SET");
-			return true;
-			#else
-			return false;
-			#endif
-
-		case DQI_WPUMP:
-			#if(boardWATER_PUMP_EN)
-			switch(tPump.eMode)
-			{
-				case PUMP_OFF:  bPump_SetMode(PUMP_LOW); break;
-				case PUMP_LOW:  bPump_SetMode(PUMP_MID); break;
-				case PUMP_MID:  bPump_SetMode(PUMP_HIGH); break;
-				default:        bPump_SetMode(PUMP_OFF); break;
-			}
-			v_disp_page_set_hint("PUMP SET");
-			return true;
-			#else
-			return false;
-			#endif
-
-		case DQI_HEAT:
-			#if(boardHEAT_MANAGE_EN)
-			bHeat_ToggleUiForce();
-			v_disp_page_set_hint("HEAT SET");
-			return true;
-			#else
-			return false;
-			#endif
-
-		default:
-			break;
-	}
-
-	return false;
-}
-
-/***********************************************************************************************************************
 -----函数功能    调整设置项目
 -----说明(备注)  只修改设置缓存中的字段, 保存前不写入实际记忆参数
 -----传入参数    item:设置项  add:true增加 false减少
@@ -474,7 +396,7 @@ static bool b_disp_adjust_setting_item(DispSettingItem_E item, bool add)
 	}
 
 	tDispPageCtx.tSettingCache.bDirty = true;
-	tDispPageCtx.usDirtyMask |= DDM_CONTENT | DDM_SOFTKEY;
+	tDispPageCtx.usDirtyMask |= DDM_CONTENT | DDM_BOTTOM;
 	g_bDispPageDirty = true;
 	return true;
 }
@@ -497,9 +419,6 @@ static bool b_disp_is_work_page(DispPageId_E page_id)
 		case DPI_O2PUMP:
 		case DPI_SETTING:
 		case DPI_ADC:
-		case DPI_ENV:
-		case DPI_ACT:
-		case DPI_ALARM:
 			return true;
 
 		default:
@@ -604,14 +523,14 @@ static DispPageId_E e_disp_home_module_page_id(DispHomeModule_E module)
 
 /***********************************************************************************************************************
 -----函数功能    标记内容刷新
------说明(备注)  焦点或数值变化时标记内容和软键区域重绘
+-----说明(备注)  焦点或数值变化时标记内容和底部提示区域重绘
 -----传入参数    none
 -----输出参数    none
 -----返回值      none
 ************************************************************************************************************************/
 static void v_disp_mark_content_dirty(void)
 {
-	tDispPageCtx.usDirtyMask |= DDM_CONTENT | DDM_SOFTKEY;
+	tDispPageCtx.usDirtyMask |= DDM_CONTENT | DDM_BOTTOM;
 	g_bDispPageDirty = true;
 	v_disp_text_scroll_reset();
 }
@@ -897,48 +816,6 @@ static bool b_disp_adjust_detail_current(bool add)
 }
 
 /***********************************************************************************************************************
------函数功能    焦点转换设置项
------说明(备注)  将卡片焦点映射到设置页项目
------传入参数    focus_id:焦点ID
------输出参数    none
------返回值      设置项枚举
-************************************************************************************************************************/
-static DispSettingItem_E e_disp_focus_to_setting_item(DispFocusId_E focus_id)
-{
-	switch(focus_id)
-	{
-		case DFI_CARD_1: return DSI_SLEEP;
-		case DFI_CARD_2: return DSI_BUZZER;
-		case DFI_CARD_3: return DSI_HIGH_LIGHT;
-		case DFI_CARD_4: return DSI_LOW_LIGHT;
-		default: break;
-	}
-
-	return DSI_INVAILD;
-}
-
-/***********************************************************************************************************************
------函数功能    焦点转换快捷项
------说明(备注)  将卡片焦点映射到快捷控制项目
------传入参数    focus_id:焦点ID
------输出参数    none
------返回值      快捷控制项枚举
-************************************************************************************************************************/
-static DispQuickItem_E e_disp_focus_to_quick_item(DispFocusId_E focus_id)
-{
-	switch(focus_id)
-	{
-		case DFI_CARD_1: return DQI_LIGHT;
-		case DFI_CARD_2: return DQI_O2PUMP;
-		case DFI_CARD_3: return DQI_WPUMP;
-		case DFI_CARD_4: return DQI_HEAT;
-		default: break;
-	}
-
-	return DQI_INVAILD;
-}
-
-/***********************************************************************************************************************
 -----函数功能    更新主页标签窗口
 -----说明(备注)  根据当前标签位置调整标签窗口起始索引
 -----传入参数    none
@@ -954,311 +831,6 @@ static void v_disp_home_update_visible_window(void)
 
 	if(tDispPageCtx.ucTabVisibleStart > (u8)(DHT_COUNT - 4U))
 		tDispPageCtx.ucTabVisibleStart = (u8)(DHT_COUNT - 4U);
-}
-
-/***********************************************************************************************************************
------函数功能    复位主页焦点
------说明(备注)  切换标签或模式后复位主页项目焦点和编辑状态
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_home_reset_focus(void)
-{
-	tDispPageCtx.ucTabItemIndex = 0U;
-	tDispPageCtx.bEditing = false;
-	tDispPageCtx.eFocusId = DFI_CARD_1;
-	v_disp_text_scroll_reset();
-	tDispPageCtx.usDirtyMask |= DDM_CONTENT | DDM_SOFTKEY;
-	g_bDispPageDirty = true;
-}
-
-/***********************************************************************************************************************
------函数功能    获取主页标签项目数
------说明(备注)  返回当前主页标签内可选项目数量
------传入参数    tab_id:主页标签ID
------输出参数    none
------返回值      项目数量
-************************************************************************************************************************/
-static u8 uc_disp_home_item_count(DispHomeTabId_E tab_id)
-{
-	switch(tab_id)
-	{
-		case DHT_LIGHT:
-		case DHT_HEAT:
-		case DHT_ADC:
-			return 2U;
-
-		case DHT_SETTING:
-			return 4U;
-
-		case DHT_WPUMP:
-		case DHT_O2PUMP:
-			return 1U;
-
-		default:
-			break;
-	}
-
-	return 1U;
-}
-
-/***********************************************************************************************************************
------函数功能    选择上一个主页标签
------说明(备注)  主页标签向前循环切换并复位焦点
------传入参数    none
------输出参数    none
------返回值      true:成功 false:失败
-************************************************************************************************************************/
-static bool b_disp_home_select_prev_tab(void)
-{
-	if(tDispPageCtx.eHomeTab > DHT_LIGHT)
-		tDispPageCtx.eHomeTab--;
-	else
-		tDispPageCtx.eHomeTab = (DispHomeTabId_E)(DHT_COUNT - 1U);
-
-	v_disp_home_update_visible_window();
-	v_disp_home_reset_focus();
-	return true;
-}
-
-/***********************************************************************************************************************
------函数功能    选择下一个主页标签
------说明(备注)  主页标签向后循环切换并复位焦点
------传入参数    none
------输出参数    none
------返回值      true:成功 false:失败
-************************************************************************************************************************/
-static bool b_disp_home_select_next_tab(void)
-{
-	if(tDispPageCtx.eHomeTab < (DispHomeTabId_E)(DHT_COUNT - 1U))
-		tDispPageCtx.eHomeTab++;
-	else
-		tDispPageCtx.eHomeTab = DHT_LIGHT;
-
-	v_disp_home_update_visible_window();
-	v_disp_home_reset_focus();
-	return true;
-}
-
-/***********************************************************************************************************************
------函数功能    选择上一个标签项目
------说明(备注)  在当前主页标签内向前循环移动项目焦点
------传入参数    none
------输出参数    none
------返回值      true:成功 false:失败
-************************************************************************************************************************/
-static bool b_disp_home_focus_prev_item(void)
-{
-	u8 count = uc_disp_home_item_count(tDispPageCtx.eHomeTab);
-
-	if(count <= 1U)
-		return false;
-
-	if(tDispPageCtx.ucTabItemIndex > 0U)
-		tDispPageCtx.ucTabItemIndex--;
-	else
-		tDispPageCtx.ucTabItemIndex = (u8)(count - 1U);
-
-	tDispPageCtx.eFocusId = (DispFocusId_E)(DFI_CARD_1 + tDispPageCtx.ucTabItemIndex);
-	tDispPageCtx.usDirtyMask |= DDM_CONTENT | DDM_SOFTKEY;
-	g_bDispPageDirty = true;
-	return true;
-}
-
-/***********************************************************************************************************************
------函数功能    选择下一个标签项目
------说明(备注)  在当前主页标签内向后循环移动项目焦点
------传入参数    none
------输出参数    none
------返回值      true:成功 false:失败
-************************************************************************************************************************/
-static bool b_disp_home_focus_next_item(void)
-{
-	u8 count = uc_disp_home_item_count(tDispPageCtx.eHomeTab);
-
-	if(count <= 1U)
-		return false;
-
-	tDispPageCtx.ucTabItemIndex++;
-	if(tDispPageCtx.ucTabItemIndex >= count)
-		tDispPageCtx.ucTabItemIndex = 0U;
-
-	tDispPageCtx.eFocusId = (DispFocusId_E)(DFI_CARD_1 + tDispPageCtx.ucTabItemIndex);
-	tDispPageCtx.usDirtyMask |= DDM_CONTENT | DDM_SOFTKEY;
-	g_bDispPageDirty = true;
-	return true;
-}
-
-/***********************************************************************************************************************
------函数功能    调整主页当前项目
------说明(备注)  对主页激活标签中的当前项目执行调整
------传入参数    add:true增加/下一个 false减少/上一个
------输出参数    none
------返回值      true:成功 false:失败
-************************************************************************************************************************/
-static bool b_disp_home_adjust_current(bool add)
-{
-	switch(tDispPageCtx.eHomeTab)
-	{
-		case DHT_LIGHT:
-			#if(boardLIGHT_EN)
-			vLight_CircSelectMode();
-			v_disp_page_set_hint("LIGHT SET");
-			return true;
-			#else
-			return false;
-			#endif
-
-		case DHT_HEAT:
-			#if(boardHEAT_MANAGE_EN)
-			if(tDispPageCtx.ucTabItemIndex == 0U)
-			{
-				bHeat_ToggleUiForce();
-				v_disp_page_set_hint("HEAT MODE");
-			}
-			else
-			{
-				bFan_CycleUiMode(add);
-				v_disp_page_set_hint(add ? "FAN MODE+" : "FAN MODE-");
-			}
-			return true;
-			#else
-			return false;
-			#endif
-
-		case DHT_WPUMP:
-			#if(boardWATER_PUMP_EN)
-			switch(tPump.eMode)
-			{
-				case PUMP_OFF:  bPump_SetMode(add ? PUMP_LOW : PUMP_MAX); break;
-				case PUMP_LOW:  bPump_SetMode(add ? PUMP_MID : PUMP_OFF); break;
-				case PUMP_MID:  bPump_SetMode(add ? PUMP_HIGH : PUMP_LOW); break;
-				case PUMP_HIGH: bPump_SetMode(add ? PUMP_MAX : PUMP_MID); break;
-				default:        bPump_SetMode(add ? PUMP_OFF : PUMP_HIGH); break;
-			}
-			v_disp_page_set_hint("PUMP SET");
-			return true;
-			#else
-			return false;
-			#endif
-
-		case DHT_O2PUMP:
-			#if(boardO2PUMP_EN)
-			switch(tO2Pump.eMode)
-			{
-				case O2PUMP_OFF:  bO2Pump_SetMode(add ? O2PUMP_LOW : O2PUMP_MAX); break;
-				case O2PUMP_LOW:  bO2Pump_SetMode(add ? O2PUMP_MID : O2PUMP_OFF); break;
-				case O2PUMP_MID:  bO2Pump_SetMode(add ? O2PUMP_HIGH : O2PUMP_LOW); break;
-				case O2PUMP_HIGH: bO2Pump_SetMode(add ? O2PUMP_MAX : O2PUMP_MID); break;
-				default:          bO2Pump_SetMode(add ? O2PUMP_OFF : O2PUMP_HIGH); break;
-			}
-			v_disp_page_set_hint("O2 SET");
-			return true;
-			#else
-			return false;
-			#endif
-
-		case DHT_SETTING:
-			if(tDispPageCtx.bEditing == false)
-			{
-				v_disp_page_set_hint("ENTER EDIT");
-				return true;
-			}
-			return b_disp_adjust_setting_item((DispSettingItem_E)tDispPageCtx.ucTabItemIndex, add);
-
-		case DHT_ADC:
-			if(add == true)
-			{
-				if(tDispPageCtx.ucAdcGroupIndex < 2U)
-					tDispPageCtx.ucAdcGroupIndex++;
-				else
-					tDispPageCtx.ucAdcGroupIndex = 0U;
-			}
-			else if(tDispPageCtx.ucAdcGroupIndex > 0U)
-				tDispPageCtx.ucAdcGroupIndex--;
-			else
-				tDispPageCtx.ucAdcGroupIndex = 2U;
-
-			tDispPageCtx.usDirtyMask |= DDM_CONTENT | DDM_SOFTKEY;
-			g_bDispPageDirty = true;
-			switch(tDispPageCtx.ucAdcGroupIndex)
-			{
-				case 0U: v_disp_page_set_hint("ADC TEMP"); break;
-				case 1U: v_disp_page_set_hint("ADC PWR"); break;
-				default: v_disp_page_set_hint("ADC LUX"); break;
-			}
-			return true;
-
-		default:
-			break;
-	}
-
-	return false;
-}
-
-/***********************************************************************************************************************
------函数功能    主页确认键处理
------说明(备注)  根据主页模式执行激活标签、切换编辑模式或应用当前项目
------传入参数    none
------输出参数    none
------返回值      true:成功 false:失败
-************************************************************************************************************************/
-static bool b_disp_home_activate_or_confirm(void)
-{
-	if(tDispPageCtx.eHomeMode == DHM_OVERVIEW)
-	{
-		tDispPageCtx.eHomeMode = DHM_TAB_ACTIVE;
-		v_disp_home_reset_focus();
-		v_disp_page_set_hint("TAB ACTIVE");
-		return true;
-	}
-
-	if(tDispPageCtx.eHomeTab == DHT_SETTING)
-	{
-		tDispPageCtx.bEditing = !tDispPageCtx.bEditing;
-		v_disp_page_set_hint(tDispPageCtx.bEditing ? "EDIT CACHE" : "CACHE HOLD");
-		return true;
-	}
-
-	if(tDispPageCtx.eHomeTab == DHT_ADC)
-	{
-		switch(tDispPageCtx.ucAdcGroupIndex)
-		{
-			case 0U:
-				v_disp_page_set_hint(tDispPageCtx.ucTabItemIndex == 0U ? "WATER TEMP1" : "WATER TEMP2");
-				break;
-
-			case 1U:
-				v_disp_page_set_hint(tDispPageCtx.ucTabItemIndex == 0U ? "12V POWER" : "LIGHT CURR");
-				break;
-
-			default:
-				v_disp_page_set_hint(tDispPageCtx.ucTabItemIndex == 0U ? "LIGHT ADC" : "BOARD TEMP");
-				break;
-		}
-		return true;
-	}
-
-	return b_disp_home_adjust_current(true);
-}
-
-/***********************************************************************************************************************
------函数功能    保存主页设置项
------说明(备注)  在主页设置标签中保存设置缓存, 需要时先恢复默认值
------传入参数    none
------输出参数    none
------返回值      true:成功 false:失败
-************************************************************************************************************************/
-static bool b_disp_home_save_setting(void)
-{
-	if(tDispPageCtx.eHomeTab != DHT_SETTING)
-		return false;
-
-	if(tDispPageCtx.tSettingCache.bRestoreDefault == true)
-		v_disp_setting_cache_load_default();
-
-	return b_disp_save_setting_cache();
 }
 
 /***********************************************************************************************************************
@@ -1289,7 +861,6 @@ void vDisp_PageInitContext(void)
 	tDispPageCtx.bOverlayLock = false;
 	v_disp_text_scroll_reset();
 	v_disp_setting_cache_load();
-	tDispPageCtx.eQuickItem = DQI_LIGHT;
 	memset(tDispPageCtx.acHint, 0, sizeof(tDispPageCtx.acHint));
 	tDispPageCtx.usHintCnt = 0U;
 	tDispPageCtx.tHomeRestore.ePageId = DPI_HOME;
@@ -1729,7 +1300,7 @@ void vDisp_Task(void *pvParameters)
 			   g_bDispPageDirty == true &&
 			   tDisp.bLight == true &&
 			   (tDisp.eDevState == DS_WORK || tDisp.eDevState == DS_ERR))
-				vDisp_RenderUi();
+				bDisp_RenderUi();
 		}
 	}
 }
@@ -1814,7 +1385,7 @@ void vDisp_TickTimer(void)
 	if(tDispPageCtx.usHintCnt > 0U)
 	{
 		tDispPageCtx.usHintCnt--;
-		tDispPageCtx.usDirtyMask |= DDM_SOFTKEY;
+		tDispPageCtx.usDirtyMask |= DDM_BOTTOM;
 		g_bDispPageDirty = true;
 	}
 
@@ -1906,3 +1477,4 @@ void vLcd_ExitLowPower(void)
 #endif //boardLOW_POWER
 
 #endif //boardDISPLAY_EN
+

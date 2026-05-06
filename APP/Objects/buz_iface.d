@@ -3,7 +3,7 @@
 .\objects\buz_iface.o: .\Application\main.h
 .\objects\buz_iface.o: .\Firmware\CMSIS\GD\GD32F30x\Include\gd32f30x.h
 .\objects\buz_iface.o: .\Firmware\CMSIS\core_cm4.h
-.\objects\buz_iface.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdint.h
+.\objects\buz_iface.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\buz_iface.o: .\Firmware\CMSIS\core_cmInstr.h
 .\objects\buz_iface.o: .\Firmware\CMSIS\core_cmFunc.h
 .\objects\buz_iface.o: .\Firmware\CMSIS\core_cm4_simd.h
@@ -34,10 +34,10 @@
 .\objects\buz_iface.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_misc.h
 .\objects\buz_iface.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_enet.h
 .\objects\buz_iface.o: .\Firmware\GD32F30x_standard_peripheral\Include\gd32f30x_exmc.h
-.\objects\buz_iface.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h
-.\objects\buz_iface.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdbool.h
-.\objects\buz_iface.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\string.h
-.\objects\buz_iface.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdlib.h
-.\objects\buz_iface.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin\..\include\assert.h
+.\objects\buz_iface.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\buz_iface.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\buz_iface.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\buz_iface.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\objects\buz_iface.o: C:\Users\29148\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\assert.h
 .\objects\buz_iface.o: .\Application\board_config.h
 .\objects\buz_iface.o: .\Hardware\Led/led_iface.h

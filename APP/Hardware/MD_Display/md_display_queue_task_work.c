@@ -49,7 +49,7 @@ void v_disp_queue_task_work(Task_T *tp_task)
             vDisp_PageSyncByState(DS_WORK);
             tDispPageCtx.usDirtyMask = DDM_FULL;
             g_bDispPageDirty = true;
-            vDisp_RenderUi();
+            bDisp_RenderUi();
             cQueue_GotoStep(tp_task, STEP_NEXT);
         }
         break;
@@ -96,9 +96,6 @@ void v_disp_queue_task_work(Task_T *tp_task)
 						case DPI_O2PUMP:
 						case DPI_SETTING:
 						case DPI_ADC:
-						case DPI_ENV:
-						case DPI_ACT:
-						case DPI_ALARM:
                             if(tDispPageCtx.bEditing == false)
                             {
                                 tDispPageCtx.usDirtyMask |= DDM_CONTENT;
@@ -113,7 +110,7 @@ void v_disp_queue_task_work(Task_T *tp_task)
             }
 
             if(g_bDispPageDirty)
-                vDisp_RenderUi();
+                bDisp_RenderUi();
             cQueue_GotoStep(tp_task, STEP_END);
         }
         break;

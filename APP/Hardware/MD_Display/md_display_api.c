@@ -20,6 +20,7 @@
 #if(boardDISPLAY_EN)
 #include "MD_Display/md_display_iface.h"
 #include "MD_Display/md_display_task.h"
+#include "MD_Display/md_display_queue_task.h"
 
 #include "app_info.h"
 
@@ -64,56 +65,13 @@
 #define DISP_HEAT_TARGET_TEMP_C               25
 #define DISP_HEAT_STRONG_TEMP_C               22
 
-//显示页面刷新快照: 每次渲染前统一采集, 绘图过程中只读取该结构体
-typedef struct
-{
-    s16 sWaterTemp;
-    s16 sWaterTemp1;
-    s16 sWaterTemp2;
-    s16 sBoardTemp5V;
-    s16 sBoardTemp12V;
-    u16 usInitProgress;
-    u16 usErrCode;
-    u16 usAutoOffCnt;
-    u16 usLightAdc;
-    u16 us12VVolt;
-    u16 usVinVolt;
-    u16 usVinCurrMa;
-    u16 usVinPowerW;
-    u16 usHeatCurrMa;
-    u16 usPumpCurrMa;
-    u16 usO2CurrMa;
-    u16 usLightPowerW;
-    u16 usHeatPowerW;
-    u16 usPumpPowerW;
-    u16 usO2PowerW;
-    u16 usLightCurrMa;
-    u16 usLightWarm;
-    u16 usO2PumpSpeed;
-    u16 usPumpSpeed;
-    u16 usFanMode;
-    u8 ucUpgradePercent;
-    u8 ucBuzOff;
-    u8 ucForceClose;
-    const char *pcLightMode;
-    const char *pcPumpMode;
-    const char *pcO2PumpMode;
-    const char *pcHeatMode;
-    const char *pcUpgradeStage;
-    const char *pcUpgradeNote;
-    const char *pcErrModule;
-    const char *pcErrMode;
-    const char *pcErrAction;
-    const char *pcAlarmDesc;
-}DispUiSnapshot_T;
-
 
 
 //****************************************************Parameter Initialization************************************************//
 #if(dispUSE_U8G2 == 0)
 static u8 s_oled_gram[OLED_PAGE_COUNT][OLED_WIDTH_PIXELS];
 #else
-//页面渲染数据缓存, 在vDisp_RenderUi开始时刷新
+//页面渲染数据缓存, 在bDisp_RenderUi开始时刷新
 static DispUiSnapshot_T s_tDispUiSnapshot;
 static unsigned char u8g_logo_bits[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -174,10 +132,9 @@ static unsigned char u8g_logo_bits[] = {
 
 //****************************************************Function Declaration****************************************************//
 static void v_disp_clear_region(u8 x, u8 y, u8 w, u8 h);
-static void v_disp_draw_page_frame(const char *title, const DispSoftKey_T *softkey);
+static void v_disp_draw_page_frame(const char *title);
 static void v_disp_draw_full_top_bar(const char *title, const char *tag);
 static void v_disp_draw_status_tag(const char *label);
-static void v_disp_draw_focus_mark(u8 y);
 static void v_disp_draw_hint_line(void);
 static u16 us_disp_text_hash(const char *text);
 static void v_disp_make_home_line(char *dst, u8 dst_size, const char *src, u8 width_chars, bool highlight, u8 field_key);
@@ -206,17 +163,6 @@ static void v_disp_draw_home_item_block(u8 x, u8 y, u8 w, const char *label, con
 static void v_disp_draw_home_tab_card(u8 x, u8 y, u8 w, u8 h, DispHomeTabId_E tab_id, bool selected, bool active);
 static void v_disp_draw_home_tab_body(u8 x, u8 y, u8 w, u8 h, DispHomeTabId_E tab_id, bool selected, bool active);
 static void v_disp_draw_home_page(void);
-static void v_disp_draw_env_page(void);
-static void v_disp_draw_act_page(void);
-static void v_disp_draw_alarm_page(void);
-static void v_disp_draw_setting_page(void);
-static void v_disp_draw_quick_page(void);
-static void v_disp_draw_init_page(void);
-static void v_disp_draw_booting_page(void);
-static void v_disp_draw_upgrade_page(void);
-static void v_disp_draw_closing_page(void);
-static void v_disp_draw_sleep_page(void);
-static void v_disp_draw_error_page(void);
 
 /***********************************************************************************************************************
 -----函数功能    采集显示页面快照
@@ -710,12 +656,12 @@ static void v_disp_clear_region(u8 x, u8 y, u8 w, u8 h)
 
 /***********************************************************************************************************************
 -----函数功能    绘制通用页面框架
------说明(备注)  根据脏标志刷新标题、内容和软键区域
------传入参数    title:标题  softkey:软键文本
+-----说明(备注)  根据脏标志刷新标题、内容和底部区域
+-----传入参数    title:标题
 -----输出参数    none
 -----返回值      none
 ************************************************************************************************************************/
-static void v_disp_draw_page_frame(const char *title, const DispSoftKey_T *softkey)
+static void v_disp_draw_page_frame(const char *title)
 {
     vu16 dirty_mask = tDispPageCtx.usDirtyMask;
 
@@ -733,10 +679,6 @@ static void v_disp_draw_page_frame(const char *title, const DispSoftKey_T *softk
         u8g2_SetDrawColor(&u8g2, 1);
         u8g2_DrawLine(&u8g2, 0, 10, OLED_WIDTH_PIXELS - 1U, 10);
         u8g2_DrawLine(&u8g2, 0, 47, OLED_WIDTH_PIXELS - 1U, 47);
-        u8g2_SetFont(&u8g2, u8g2_font_5x8_tr);
-        u8g2_DrawStr(&u8g2, 2, 61, softkey->pcLeft);
-        u8g2_DrawStr(&u8g2, 50, 61, softkey->pcCenter);
-        u8g2_DrawStr(&u8g2, 98, 61, softkey->pcRight);
         return;
     }
 
@@ -754,14 +696,10 @@ static void v_disp_draw_page_frame(const char *title, const DispSoftKey_T *softk
     if(dirty_mask & DDM_CONTENT)
         v_disp_clear_region(0, 11, OLED_WIDTH_PIXELS, 36);
 
-    if(dirty_mask & DDM_SOFTKEY)
+    if(dirty_mask & DDM_BOTTOM)
     {
         v_disp_clear_region(0, 48, OLED_WIDTH_PIXELS, 16);
         u8g2_DrawLine(&u8g2, 0, 47, OLED_WIDTH_PIXELS - 1U, 47);
-        u8g2_SetFont(&u8g2, u8g2_font_5x8_tr);
-        u8g2_DrawStr(&u8g2, 2, 61, softkey->pcLeft);
-        u8g2_DrawStr(&u8g2, 50, 61, softkey->pcCenter);
-        u8g2_DrawStr(&u8g2, 98, 61, softkey->pcRight);
     }
 }
 
@@ -801,18 +739,6 @@ static void v_disp_draw_full_top_bar(const char *title, const char *tag)
         u8g2_DrawStr(&u8g2, (u8)(OLED_WIDTH_PIXELS - (tag_len * 6U) - 2U), 7, tag);
     u8g2_SetDrawColor(&u8g2, 1);
     u8g2_DrawLine(&u8g2, 0, 9, OLED_WIDTH_PIXELS - 1U, 9);
-}
-
-/***********************************************************************************************************************
------函数功能    绘制焦点标记
------说明(备注)  在指定行左侧绘制焦点指示条
------传入参数    y:焦点行纵坐标
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_draw_focus_mark(u8 y)
-{
-    u8g2_DrawBox(&u8g2, 0, y - 5U, 2, 8);
 }
 
 /***********************************************************************************************************************
@@ -1475,79 +1401,6 @@ static void v_disp_draw_adc_page(void)
 }
 
 /***********************************************************************************************************************
------函数功能    绘制环境信息页
------说明(备注)  显示水温、板温、光照ADC和12V电压
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_draw_env_page(void)
-{
-    DispSoftKey_T softkey = {"TAB-", "INFO", "TAB+"};
-    char line[24];
-    v_disp_draw_page_frame("P11 ENV", &softkey);
-    v_disp_draw_status_tag("ENV");
-    u8g2_SetFont(&u8g2, u8g2_font_5x8_tr);
-    sprintf(line, "WATER  %2d/%2dC", s_tDispUiSnapshot.sWaterTemp1, s_tDispUiSnapshot.sWaterTemp2);
-    u8g2_DrawStr(&u8g2, 6, 18, line);
-    sprintf(line, "BOARD  %2d/%2dC", s_tDispUiSnapshot.sBoardTemp5V, s_tDispUiSnapshot.sBoardTemp12V);
-    u8g2_DrawStr(&u8g2, 6, 28, line);
-    sprintf(line, "LIGHT  %4u ADC", s_tDispUiSnapshot.usLightAdc);
-    u8g2_DrawStr(&u8g2, 6, 38, line);
-    sprintf(line, "12VIN  %2u.%uV", s_tDispUiSnapshot.us12VVolt / 10U, s_tDispUiSnapshot.us12VVolt % 10U);
-    u8g2_DrawStr(&u8g2, 6, 46, line);
-    v_disp_draw_focus_mark((u8)(8U + (tDispPageCtx.eFocusId >= DFI_CARD_1 ? (tDispPageCtx.eFocusId - DFI_CARD_1 + 1U) * 10U : 10U)));
-    v_disp_draw_hint_line();
-}
-
-/***********************************************************************************************************************
------函数功能    绘制执行器信息页
------说明(备注)  显示照明、氧气泵、水泵和温控执行状态
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_draw_act_page(void)
-{
-	DispSoftKey_T softkey = {"TAB-", "QUICK", "TAB+"};
-    char line[24];
-    v_disp_draw_page_frame("P12 ACT", &softkey);
-    v_disp_draw_status_tag("ACT");
-    u8g2_SetFont(&u8g2, u8g2_font_5x8_tr);
-    sprintf(line, "LIGHT %s %3u", s_tDispUiSnapshot.pcLightMode, s_tDispUiSnapshot.usLightWarm);
-    u8g2_DrawStr(&u8g2, 6, 18, line);
-    sprintf(line, "O2PMP %s %3u", s_tDispUiSnapshot.pcO2PumpMode, s_tDispUiSnapshot.usO2PumpSpeed);
-    u8g2_DrawStr(&u8g2, 6, 28, line);
-    sprintf(line, "WPUMP %s %3u", s_tDispUiSnapshot.pcPumpMode, s_tDispUiSnapshot.usPumpSpeed);
-    u8g2_DrawStr(&u8g2, 6, 38, line);
-    sprintf(line, "HEAT  %s FAN %u", s_tDispUiSnapshot.pcHeatMode, s_tDispUiSnapshot.usFanMode);
-    u8g2_DrawStr(&u8g2, 6, 46, line);
-    v_disp_draw_focus_mark((u8)(8U + (tDispPageCtx.eFocusId >= DFI_CARD_1 ? (tDispPageCtx.eFocusId - DFI_CARD_1 + 1U) * 10U : 10U)));
-	v_disp_draw_hint_line();
-}
-
-/***********************************************************************************************************************
------函数功能    绘制报警摘要页
------说明(备注)  显示错误码、报警描述和处理动作
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_draw_alarm_page(void)
-{
-    char line[24];
-    DispSoftKey_T softkey = {"TAB-", s_tDispUiSnapshot.ucBuzOff ? "BUZON" : "MUTE", "TAB+"};
-    v_disp_draw_page_frame("P13 ALARM", &softkey);
-    v_disp_draw_status_tag("ALM");
-    u8g2_SetFont(&u8g2, u8g2_font_5x8_tr);
-    sprintf(line, "CODE  %03u %s", s_tDispUiSnapshot.usErrCode, s_tDispUiSnapshot.pcErrMode);
-    u8g2_DrawStr(&u8g2, 6, 20, line);
-    u8g2_DrawStr(&u8g2, 6, 31, s_tDispUiSnapshot.pcAlarmDesc);
-    sprintf(line, "ACT   %s", s_tDispUiSnapshot.pcErrAction);
-    u8g2_DrawStr(&u8g2, 6, 42, line);
-}
-
-/***********************************************************************************************************************
 -----函数功能    绘制设置页
 -----说明(备注)  显示息屏、蜂鸣器、亮度和恢复默认设置项
 -----传入参数    none
@@ -1575,182 +1428,6 @@ static void v_disp_draw_setting_page(void)
     v_disp_draw_hint_line();
 }
 
-/***********************************************************************************************************************
------函数功能    绘制快捷控制页
------说明(备注)  显示照明、氧气泵和水泵快捷控制入口
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_draw_quick_page(void)
-{
-    DispSoftKey_T softkey = {"EXIT", "APPLY", "NEXT"};
-    const u8 x_list[3] = {10U, 47U, 84U};
-    char line[24];
-    v_disp_draw_page_frame("P12A QUICK", &softkey);
-    v_disp_draw_status_tag("QCK");
-    u8g2_SetFont(&u8g2, u8g2_font_6x10_tr);
-    u8g2_DrawRFrame(&u8g2, 10, 16, 34, 18, 2);
-    u8g2_DrawStr(&u8g2, 16, 28, "LAMP");
-    u8g2_DrawRFrame(&u8g2, 47, 16, 34, 18, 2);
-    u8g2_DrawStr(&u8g2, 54, 28, "O2");
-    u8g2_DrawRFrame(&u8g2, 84, 16, 34, 18, 2);
-    u8g2_DrawStr(&u8g2, 90, 28, "PUMP");
-    if(tDispPageCtx.eFocusId >= DFI_CARD_1 && tDispPageCtx.eFocusId <= DFI_CARD_3)
-        u8g2_DrawFrame(&u8g2, x_list[tDispPageCtx.eFocusId - DFI_CARD_1], 14, 38, 22);
-    u8g2_SetFont(&u8g2, u8g2_font_5x8_tr);
-    sprintf(line, "%s / %s / %s", s_tDispUiSnapshot.pcLightMode, s_tDispUiSnapshot.pcO2PumpMode, s_tDispUiSnapshot.pcPumpMode);
-    u8g2_DrawStr(&u8g2, 12, 44, line);
-    u8g2_DrawStr(&u8g2, 18, 53, "UP/DN SEL ENT");
-    v_disp_draw_hint_line();
-}
-
-/***********************************************************************************************************************
------函数功能    绘制初始化页面
------说明(备注)  显示版本信息和初始化进度条
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_draw_init_page(void)
-{
-    char line[32];
-    u8 bar_w;
-
-    bar_w = (u8)((108U * s_tDispUiSnapshot.usInitProgress) / 100U);
-    v_disp_clear_region(0, 0, OLED_WIDTH_PIXELS, OLED_HEIGHT_PIXELS);
-    u8g2_DrawRFrame(&u8g2, 1, 1, 126, 62, 4);
-    u8g2_DrawBox(&u8g2, 8, 6, 112, 10);
-    u8g2_SetDrawColor(&u8g2, 0);
-    u8g2_SetFont(&u8g2, u8g2_font_5x8_tr);
-    u8g2_DrawStr(&u8g2, 46, 14, "INIT");
-    u8g2_SetDrawColor(&u8g2, 1);
-    u8g2_SetFont(&u8g2, u8g2_font_6x10_tr);
-    u8g2_DrawStr(&u8g2, 31, 29, "SmartFishJar");
-    u8g2_SetFont(&u8g2, u8g2_font_5x8_tr);
-    sprintf(line, "SW %s", boardSOFTWARE_VERSION);
-    u8g2_DrawStr(&u8g2, 20, 39, line);
-    sprintf(line, "HW %s", boardHARDWARE_VERSION);
-    u8g2_DrawStr(&u8g2, 20, 48, line);
-    sprintf(line, "%s %s", tAppMemParam.tVerInfo.saBuildDate, tAppMemParam.tVerInfo.saBuildTime);
-    u8g2_DrawStr(&u8g2, 10, 56, line);
-    u8g2_DrawFrame(&u8g2, 10, 58, 108, 4);
-    if(bar_w > 0U)
-        u8g2_DrawBox(&u8g2, 11, 59, (u8)(bar_w > 106U ? 106U : bar_w), 2);
-}
-/***********************************************************************************************************************
------函数功能    绘制启动页面
------说明(备注)  显示启动阶段标题、版本和进度
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_draw_booting_page(void)
-{
-    DispSoftKey_T softkey = {"", "", ""};
-    char line[24];
-    v_disp_draw_page_frame("P10 BOOTING", &softkey);
-    v_disp_draw_status_tag("BOOT");
-    u8g2_SetFont(&u8g2, u8g2_font_6x10_tr);
-    u8g2_DrawStr(&u8g2, 18, 26, "SmartFishJar");
-    u8g2_SetFont(&u8g2, u8g2_font_5x8_tr);
-    sprintf(line, "%s", boardSOFTWARE_VERSION);
-    u8g2_DrawStr(&u8g2, 20, 38, line);
-    sprintf(line, "BOOT %u%%", s_tDispUiSnapshot.usInitProgress);
-    u8g2_DrawStr(&u8g2, 42, 48, line);
-    u8g2_DrawFrame(&u8g2, 14, 44, 100, 8);
-    u8g2_DrawBox(&u8g2, 16, 46, (u8)((96U * s_tDispUiSnapshot.usInitProgress) / 100U), 4);
-}
-
-/***********************************************************************************************************************
------函数功能    绘制升级页面
------说明(备注)  显示升级进度、阶段和提示信息
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_draw_upgrade_page(void)
-{
-    DispSoftKey_T softkey = {"", "LOCK", ""};
-    char line[24];
-    v_disp_draw_page_frame("P20 UPGRADE", &softkey);
-    v_disp_draw_status_tag("UPD");
-    u8g2_SetFont(&u8g2, u8g2_font_6x10_tr);
-    sprintf(line, "PROG %u%%", s_tDispUiSnapshot.ucUpgradePercent);
-    u8g2_DrawStr(&u8g2, 20, 24, line);
-    u8g2_SetFont(&u8g2, u8g2_font_5x8_tr);
-    sprintf(line, "STEP %s", s_tDispUiSnapshot.pcUpgradeStage);
-    u8g2_DrawStr(&u8g2, 14, 36, line);
-    u8g2_DrawFrame(&u8g2, 14, 42, 100, 10);
-    u8g2_DrawBox(&u8g2, 16, 44, (u8)((96U * s_tDispUiSnapshot.ucUpgradePercent) / 100U), 6);
-    sprintf(line, "NOTE %s", s_tDispUiSnapshot.pcUpgradeNote);
-    u8g2_DrawStr(&u8g2, 8, 61, line);
-}
-
-/***********************************************************************************************************************
------函数功能    绘制关机中页面
------说明(备注)  显示关机流程状态和错误信息
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_draw_closing_page(void)
-{
-    DispSoftKey_T softkey = {"", "WAIT", ""};
-    char line[24];
-    v_disp_draw_page_frame("P30 CLOSING", &softkey);
-    v_disp_draw_status_tag("OFF");
-    u8g2_SetFont(&u8g2, u8g2_font_6x10_tr);
-    u8g2_DrawStr(&u8g2, 30, 26, "Power Down");
-    u8g2_SetFont(&u8g2, u8g2_font_5x8_tr);
-    sprintf(line, "ERR %03u FORCE %u", s_tDispUiSnapshot.usErrCode, s_tDispUiSnapshot.ucForceClose);
-    u8g2_DrawStr(&u8g2, 10, 40, line);
-    u8g2_DrawStr(&u8g2, 20, 48, "Save state / stop io");
-}
-
-/***********************************************************************************************************************
------函数功能    绘制休眠页面
------说明(备注)  显示休眠状态和唤醒提示
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_draw_sleep_page(void)
-{
-    DispSoftKey_T softkey = {"", "", ""};
-    v_disp_draw_page_frame("P40 SLEEP", &softkey);
-    v_disp_draw_status_tag("SLP");
-    u8g2_SetFont(&u8g2, u8g2_font_6x10_tr);
-    u8g2_DrawStr(&u8g2, 34, 30, "Sleep");
-    u8g2_SetFont(&u8g2, u8g2_font_5x8_tr);
-    u8g2_DrawStr(&u8g2, 20, 42, "Press key to wake");
-}
-
-/***********************************************************************************************************************
------函数功能    绘制错误页面
------说明(备注)  显示错误码、故障模块、描述和处理动作
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_draw_error_page(void)
-{
-    char line[24];
-    DispSoftKey_T softkey = {"", "MUTE", ""};
-    v_disp_draw_page_frame("P50 ERROR", &softkey);
-    v_disp_draw_status_tag("ERR");
-    u8g2_SetFont(&u8g2, u8g2_font_6x10_tr);
-    u8g2_DrawStr(&u8g2, 40, 22, "ERROR");
-    u8g2_SetFont(&u8g2, u8g2_font_5x8_tr);
-    sprintf(line, "CODE %03u %s", s_tDispUiSnapshot.usErrCode, s_tDispUiSnapshot.pcErrMode);
-    u8g2_DrawStr(&u8g2, 6, 32, line);
-    sprintf(line, "MOD  %s", s_tDispUiSnapshot.pcErrModule);
-    u8g2_DrawStr(&u8g2, 6, 40, line);
-    sprintf(line, "DESC %s", s_tDispUiSnapshot.pcAlarmDesc);
-    u8g2_DrawStr(&u8g2, 6, 48, line);
-    sprintf(line, "ACT  %s", s_tDispUiSnapshot.pcErrAction);
-    u8g2_DrawStr(&u8g2, 6, 56, line);
-}
 
 #if(dispUSE_U8G2 == 0)
 /***********************************************************************************************************************
@@ -2262,26 +1939,66 @@ void vDisp_UiTest(void)
 }
 
 /***********************************************************************************************************************
+-----函数功能    获取显示快照指针
+-----说明(备注)  返回最近一次渲染采集的数据快照
+-----传入参数    none
+-----输出参数    none
+-----返回值      快照结构体常量指针
+************************************************************************************************************************/
+const DispUiSnapshot_T *ptDisp_GetUiSnapshot(void)
+{
+    return &s_tDispUiSnapshot;
+}
+
+/***********************************************************************************************************************
+-----函数功能    绘制页面框架(对外接口)
+-----说明(备注)  调用内部页面框架绘制函数, 供队列任务直接复用
+-----传入参数    title:标题
+-----输出参数    none
+-----返回值      none
+************************************************************************************************************************/
+void vDisp_DrawPageFrame(const char *title)
+{
+    v_disp_draw_page_frame(title);
+}
+
+/***********************************************************************************************************************
+-----函数功能    绘制状态标签(对外接口)
+-----说明(备注)  调用内部状态标签绘制函数
+-----传入参数    label:标签文本
+-----输出参数    none
+-----返回值      none
+************************************************************************************************************************/
+void vDisp_DrawStatusTag(const char *label)
+{
+    v_disp_draw_status_tag(label);
+}
+
+/***********************************************************************************************************************
+-----函数功能    清除显示区域(对外接口)
+-----说明(备注)  调用内部区域清除函数
+-----传入参数    x/y/w/h:区域坐标和尺寸
+-----输出参数    none
+-----返回值      none
+************************************************************************************************************************/
+void vDisp_ClearRegion(u8 x, u8 y, u8 w, u8 h)
+{
+    v_disp_clear_region(x, y, w, h);
+}
+
+/***********************************************************************************************************************
 -----函数功能    渲染当前显示页面
 -----说明(备注)  采集快照、分发页面绘制、刷新屏幕并清除脏标志
 -----传入参数    none
 -----输出参数    none
------返回值      none
+-----返回值      true:已执行渲染 false:未执行渲染
 ************************************************************************************************************************/
-void vDisp_RenderUi(void)
+bool bDisp_RenderUi(void)
 {
     #if(dispUSE_U8G2 == 1)
     v_disp_collect_snapshot();
     switch(tDispPageCtx.ePageId)
     {
-        case DPI_INIT:
-            v_disp_draw_init_page();
-            break;
-
-        case DPI_BOOTING:
-            v_disp_draw_booting_page();
-            break;
-
         case DPI_HOME:
             v_disp_draw_home_page();
             break;
@@ -2302,44 +2019,12 @@ void vDisp_RenderUi(void)
             v_disp_draw_o2pump_page();
             break;
 
-        case DPI_ENV:
-            v_disp_draw_env_page();
-            break;
-
-        case DPI_ACT:
-            v_disp_draw_act_page();
-            break;
-
-        case DPI_ALARM:
-            v_disp_draw_alarm_page();
-            break;
-
         case DPI_SETTING:
             v_disp_draw_setting_page();
             break;
 
         case DPI_ADC:
             v_disp_draw_adc_page();
-            break;
-
-        case DPI_QUICK:
-            v_disp_draw_quick_page();
-            break;
-
-        case DPI_UPGRADE:
-            v_disp_draw_upgrade_page();
-            break;
-
-        case DPI_CLOSING:
-            v_disp_draw_closing_page();
-            break;
-
-        case DPI_SLEEP:
-            v_disp_draw_sleep_page();
-            break;
-
-        case DPI_ERROR:
-            v_disp_draw_error_page();
             break;
 
         default:
@@ -2353,6 +2038,10 @@ void vDisp_RenderUi(void)
 
     tDispPageCtx.usDirtyMask = DDM_NONE;
     g_bDispPageDirty = false;
+    return true;
 }
 
 #endif  // boardDISPLAY_EN
+
+
+

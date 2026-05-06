@@ -9,8 +9,14 @@
 #include "Sys/sys_task.h"
 #include "Print/print_task.h"
 
+#include <stdio.h>
+
 
 #define     dispTASK_ERR_CYCLE_TIME             100 //任务时间
+
+bool b_disp_render_error_page(void);
+
+
 
 /***********************************************************************************************************************
 -----函数功能    错误显示任务
@@ -48,7 +54,7 @@ void v_disp_queue_task_err(Task_T *tp_task)
             }
 
             if(g_bDispPageDirty)
-                vDisp_RenderUi();
+                b_disp_render_error_page();
 
             if(err_code < 100)
             {
@@ -72,3 +78,26 @@ void v_disp_queue_task_err(Task_T *tp_task)
     vTaskDelay(dispTASK_ERR_CYCLE_TIME);
     #endif  //boardUSE_OS
 }
+
+/***********************************************************************************************************************
+-----函数功能    渲染错误页面
+-----说明(备注)  错误页只属于错误队列, 由统一渲染入口分发到这里执行
+-----传入参数    none
+-----输出参数    none
+-----返回值      true:动画完成  false:继续显示
+************************************************************************************************************************/
+bool b_disp_render_error_page(void)
+{
+    char line[24];
+
+    vDisp_DrawPageFrame("P50 ERROR");
+    vDisp_DrawStatusTag("ERR");
+    u8g2_SetFont(&u8g2, u8g2_font_6x10_tr);
+    u8g2_DrawStr(&u8g2, 40, 22, "ERROR");
+
+    vDisp_Refresh();
+    tDispPageCtx.usDirtyMask = DDM_NONE;
+    g_bDispPageDirty = false;
+    return true;
+}
+

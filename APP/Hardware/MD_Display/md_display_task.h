@@ -2,6 +2,7 @@
 #define MD_DISPLAY_TASK_H_
 
 #include "board_config.h"
+#include "MD_Display/md_display_api.h"
 
 #if(boardDISPLAY_EN)
 #include "queue_task.h"
@@ -55,7 +56,7 @@ typedef struct
 }Disp_T;  
 extern Disp_T tDisp; 
 
-//显示页面ID, vDisp_RenderUi根据该ID选择绘制函数
+//显示页面ID, bDisp_RenderUi根据该ID选择绘制函数
 typedef enum
 {
 	DPI_NONE = 0,
@@ -68,10 +69,6 @@ typedef enum
 	DPI_O2PUMP,
 	DPI_SETTING,
 	DPI_ADC,
-	DPI_ENV,
-	DPI_ACT,
-	DPI_ALARM,
-	DPI_QUICK,
 	DPI_UPGRADE,
 	DPI_CLOSING,
 	DPI_SLEEP,
@@ -107,7 +104,7 @@ typedef enum
 	DDM_LAYOUT = 0x0001,
 	DDM_HEADER = 0x0002,
 	DDM_CONTENT = 0x0004,
-	DDM_SOFTKEY = 0x0008,
+	DDM_BOTTOM = 0x0008,
 	DDM_FULL = 0xFFFF,
 }DispDirtyMask_E;
 
@@ -121,16 +118,6 @@ typedef enum
 	DSI_RESET,
 	DSI_INVAILD,
 }DispSettingItem_E;
-
-//快捷控制项目, 用于切换对应执行器模式
-typedef enum
-{
-	DQI_LIGHT = 0,
-	DQI_O2PUMP,
-	DQI_WPUMP,
-	DQI_HEAT,
-	DQI_INVAILD,
-}DispQuickItem_E;
 
 //主页标签顺序, 绘制和按键导航共用
 typedef enum
@@ -169,14 +156,6 @@ typedef enum
 	DHM_OVERVIEW = 0,
 	DHM_TAB_ACTIVE,
 }DispHomeMode_E;
-
-//底部三段软键文本
-typedef struct
-{
-	const char *pcLeft;
-	const char *pcCenter;
-	const char *pcRight;
-}DispSoftKey_T;
 
 //设置页编辑缓存, 保存成功后再写入记忆参数
 typedef struct
@@ -218,28 +197,27 @@ typedef struct
 //页面上下文, 保存当前页、焦点、刷新区域、编辑缓存和提示文本
 typedef struct
 {
-	DispPageId_E ePageId;
-	DispPageId_E ePrevPageId;
-	DispOverlayId_E eOverlayId;
-	DispFocusId_E eFocusId;
-	DispFocusId_E ePrevFocusId;
-	DispMainPage_E eMainPage;
-	DispHomeMode_E eHomeMode;
-	DispHomeTabId_E eHomeTab;
-	DispHomeModule_E eHomeModule;
-	vu16 usDirtyMask;
-	u8 ucTabVisibleStart;
-	u8 ucTabItemIndex;
-	u8 ucFieldIndex;
-	u8 ucAdcGroupIndex;
-	bool bEditing;
-	bool bOverlayLock;
-	DispSettingCache_T tSettingCache;
-	DispTextScroll_T tTextScroll;
-	DispHomeRestore_T tHomeRestore;
-	DispQuickItem_E eQuickItem;
-	char acHint[20];
-	vu16 usHintCnt;
+	DispPageId_E ePageId;              //当前页面ID, 决定当前绘制的页面
+	DispPageId_E ePrevPageId;          //上一个页面ID, 用于页面返回或错误恢复
+	DispOverlayId_E eOverlayId;        //当前叠加层ID, 用于临时状态(快捷/错误)覆盖显示
+	DispFocusId_E eFocusId;            //当前焦点ID, 指示当前选中的卡片或软键
+	DispFocusId_E ePrevFocusId;        //上一个焦点ID, 页面切换前保存以便恢复
+	DispMainPage_E eMainPage;          //主页面分组, 左右键在主页/设置/ADC之间切换
+	DispHomeMode_E eHomeMode;          //主页交互模式, 区分总览选模块与标签激活后选字段
+	DispHomeTabId_E eHomeTab;          //当前主页标签, 对应灯光/加热/水泵等标签页
+	DispHomeModule_E eHomeModule;      //主页总览当前选中模块, 同时映射到对应详情页
+	vu16 usDirtyMask;                  //局部刷新脏标志, 指示需要重绘的区域(布局/标题/内容/底部提示)
+	u8 ucTabVisibleStart;              //标签栏可见起始索引, 用于标签过多时的滚动显示窗口
+	u8 ucTabItemIndex;                 //当前标签内项目索引, 标签激活模式下选中的卡片序号
+	u8 ucFieldIndex;                   //当前页面字段索引, 设置页/详情页中选中的设置项序号
+	u8 ucAdcGroupIndex;                //ADC分组索引, ADC页面中切换不同测量组(0/1/2)
+	bool bEditing;                     //编辑状态标志, 设置页中标志是否正在修改参数值
+	bool bOverlayLock;                 //叠加层锁定标志, 错误叠加层出现时锁定常规按键响应
+	DispSettingCache_T tSettingCache;  //设置页编辑缓存, 保存成功后再写入记忆参数
+	DispTextScroll_T tTextScroll;      //窄卡片长文本滚动状态, 控制文本过长时的滚动显示
+	DispHomeRestore_T tHomeRestore;    //主页恢复点, 错误页进入前保存工作状态以便退出后恢复
+	char acHint[20];                   //提示文本缓冲区, 存储底部软键区域显示的提示信息
+	vu16 usHintCnt;                    //提示显示计数, 大于0时显示提示, 递减至0后清除
 }DispPageCtx_T;
 
 extern DispPageCtx_T tDispPageCtx;
@@ -291,3 +269,4 @@ void vLcd_ExitLowPower(void);
 #endif  //boardDISPLAY_EN
 
 #endif  //MD_DISPLAY_TASK_H_
+
