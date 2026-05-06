@@ -18,6 +18,8 @@
 
 #define     dispTASK_UPDATA_CYCLE_TIME          100 //任务时间
 
+
+//****************************************************局部函数定义************************************************//
 static void v_disp_draw_upgrade_page(void);
 static u8 uc_disp_updata_percent_local(void);
 

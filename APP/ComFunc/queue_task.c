@@ -39,7 +39,7 @@ s8 cQueue_TaskInit(Task_T** task,
 	#endif
 	
 	// 动态分配内存，数组大小在编译时由task_queue_size和reply_buff_size确定
-    size_t total_size = sizeof(Task_T) + task_queue_size * 2 + reply_buff_size;
+    size_t total_size = sizeof(Task_T) + task_queue_size * 3 + reply_buff_size;
 	#if(boardUSE_OS)
     *task = (Task_T *)pvPortMalloc(total_size);
     #else
@@ -61,13 +61,13 @@ s8 cQueue_TaskInit(Task_T** task,
 		(*task)->tReplyBuff.buff = NULL;
 		
 		// 初始化任务队列缓存器（使用柔性数组的前部分）
-		lwrb_init(&(*task)->tQueueBuff, &(*task)->uac_buff[0], task_queue_size * 2);
+		lwrb_init(&(*task)->tQueueBuff, &(*task)->uac_buff[0], task_queue_size * 3);
 		lwrb_reset(&(*task)->tQueueBuff);
 		
 		// 初始化回复缓存器（使用柔性数组的后部分）
 		if(reply_buff_size)
 		{
-			lwrb_init(&(*task)->tReplyBuff, &(*task)->uac_buff[task_queue_size * 2], reply_buff_size);
+			lwrb_init(&(*task)->tReplyBuff, &(*task)->uac_buff[task_queue_size * 3], reply_buff_size);
 			lwrb_reset(&(*task)->tReplyBuff);
 		}
     }
@@ -237,7 +237,14 @@ s8 cQueue_AddQueueTask(Task_T* task, u8 task_id, u16 in_param, bool now_run)
 	}	
 	
 	//写入队列
-	lwrb_write(&task->tQueueBuff, uca_write_array, 3);
+	if(lwrb_write(&task->tQueueBuff, uca_write_array, 3) != 3)
+	{
+		lwrb_reset(&task->tQueueBuff);
+		#if(boardUSE_OS)
+		taskEXIT_CRITICAL();
+		#endif
+		return -4;
+	}
 	
 	if(now_run || task->ucID == 0)
 	{

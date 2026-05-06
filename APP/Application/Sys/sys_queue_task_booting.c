@@ -112,7 +112,11 @@ void v_sys_queue_task_booting(Task_T *tp_task)
 		//************************************步骤4:开启完成**********************************************
 		case 4:
 		{
-			bSys_SetDevState(DS_WORK, false);//进入工作
+			bSys_SetDevState(DS_WORK, false);// enter work
+
+			#if(boardDISPLAY_EN)
+			cQueue_AddQueueTask(tpDispTask, DTI_WORK, 0, true);
+			#endif
 
 			cQueue_GotoStep(tp_task, STEP_END);  //结束
 		}

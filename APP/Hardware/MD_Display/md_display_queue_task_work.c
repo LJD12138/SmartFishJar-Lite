@@ -29,7 +29,7 @@ void v_disp_queue_task_work(Task_T *tp_task)
         cQueue_GotoStep(tp_task, STEP_END);
 
     //о╒фа
-    if(tDisp.bLight == false) 
+    if(tDisp.bLight == false && tp_task->ucStep != 0) 
     {
         tp_task->ucStep = 0;
         #if(boardUSE_OS)
