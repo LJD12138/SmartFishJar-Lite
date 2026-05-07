@@ -1,0 +1,15 @@
+*.bin
+*.hex
+build/
+.eide\env.ini"
+
+Projects.uvguix.*
+*.txt
+compile_commands.json
+Listings/
+Objects/
+RTE/
+*.jac
+*.PC
+
+
