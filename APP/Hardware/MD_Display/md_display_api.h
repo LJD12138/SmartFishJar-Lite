@@ -105,6 +105,7 @@ void vDisp_DrawPageFrame(const char *title);
 void vDisp_DrawFullTopBar(const char *title, const char *tag);
 void vDisp_DrawStatusTag(const char *label);
 void vDisp_DrawHintLine(void);
+void vDisp_UpdateUiSnapshot(void);
 const DispUiSnapshot_T *ptDisp_GetUiSnapshot(void);
 
 #ifdef __cplusplus

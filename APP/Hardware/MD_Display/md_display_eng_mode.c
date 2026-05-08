@@ -289,8 +289,10 @@ void vDisp_EnginModeDis(void)
 	Display_Time1(tpSysTask->usTaskWaitCnt/10);
 	
 	//É¢ÈÈ¿ªÆô
-	if(eFan_GetWorkMode() > FWM_OFF)
+	#if(boardHEAT_MANAGE_EN)
+	if(tHM.usValue > 0)
 		Display_IconFan();
+	#endif
 	
 	Display_EngModeObj(tpSysTask->ucStep,tEngMode.ucEngModeItem);
 	Display_OutNum(temp);

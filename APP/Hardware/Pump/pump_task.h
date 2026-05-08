@@ -17,15 +17,17 @@ typedef enum
 
 typedef struct
 {
-    vu16            usSpeed;     // 当前PWM占空比（0~pumpPWM_MAX_VALUE）
+    vu16            usSpeed;        // 当前PWM占空比（0~pumpPWM_MAX_VALUE）
     PumpWorkMode_E  eMode;
-    DevState_E      eDevState;
+    DevState_E      eDevState;      // 设备状态（替代bEnable管理功能使能）
 }Pump_T;
 extern Pump_T tPump;
 
 bool bPump_TaskInit(void);
 bool bPump_SetLevel(u16 level);
 bool bPump_SetMode(PumpWorkMode_E mode);
+void bPump_SetDevState(DevState_E stat);
+s8 cPump_Switch(SwitchType_E type, bool fore_en);
 
 #if(boardLOW_POWER)
 void vPump_EnterLowPower(void);

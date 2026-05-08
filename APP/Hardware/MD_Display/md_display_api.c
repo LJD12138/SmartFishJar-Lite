@@ -44,6 +44,7 @@
 
 #if(boardHEAT_MANAGE_EN)
 #include "MD_HeatManage/md_hm_task.h"
+#include "MD_HeatManage/md_hm_iface.h"
 #endif
 
 #include "MD_Display/icon_bitmaps.h"
@@ -162,7 +163,6 @@ static const unsigned char *pc_disp_tab_icon(DispHomeTabId_E tab_id);
 static void v_disp_draw_home_item_block(u8 x, u8 y, u8 w, const char *label, const char *value, bool selected, bool highlight, u8 field_key);
 static void v_disp_draw_home_tab_card(u8 x, u8 y, u8 w, u8 h, DispHomeTabId_E tab_id, bool selected, bool active);
 static void v_disp_draw_home_tab_body(u8 x, u8 y, u8 w, u8 h, DispHomeTabId_E tab_id, bool selected, bool active);
-static void v_disp_draw_home_page(void);
 
 /***********************************************************************************************************************
 -----函数功能    采集显示页面快照
@@ -226,7 +226,7 @@ static void v_disp_collect_snapshot(void)
     #endif
 
     #if(boardHEAT_MANAGE_EN)
-    s_tDispUiSnapshot.usFanMode = (u16)eFan_GetWorkMode();
+    s_tDispUiSnapshot.usFanMode = tHM.usValue;
     #endif
 }
 
@@ -376,7 +376,7 @@ static const char *pc_disp_o2pump_mode(void)
 static const char *pc_disp_heat_mode(void)
 {
 	#if(boardHEAT_MANAGE_EN)
-    if(bHeat_IsUiForceOn())
+    if(bHM_IsForceOn())
 		return "MAN";
 	#endif
 
@@ -389,25 +389,23 @@ static const char *pc_disp_heat_mode(void)
 
 /***********************************************************************************************************************
 -----函数功能    获取风扇模式文本
------说明(备注)  将风扇工作档位转换成OLED短文本
+-----说明(备注)  将风扇PWM值转换成OLED短文本（无级调速）
 -----传入参数    none
 -----输出参数    none
 -----返回值      模式文本指针
 ************************************************************************************************************************/
 static const char *pc_disp_fan_mode(void)
 {
-    #if(boardHEAT_MANAGE_EN)
-    switch(eFan_GetWorkMode())
-    {
-        case FWM_GEAR_1: return "LOW";
-        case FWM_GEAR_2: return "MID";
-        case FWM_GEAR_3: return "HIGH";
-        case FWM_GEAR_FULL: return "FULL";
-        default: break;
-    }
-    #endif
+    const char *pc_mode = "OFF";
 
-    return "OFF";
+#if(boardHEAT_MANAGE_EN)
+    if(tHM.usValue == 0)
+        pc_mode = "OFF";
+    else
+        pc_mode = (tHM.usValue >= hmPWM_MAX_VALUE) ? "FULL" : "AUTO";
+#endif
+
+    return pc_mode;
 }
 
 /***********************************************************************************************************************
@@ -963,7 +961,7 @@ static void v_disp_draw_home_tab_body(u8 x, u8 y, u8 w, u8 h, DispHomeTabId_E ta
 
         case DHT_HEAT:
             sprintf(line0, "%dC", s_tDispUiSnapshot.sWaterTemp);
-            strcpy(line1, bHeat_IsUiForceOn() ? "MAN" : "AUTO");
+            strcpy(line1, bHM_IsForceOn() ? "MAN" : "AUTO");
             strcpy(line2, pc_disp_short_mode(pc_disp_fan_mode()));
             v_disp_draw_home_item_block(x + 1U, y + 17U, text_w, "HE", line1, selected, focus_0, 0x20U);
             v_disp_draw_home_item_block(x + 1U, y + 33U, text_w, "FN", line2, selected, focus_1, 0x21U);
@@ -1083,352 +1081,6 @@ static void v_disp_draw_home_tab_card(u8 x, u8 y, u8 w, u8 h, DispHomeTabId_E ta
 -----输出参数    none
 -----返回值      标签文本指针
 ************************************************************************************************************************/
-static const char *pc_disp_home_module_label(DispHomeModule_E module)
-{
-    switch(module)
-    {
-        case DHM_HEAT: return "HEAT";
-        case DHM_WPUMP: return "WPUMP";
-        case DHM_O2PUMP: return "O2PUMP";
-        case DHM_LIGHT:
-        default: break;
-    }
-
-    return "LIGHT";
-}
-
-/***********************************************************************************************************************
------函数功能    获取主页模块图标
------说明(备注)  根据主页模块ID返回四宫格图标数据
------传入参数    module:主页模块
------输出参数    none
------返回值      图标数据指针
-************************************************************************************************************************/
-static const unsigned char *pc_disp_home_module_icon(DispHomeModule_E module)
-{
-    return pc_disp_tab_icon((DispHomeTabId_E)module);
-}
-
-/***********************************************************************************************************************
------函数功能    格式化电流显示
------说明(备注)  将毫安电流值转换为安培字符串
------传入参数    dst:输出字符串缓冲区  ma:电流毫安值
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_format_curr_ma(char *dst, u16 ma)
-{
-    sprintf(dst, "%u.%02uA", ma / 1000U, (ma % 1000U) / 10U);
-}
-
-/***********************************************************************************************************************
------函数功能    绘制主页总览模块块
------说明(备注)  绘制四宫格中的单个模块摘要
------传入参数    x/y:坐标  module:模块ID  selected:是否选中
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_draw_home_module_block(u8 x, u8 y, DispHomeModule_E module, bool selected)
-{
-    char line1[18];
-
-    switch(module)
-    {
-        case DHM_HEAT:
-            sprintf(line1, "%dC %s", s_tDispUiSnapshot.sWaterTemp, s_tDispUiSnapshot.pcHeatMode);
-            break;
-
-        case DHM_WPUMP:
-            sprintf(line1, "%s %u%%", s_tDispUiSnapshot.pcPumpMode, s_tDispUiSnapshot.usPumpSpeed / 10U);
-            break;
-
-        case DHM_O2PUMP:
-            sprintf(line1, "%s %u%%", s_tDispUiSnapshot.pcO2PumpMode, s_tDispUiSnapshot.usO2PumpSpeed / 10U);
-            break;
-
-        case DHM_LIGHT:
-        default:
-            sprintf(line1, "W:%s R:%s", pc_disp_light_white_state(), pc_disp_light_rgb_state());
-            break;
-    }
-
-    if(selected == true)
-    {
-        u8g2_DrawFrame(&u8g2, x, y, 64, 20);
-        u8g2_DrawFrame(&u8g2, x + 1U, y + 1U, 62, 18);
-    }
-    else
-        u8g2_DrawFrame(&u8g2, x, y, 64, 20);
-
-    u8g2_DrawXBMP(&u8g2, x + 2U, y + 2U, 16, 16, pc_disp_home_module_icon(module));
-    u8g2_SetFont(&u8g2, u8g2_font_5x8_tr);
-    u8g2_DrawStr(&u8g2, x + 20U, y + 8U, pc_disp_home_module_label(module));
-    u8g2_DrawStr(&u8g2, x + 20U, y + 15U, line1);
-}
-
-/***********************************************************************************************************************
------函数功能    绘制字段行
------说明(备注)  绘制左侧名称和右侧数值, 选中时反色显示
------传入参数    index:字段索引  y:纵坐标  label:字段名  value:字段值  edit_mark:编辑标记
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_draw_field_row(u8 index, u8 y, const char *label, const char *value, bool edit_mark)
-{
-    bool focus = (tDispPageCtx.ucFieldIndex == index);
-
-    u8g2_SetFont(&u8g2, u8g2_font_5x8_tr);
-    if(focus == true)
-    {
-        u8g2_DrawBox(&u8g2, 0, y - 7U, OLED_WIDTH_PIXELS, 8);
-        u8g2_SetDrawColor(&u8g2, 0);
-    }
-
-    u8g2_DrawStr(&u8g2, 4, y, label);
-    u8g2_DrawStr(&u8g2, 52, y, value);
-    if(focus == true && edit_mark == true)
-        u8g2_DrawStr(&u8g2, 122, y, "*");
-
-    u8g2_SetDrawColor(&u8g2, 1);
-}
-
-/***********************************************************************************************************************
------函数功能    绘制详情页页头
------说明(备注)  清屏后绘制标题栏、图标和两行摘要文本
------传入参数    title/tag/icon/line1/line2:页头显示参数
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_draw_detail_header(const char *title, const char *tag, const unsigned char *icon, const char *line1, const char *line2)
-{
-    v_disp_clear_region(0, 0, OLED_WIDTH_PIXELS, OLED_HEIGHT_PIXELS);
-    v_disp_draw_full_top_bar(title, tag);
-    u8g2_DrawXBMP(&u8g2, 0, 10, 16, 16, icon);
-    u8g2_SetFont(&u8g2, u8g2_font_5x8_tr);
-    u8g2_DrawStr(&u8g2, 20, 16, line1);
-    u8g2_DrawStr(&u8g2, 20, 24, line2);
-}
-
-/***********************************************************************************************************************
------函数功能    绘制主页总览页
------说明(备注)  显示输入电压电流功率和四个核心模块摘要
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_draw_home_page(void)
-{
-    char line[32];
-
-    v_disp_clear_region(0, 0, OLED_WIDTH_PIXELS, OLED_HEIGHT_PIXELS);
-    v_disp_draw_full_top_bar("HOME 1/3", "WORK");
-    u8g2_SetFont(&u8g2, u8g2_font_5x8_tr);
-    sprintf(line, "VIN%u.%u I%u.%02u P%uW", s_tDispUiSnapshot.usVinVolt / 10U,
-            s_tDispUiSnapshot.usVinVolt % 10U, s_tDispUiSnapshot.usVinCurrMa / 1000U,
-            (s_tDispUiSnapshot.usVinCurrMa % 1000U) / 10U, s_tDispUiSnapshot.usVinPowerW);
-    u8g2_DrawStr(&u8g2, 1, 16, line);
-
-    v_disp_draw_home_module_block(0, 17, DHM_LIGHT, tDispPageCtx.eHomeModule == DHM_LIGHT);
-    v_disp_draw_home_module_block(64, 17, DHM_HEAT, tDispPageCtx.eHomeModule == DHM_HEAT);
-    v_disp_draw_home_module_block(0, 38, DHM_WPUMP, tDispPageCtx.eHomeModule == DHM_WPUMP);
-    v_disp_draw_home_module_block(64, 38, DHM_O2PUMP, tDispPageCtx.eHomeModule == DHM_O2PUMP);
-    v_disp_draw_hint_line();
-}
-
-/***********************************************************************************************************************
------函数功能    绘制照明详情页
------说明(备注)  显示照明功率、电流、白光和RGB状态
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_draw_light_page(void)
-{
-    char line1[24];
-    char line2[24];
-    char value[20];
-
-    sprintf(line1, "P%uW I%umA", s_tDispUiSnapshot.usLightPowerW, s_tDispUiSnapshot.usLightCurrMa);
-    v_disp_draw_detail_header("LIGHT", "1/4", icon_light_16x16, line1, line2);
-
-    v_disp_draw_field_row(0U, 32, "WHITE", pc_disp_light_white_state(), false);
-    v_disp_draw_field_row(1U, 40, "RGB", pc_disp_light_rgb_state(), false);
-    sprintf(value, "%u%%", s_tDispUiSnapshot.usLightWarm / 10U);
-    v_disp_draw_field_row(2U, 48, "WARM", value, false);
-    sprintf(value, "%umA", s_tDispUiSnapshot.usLightCurrMa);
-    v_disp_draw_field_row(3U, 56, "CURR", value, false);
-    v_disp_draw_hint_line();
-}
-
-/***********************************************************************************************************************
------函数功能    绘制温控详情页
------说明(备注)  显示水温、加热模式、风扇模式和目标温度
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_draw_heat_page(void)
-{
-    char line1[24];
-    char line2[24];
-    char value[20];
-
-    sprintf(line1, "WATER %dC", s_tDispUiSnapshot.sWaterTemp);
-    v_disp_draw_detail_header("HEAT", "1/4", icon_heat_16x16, line1, line2);
-
-    sprintf(value, "%d/%dC", s_tDispUiSnapshot.sWaterTemp1, s_tDispUiSnapshot.sWaterTemp2);
-    v_disp_draw_field_row(0U, 32, "WATER", value, false);
-    v_disp_draw_field_row(1U, 40, "HEAT", s_tDispUiSnapshot.pcHeatMode, false);
-    v_disp_draw_field_row(2U, 48, "FAN", pc_disp_fan_mode(), false);
-    sprintf(value, "%dC", DISP_HEAT_TARGET_TEMP_C);
-    v_disp_draw_field_row(3U, 56, "TARGET", value, false);
-    v_disp_draw_hint_line();
-}
-
-/***********************************************************************************************************************
------函数功能    绘制水泵详情页
------说明(备注)  显示水泵模式、转速、状态和电流
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_draw_wpump_page(void)
-{
-    char line1[24];
-    char line2[24];
-    char value[20];
-
-    sprintf(line1, "MODE %s", s_tDispUiSnapshot.pcPumpMode);
-    v_disp_draw_detail_header("WPUMP", "1/4", icon_wpump_16x16, line1, line2);
-
-    v_disp_draw_field_row(0U, 32, "MODE", s_tDispUiSnapshot.pcPumpMode, false);
-    sprintf(value, "%u%%/%u", s_tDispUiSnapshot.usPumpSpeed / 10U, s_tDispUiSnapshot.usPumpSpeed);
-    v_disp_draw_field_row(1U, 40, "SPEED", value, false);
-    v_disp_draw_field_row(2U, 48, "STATE", s_tDispUiSnapshot.usPumpSpeed > 0U ? "RUN" : "STOP", false);
-    v_disp_format_curr_ma(value, s_tDispUiSnapshot.usPumpCurrMa);
-    v_disp_draw_field_row(3U, 56, "CURR", value, false);
-    v_disp_draw_hint_line();
-}
-
-/***********************************************************************************************************************
------函数功能    绘制氧气泵详情页
------说明(备注)  显示氧气泵模式、转速、状态和电流
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_draw_o2pump_page(void)
-{
-    char line1[24];
-    char line2[24];
-    char value[20];
-
-    sprintf(line1, "MODE %s", s_tDispUiSnapshot.pcO2PumpMode);
-    v_disp_draw_detail_header("O2PUMP", "1/4", icon_o2pump_16x16, line1, line2);
-
-    v_disp_draw_field_row(0U, 32, "MODE", s_tDispUiSnapshot.pcO2PumpMode, false);
-    sprintf(value, "%u%%/%u", s_tDispUiSnapshot.usO2PumpSpeed / 10U, s_tDispUiSnapshot.usO2PumpSpeed);
-    v_disp_draw_field_row(1U, 40, "SPEED", value, false);
-    v_disp_draw_field_row(2U, 48, "STATE", s_tDispUiSnapshot.usO2PumpSpeed > 0U ? "RUN" : "STOP", false);
-    v_disp_format_curr_ma(value, s_tDispUiSnapshot.usO2CurrMa);
-    v_disp_draw_field_row(3U, 56, "CURR", value, false);
-    v_disp_draw_hint_line();
-}
-
-/***********************************************************************************************************************
------函数功能    绘制ADC诊断页
------说明(备注)  按温度、电源和光照三组显示ADC采样数据
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_draw_adc_page(void)
-{
-    char value[20];
-    const char *tag = "TEMP";
-
-    if(tDispPageCtx.ucAdcGroupIndex == 1U)
-        tag = "PWR";
-    else if(tDispPageCtx.ucAdcGroupIndex == 2U)
-        tag = "LIGHT";
-
-    v_disp_clear_region(0, 0, OLED_WIDTH_PIXELS, OLED_HEIGHT_PIXELS);
-    v_disp_draw_full_top_bar("ADC 3/3", tag);
-
-    switch(tDispPageCtx.ucAdcGroupIndex)
-    {
-        case 0U:
-            sprintf(value, "%dC", s_tDispUiSnapshot.sWaterTemp1);
-            v_disp_draw_field_row(0U, 17, "WT1", value, false);
-            sprintf(value, "%dC", s_tDispUiSnapshot.sWaterTemp2);
-            v_disp_draw_field_row(1U, 26, "WT2", value, false);
-            sprintf(value, "%dC", s_tDispUiSnapshot.sBoardTemp5V);
-            v_disp_draw_field_row(2U, 35, "BOARD5", value, false);
-            sprintf(value, "%dC", s_tDispUiSnapshot.sBoardTemp12V);
-            v_disp_draw_field_row(3U, 44, "BOARD12", value, false);
-            sprintf(value, "%dC", s_tDispUiSnapshot.sWaterTemp);
-            v_disp_draw_field_row(4U, 53, "MAXT", value, false);
-            break;
-
-        case 1U:
-            sprintf(value, "%u.%uV", s_tDispUiSnapshot.us12VVolt / 10U, s_tDispUiSnapshot.us12VVolt % 10U);
-            v_disp_draw_field_row(0U, 17, "12V", value, false);
-            sprintf(value, "%u.%uV", s_tDispUiSnapshot.usVinVolt / 10U, s_tDispUiSnapshot.usVinVolt % 10U);
-            v_disp_draw_field_row(1U, 26, "VIN", value, false);
-            v_disp_format_curr_ma(value, s_tDispUiSnapshot.usVinCurrMa);
-            v_disp_draw_field_row(2U, 35, "IIN", value, false);
-            sprintf(value, "%uW", s_tDispUiSnapshot.usVinPowerW);
-            v_disp_draw_field_row(3U, 44, "PIN", value, false);
-            sprintf(value, "%umA", s_tDispUiSnapshot.usLightCurrMa);
-            v_disp_draw_field_row(4U, 53, "LCURR", value, false);
-            break;
-
-        default:
-            sprintf(value, "%u", s_tDispUiSnapshot.usLightAdc);
-            v_disp_draw_field_row(0U, 17, "LIGHT", value, false);
-            sprintf(value, "%umA", s_tDispUiSnapshot.usLightCurrMa);
-            v_disp_draw_field_row(1U, 26, "LCURR", value, false);
-            sprintf(value, "%u%%", s_tDispUiSnapshot.usLightWarm / 10U);
-            v_disp_draw_field_row(2U, 35, "WARM", value, false);
-            sprintf(value, "%s", pc_disp_light_rgb_state());
-            v_disp_draw_field_row(3U, 44, "RGB", value, false);
-            sprintf(value, "%d/%dC", s_tDispUiSnapshot.sBoardTemp5V, s_tDispUiSnapshot.sBoardTemp12V);
-            v_disp_draw_field_row(4U, 53, "BOARD", value, false);
-            break;
-    }
-
-    v_disp_draw_hint_line();
-}
-
-/***********************************************************************************************************************
------函数功能    绘制设置页
------说明(备注)  显示息屏、蜂鸣器、亮度和恢复默认设置项
------传入参数    none
------输出参数    none
------返回值      none
-************************************************************************************************************************/
-static void v_disp_draw_setting_page(void)
-{
-    char value[20];
-    const char *tag = tDispPageCtx.tSettingCache.bDirty ? "DIRTY" : (tDispPageCtx.bEditing ? "EDIT" : "VIEW");
-
-    v_disp_clear_region(0, 0, OLED_WIDTH_PIXELS, OLED_HEIGHT_PIXELS);
-    v_disp_draw_full_top_bar("SET 2/3", tag);
-
-    sprintf(value, "%us", tDispPageCtx.tSettingCache.usSleepTime);
-    v_disp_draw_field_row(0U, 17, "SLEEP", value, tDispPageCtx.bEditing);
-    sprintf(value, "%s", tDispPageCtx.tSettingCache.bBuzOff ? "OFF" : "ON");
-    v_disp_draw_field_row(1U, 26, "BUZZER", value, tDispPageCtx.bEditing);
-    sprintf(value, "%u", tDispPageCtx.tSettingCache.ucHighLightValue);
-    v_disp_draw_field_row(2U, 35, "HIGH BL", value, tDispPageCtx.bEditing);
-    sprintf(value, "%u", tDispPageCtx.tSettingCache.ucLowLightValue);
-    v_disp_draw_field_row(3U, 44, "LOW BL", value, tDispPageCtx.bEditing);
-    sprintf(value, "%s", tDispPageCtx.tSettingCache.bRestoreDefault ? "YES" : "NO");
-    v_disp_draw_field_row(4U, 53, "RESET", value, tDispPageCtx.bEditing);
-    v_disp_draw_hint_line();
-}
-
-
 #if(dispUSE_U8G2 == 0)
 /***********************************************************************************************************************
 -----函数功能    写OLED命令
@@ -1951,6 +1603,18 @@ const DispUiSnapshot_T *ptDisp_GetUiSnapshot(void)
 }
 
 /***********************************************************************************************************************
+-----函数功能    刷新显示快照(对外接口)
+-----说明(备注)  供状态队列任务在独立渲染前主动刷新快照
+-----传入参数    none
+-----输出参数    none
+-----返回值      none
+************************************************************************************************************************/
+void vDisp_UpdateUiSnapshot(void)
+{
+    v_disp_collect_snapshot();
+}
+
+/***********************************************************************************************************************
 -----函数功能    绘制页面框架(对外接口)
 -----说明(备注)  调用内部页面框架绘制函数, 供队列任务直接复用
 -----传入参数    title:标题
@@ -1996,42 +1660,13 @@ void vDisp_ClearRegion(u8 x, u8 y, u8 w, u8 h)
 bool bDisp_RenderUi(void)
 {
     #if(dispUSE_U8G2 == 1)
+    if(tDisp.eDevState == DS_WORK)
+        return false;
+
     v_disp_collect_snapshot();
-    switch(tDispPageCtx.ePageId)
-    {
-        case DPI_HOME:
-            v_disp_draw_home_page();
-            break;
 
-        case DPI_LIGHT:
-            v_disp_draw_light_page();
-            break;
-
-        case DPI_HEAT:
-            v_disp_draw_heat_page();
-            break;
-
-        case DPI_WPUMP:
-            v_disp_draw_wpump_page();
-            break;
-
-        case DPI_O2PUMP:
-            v_disp_draw_o2pump_page();
-            break;
-
-        case DPI_SETTING:
-            v_disp_draw_setting_page();
-            break;
-
-        case DPI_ADC:
-            v_disp_draw_adc_page();
-            break;
-
-        default:
-            v_disp_draw_home_page();
-            break;
-    }
-    vDisp_Refresh();
+    // WORK 页面渲染已下沉到 work 队列任务, 这里不再分发 WORK 相关页面
+    return false;
     #else
     vDisp_UiTest();
     #endif

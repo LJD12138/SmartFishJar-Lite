@@ -19,7 +19,7 @@
 //****************************************************任务初始化**************************************************//
 #if(boardUSE_OS)
 #define         HM_TASK_PRIO                            1
-#define         HM_TASK_STK_SIZE                        256
+#define         HM_TASK_STK_SIZE                        128
 #define         HM_TASK_CYCLE_MS                        1000
 TaskHandle_t    tHeatManageHandler = NULL;
 void            vHW_Task(void *pvParameters);
@@ -31,18 +31,16 @@ HM_T tHM;
 
 // 风扇相关
 static bool b_fan_stop_to_run_flag = 0;
-static bool b_fan_ui_override = 0;
-static FanWorkMode_E e_fan_ui_mode = FWM_OFF;
 
 // 加热相关
-static bool b_heat_ui_force_on = 0;
+static bool b_hm_force_on = 0;
 static bool b_hm_ot_protect = 0;
 
 static u8   uc_updata_delay = 0;
 
-static s16  s_water_temp = 0;     // 水温（取NTC1/NTC2均值）
+static s16  s_water_temp = 0;    // 水温（取NTC1/NTC2均值）
+static u16  us_fan_pwm  = 0;     // 风扇PWM当前值
 static u16  us_heat_pwm  = 0;    // 加热棒PWM当前值
-
 
 //****************************************************PID控制器**************************************************//
 static PID_Controller_t tHeatPid;
@@ -68,7 +66,6 @@ static PID_Controller_t tHeatPid;
 //****************************************************函数声明****************************************************//
 static void v_fan_pwm_set(u8 fan_id, u16 level);
 static void v_heat_pwm_set(u16 level);
-static u16  us_fan_set_work_mode(FanWorkMode_E mode);
 
 static float f_pid_compute(PID_Controller_t *pid, float measurement);
 static void  v_pid_init(PID_Controller_t *pid, float kp, float ki, float kd, float setpoint, float out_min, float out_max);
@@ -91,10 +88,7 @@ static void  v_hm_run_heat_control(void);
 static bool b_task_param_init(void)
 {
     // 初始化热管理结构体
-    tHM.usValue = 0;
-    tHM.eWordMode = FWM_OFF;
     tHM.bFanEnable = false;             // 默认关闭风扇
-    tHM.usFanTargetVolt = hmPWM_MAX_VALUE;  // 默认风扇PWM上限为最大值
     tHM.sFanTempStart = FAN_TEMP_START_DEFAULT;
     tHM.sFanTempFull = FAN_TEMP_FULL_DEFAULT;
     tHM.bHeatEnable = false;            // 默认关闭加热
@@ -198,35 +192,6 @@ static void v_heat_pwm_set(u16 level)
 }
 
 /*****************************************************************************************************************
------函数功能    设置风扇工作模式，返回对应PWM值
------说明(备注)  根据模式返回预设PWM值，并更新全局状态
------传入参数    mode: 风扇工作模式
------输出参数    none
------返回值      对应模式的PWM值
-******************************************************************************************************************/
-static u16 us_fan_set_work_mode(FanWorkMode_E mode)
-{
-    u16 temp = 0;
-    u16 target_max = (tHM.usFanTargetVolt > 0 && tHM.usFanTargetVolt <= hmPWM_MAX_VALUE) ? tHM.usFanTargetVolt : hmPWM_MAX_VALUE;
-
-    switch(mode)
-    {
-        case FWM_GEAR_1:    temp = target_max / 4;      break;
-        case FWM_GEAR_2:    temp = target_max / 2;      break;
-        case FWM_GEAR_3:    temp = target_max * 3 / 4;  break;
-        case FWM_GEAR_FULL: temp = target_max;          break;
-        default:
-            temp = 0;
-            b_fan_stop_to_run_flag = 0;
-            mode = FWM_OFF;
-            break;
-    }
-
-    tHM.eWordMode = mode;
-    return temp;
-}
-
-/*****************************************************************************************************************
 -----函数功能    PID初始化
 -----说明(备注)  none
 -----传入参数    pid: PID控制器
@@ -298,7 +263,6 @@ static u16 us_fan_calc_stepless_pwm(s16 water_temp)
     u16 pwm = 0;
     s16 temp_start = tHM.sFanTempStart;
     s16 temp_full = tHM.sFanTempFull;
-    u16 target_max = (tHM.usFanTargetVolt > 0 && tHM.usFanTargetVolt <= hmPWM_MAX_VALUE) ? tHM.usFanTargetVolt : hmPWM_MAX_VALUE;
 
     // 防御式保护：避免温区配置异常导致除零
     if(temp_full <= temp_start)
@@ -313,12 +277,12 @@ static u16 us_fan_calc_stepless_pwm(s16 water_temp)
     }
     else if(water_temp >= temp_full)
     {
-        pwm = target_max;
+        pwm = hmPWM_MAX_VALUE;
     }
     else
     {
         // 线性插值
-        pwm = (u16)(((float)(water_temp - temp_start) / (float)(temp_full - temp_start)) * target_max);
+        pwm = (u16)(((float)(water_temp - temp_start) / (float)(temp_full - temp_start)) * hmPWM_MAX_VALUE);
     }
     
     return pwm;
@@ -368,9 +332,6 @@ static void v_hm_check_prote(void)
 {
     static u8 uc_ot_set_cnt = 0;
     static u8 uc_ot_clr_cnt = 0;
-
-    if(tHM.usFanTargetVolt > hmPWM_MAX_VALUE)
-        tHM.usFanTargetVolt = hmPWM_MAX_VALUE;
 
     if(tHM.sFanTempFull <= tHM.sFanTempStart)
     {
@@ -423,12 +384,12 @@ static void v_hm_check_prote(void)
 ******************************************************************************************************************/
 static void v_hm_shutdown_output(void)
 {
-    if(tHM.eWordMode != FWM_OFF || tHM.usValue != 0)
+    if(us_fan_pwm != 0)
     {
-        tHM.usValue = us_fan_set_work_mode(FWM_OFF);
-        v_fan_pwm_set(0, tHM.usValue);
+        us_fan_pwm = 0;
+        v_fan_pwm_set(0, 0);
         #if(boardFAN2_EN)
-        v_fan_pwm_set(1, tHM.usValue);
+        v_fan_pwm_set(1, 0);
         #endif  //boardFAN2_EN
     }
 
@@ -452,51 +413,46 @@ static void v_hm_run_fan_control(void)
 {
     if(b_hm_ot_protect == true)
     {
-        tHM.usValue = us_fan_set_work_mode(FWM_GEAR_FULL);
-        v_fan_pwm_set(0, tHM.usValue);
+        us_fan_pwm = hmPWM_MAX_VALUE;
+        v_fan_pwm_set(0, us_fan_pwm);
         #if(boardFAN2_EN)
-        v_fan_pwm_set(1, tHM.usValue);
+        v_fan_pwm_set(1, us_fan_pwm);
         #endif  //boardFAN2_EN
         return;
     }
 
     if(tHM.bFanEnable == false)
     {
-        if(tHM.eWordMode != FWM_OFF || tHM.usValue != 0)
+        if(us_fan_pwm != 0)
         {
-            tHM.usValue = us_fan_set_work_mode(FWM_OFF);
-            v_fan_pwm_set(0, tHM.usValue);
+            us_fan_pwm = 0;
+            v_fan_pwm_set(0, 0);
             #if(boardFAN2_EN)
-            v_fan_pwm_set(1, tHM.usValue);
+            v_fan_pwm_set(1, 0);
             #endif  //boardFAN2_EN
         }
         return;
     }
 
-    if(b_fan_ui_override == true)
-    {
-        tHM.usValue = us_fan_set_work_mode(e_fan_ui_mode);
-    }
+    if(b_hm_force_on == true)
+        us_fan_pwm = hmPWM_MAX_VALUE;
     else
-    {
-        tHM.usValue = us_fan_calc_stepless_pwm(s_water_temp);
-        tHM.eWordMode = (tHM.usValue > 0) ? FWM_GEAR_FULL : FWM_OFF;
-    }
+        us_fan_pwm = us_fan_calc_stepless_pwm(s_water_temp);
 
     // 风扇从停止到启动时先给中高转速防止启动困难
-    if(tHM.usValue > 0 && b_fan_stop_to_run_flag == 0)
+    if(us_fan_pwm > 0 && b_fan_stop_to_run_flag == 0)
     {
         b_fan_stop_to_run_flag = 1;
-        tHM.usValue = (tHM.usValue < 300) ? 300 : tHM.usValue;
+        us_fan_pwm = (us_fan_pwm < 300) ? 300 : us_fan_pwm;
     }
-    else if(tHM.usValue == 0)
+    else if(us_fan_pwm == 0)
     {
         b_fan_stop_to_run_flag = 0;
     }
 
-    v_fan_pwm_set(0, tHM.usValue);
+    v_fan_pwm_set(0, us_fan_pwm);
     #if(boardFAN2_EN)
-    v_fan_pwm_set(1, tHM.usValue);
+    v_fan_pwm_set(1, us_fan_pwm);
     #endif  //boardFAN2_EN
 }
 
@@ -532,25 +488,25 @@ static void v_hm_run_heat_control(void)
         return;
     }
 
+    
+    u16 target_heat = 0;
+
+    if(b_hm_force_on == true)
     {
-        u16 target_heat = 0;
-
-        if(b_heat_ui_force_on == true)
-        {
-            target_heat = hmPWM_MAX_VALUE;
-        }
-        else
-        {
-            tHeatPid.setpoint = (float)tHM.sHeatTargetTemp;
-            target_heat = (u16)f_pid_compute(&tHeatPid, (float)s_water_temp);
-        }
-
-        if(us_heat_pwm != target_heat)
-        {
-            us_heat_pwm = target_heat;
-            v_heat_pwm_set(us_heat_pwm);
-        }
+        target_heat = hmPWM_MAX_VALUE;
     }
+    else
+    {
+        tHeatPid.setpoint = (float)tHM.sHeatTargetTemp;
+        target_heat = (u16)f_pid_compute(&tHeatPid, (float)s_water_temp);
+    }
+
+    if(us_heat_pwm != target_heat)
+    {
+        us_heat_pwm = target_heat;
+        v_heat_pwm_set(us_heat_pwm);
+    }
+    
     #endif  //boardWATER_TEMP_EN
 }
 
@@ -570,205 +526,195 @@ static void v_hm_run_heat_control(void)
 ******************************************************************************************************************/
 
 /*****************************************************************************************************************
------函数功能    热管理统一开关控制（参考Dc模块cDc_Switch）
+-----函数功能    热管理统一开关控制（参考Sys模块cSys_Switch）
 -----说明(备注)  通过传入不同对象实现一个接口控制FAN和HEAT两个对象
------传入参数    obj:     控制对象（HM_OBJ_FAN=风扇, HM_OBJ_HEAT=加热）
+-----传入参数    obj:     控制对象（HM_OBJ_FAN=风扇, HM_OBJ_HEAT=加热, HM_OBJ_ALL=全部）
                 type:    开关类型（ST_ON=开启, ST_OFF=关闭, ST_NULL=取反）
                 fore_en: false=当前已是目标状态时直接跳过, true=强制执行
 -----输出参数    none
------返回值      0: 操作成功  -1: 参数错误
+-----返回值      小于0:有错误  等于0:没操作  大于0:操作成功
 ******************************************************************************************************************/
 s8 cHm_Switch(HM_Object_E obj, SwitchType_E type, bool fore_en)
 {
-    bool *p_enable = NULL;
-    bool target_state = false;
-    
-    // 确定操作对象
     switch(obj)
     {
         case HM_OBJ_FAN:
-            p_enable = &tHM.bFanEnable;
-            break;
+        {
+            switch(type)
+            {
+                case ST_ON:
+                {
+                    if(tHM.bFanEnable == true && fore_en == false)
+                    {
+                        if(uPrint.tFlag.bSysTask)
+                            sMyPrint("bHmTask:风扇已为开启,跳过\r\n");
+                        return 0;
+                    }
+                    goto HmFanOn;
+                }
+                
+                case ST_OFF:
+                {
+                    if(tHM.bFanEnable == false && fore_en == false)
+                    {
+                        if(uPrint.tFlag.bSysTask)
+                            sMyPrint("bHmTask:风扇已为关闭,跳过\r\n");
+                        return 0;
+                    }
+                    goto HmFanOff;
+                }
+                
+                default:
+                {
+                    if(tHM.bFanEnable == false)
+                    {
+                        HmFanOn:
+                        tHM.bFanEnable = true;
+                        if(fore_en) b_hm_force_on = true;
+                        if(uPrint.tFlag.bSysTask)
+                            sMyPrint("bHmTask:风扇开启\r\n");
+                    }
+                    else
+                    {
+                        HmFanOff:
+                        tHM.bFanEnable = false;
+                        us_fan_pwm = 0;
+                        v_fan_pwm_set(0, 0);
+                        #if(boardFAN2_EN)
+                        v_fan_pwm_set(1, 0);
+                        #endif  //boardFAN2_EN
+                        b_hm_force_on = false;
+                        if(uPrint.tFlag.bSysTask)
+                            sMyPrint("bHmTask:风扇关闭\r\n");
+                    }
+                }
+                break;
+            }
+        }
+        break;
+        
         case HM_OBJ_HEAT:
-            p_enable = &tHM.bHeatEnable;
-            break;
-        default:
-            return -1;  // 无效对象
-    }
-    
-    // 确定目标状态
-    switch(type)
-    {
-        case ST_ON:
-            target_state = true;
-            break;
-        case ST_OFF:
-            target_state = false;
-            break;
-        case ST_NULL:
-            target_state = !(*p_enable);
-            break;
-        default:
-            return -1;  // 无效类型
-    }
-    
-    // 如果当前状态已经是目标状态且不需要强制执行，则直接跳过
-    if((*p_enable) == target_state && fore_en == false)
-    {
-        return 0;
-    }
-    
-    // 执行开关操作
-    if(obj == HM_OBJ_FAN)
-    {
-        tHM.bFanEnable = target_state;
-        if(target_state == false)
         {
-            tHM.usValue = us_fan_set_work_mode(FWM_OFF);
-            v_fan_pwm_set(0, tHM.usValue);
-            #if(boardFAN2_EN)
-            v_fan_pwm_set(1, tHM.usValue);
-            #endif  //boardFAN2_EN
+            switch(type)
+            {
+                case ST_ON:
+                {
+                    if(tHM.bHeatEnable == true && fore_en == false)
+                    {
+                        if(uPrint.tFlag.bSysTask)
+                            sMyPrint("bHmTask:加热已为开启,跳过\r\n");
+                        return 0;
+                    }
+                    goto HmHeatOn;
+                }
+                
+                case ST_OFF:
+                {
+                    if(tHM.bHeatEnable == false && fore_en == false)
+                    {
+                        if(uPrint.tFlag.bSysTask)
+                            sMyPrint("bHmTask:加热已为关闭,跳过\r\n");
+                        return 0;
+                    }
+                    goto HmHeatOff;
+                }
+                
+                default:
+                {
+                    if(tHM.bHeatEnable == false)
+                    {
+                        HmHeatOn:
+                        tHM.bHeatEnable = true;
+                        if(fore_en) b_hm_force_on = true;
+                        if(uPrint.tFlag.bSysTask)
+                            sMyPrint("bHmTask:加热开启\r\n");
+                    }
+                    else
+                    {
+                        HmHeatOff:
+                        tHM.bHeatEnable = false;
+                        us_heat_pwm = 0;
+                        v_heat_pwm_set(0);
+                        // 重置PID积分项，避免下次开启时积分饱和
+                        tHeatPid.integral = 0.0f;
+                        tHeatPid.prev_error = 0.0f;
+                        b_hm_force_on = false;
+                        if(uPrint.tFlag.bSysTask)
+                            sMyPrint("bHmTask:加热关闭\r\n");
+                    }
+                }
+                break;
+            }
         }
-    }
-    else if(obj == HM_OBJ_HEAT)
-    {
-        tHM.bHeatEnable = target_state;
-        if(target_state == false)
+        break;
+        
+        case HM_OBJ_ALL:
         {
-            us_heat_pwm = 0;
-            v_heat_pwm_set(0);
-            // 重置PID积分项，避免下次开启时积分饱和
-            tHeatPid.integral = 0.0f;
-            tHeatPid.prev_error = 0.0f;
+            switch(type)
+            {
+                case ST_ON:
+                {
+                    if(tHM.bFanEnable == true && tHM.bHeatEnable == true && fore_en == false)
+                    {
+                        if(uPrint.tFlag.bSysTask)
+                            sMyPrint("bHmTask:全部已为开启,跳过\r\n");
+                        return 0;
+                    }
+                    goto HmAllOn;
+                }
+                
+                case ST_OFF:
+                {
+                    if(tHM.bFanEnable == false && tHM.bHeatEnable == false && fore_en == false)
+                    {
+                        if(uPrint.tFlag.bSysTask)
+                            sMyPrint("bHmTask:全部已为关闭,跳过\r\n");
+                        return 0;
+                    }
+                    goto HmAllOff;
+                }
+                
+                default:
+                {
+                    if(tHM.bFanEnable == false && tHM.bHeatEnable == false)
+                    {
+                        HmAllOn:
+                        tHM.bFanEnable = true;
+                        tHM.bHeatEnable = true;
+                        if(fore_en) b_hm_force_on = true;
+                        if(uPrint.tFlag.bSysTask)
+                            sMyPrint("bHmTask:全部开启\r\n");
+                    }
+                    else
+                    {
+                        HmAllOff:
+                        tHM.bFanEnable = false;
+                        tHM.bHeatEnable = false;
+                        us_fan_pwm = 0;
+                        v_fan_pwm_set(0, 0);
+                        #if(boardFAN2_EN)
+                        v_fan_pwm_set(1, 0);
+                        #endif  //boardFAN2_EN
+                        us_heat_pwm = 0;
+                        v_heat_pwm_set(0);
+                        // 重置PID积分项，避免下次开启时积分饱和
+                        tHeatPid.integral = 0.0f;
+                        tHeatPid.prev_error = 0.0f;
+                        b_hm_force_on = false;
+                        if(uPrint.tFlag.bSysTask)
+                            sMyPrint("bHmTask:全部关闭\r\n");
+                    }
+                }
+                break;
+            }
         }
+        break;
+        
+        default:
+            return -1;
     }
     
-    return 0;
-}
-
-/*****************************************************************************************************************
------函数功能    获取风扇当前工作模式
------说明(备注)  none
------传入参数    none
------输出参数    none
------返回值      当前风扇工作模式
-******************************************************************************************************************/
-FanWorkMode_E eFan_GetWorkMode(void)
-{
-    return tHM.eWordMode;
-}
-
-/*****************************************************************************************************************
------函数功能    循环切换风扇UI模式
------说明(备注)  add=true时升档，add=false时降档，到达边界后循环
------传入参数    add: true=加档  false=减档
------输出参数    none
------返回值      true: 操作成功
-******************************************************************************************************************/
-bool bFan_CycleUiMode(bool add)
-{
-    // 风扇功能未开启时不响应UI操作
-    if(tHM.bFanEnable == false)
-        return false;
-
-    FanWorkMode_E next_mode;
-
-    if(b_fan_ui_override == false)
-        next_mode = tHM.eWordMode;
-    else
-        next_mode = e_fan_ui_mode;
-
-    if(add == true)
-    {
-        if(next_mode < FWM_GEAR_FULL)
-            next_mode = (FanWorkMode_E)(next_mode + 1);
-        else
-            next_mode = FWM_OFF;
-    }
-    else if(next_mode > FWM_OFF)
-        next_mode = (FanWorkMode_E)(next_mode - 1);
-    else
-        next_mode = FWM_GEAR_FULL;
-
-    e_fan_ui_mode = next_mode;
-    b_fan_ui_override = true;
-    tHM.usValue = us_fan_set_work_mode(e_fan_ui_mode);
-    v_fan_pwm_set(0, tHM.usValue);
-    #if(boardFAN2_EN)
-    v_fan_pwm_set(1, tHM.usValue);
-    #endif  //boardFAN2_EN
-
-    return true;
-}
-
-/*****************************************************************************************************************
------函数功能    查询风扇是否被UI强制覆盖
------说明(备注)  none
------传入参数    none
------输出参数    none
------返回值      true: UI强制覆盖中  false: 自动模式
-******************************************************************************************************************/
-bool bFan_IsUiOverride(void)
-{
-    return b_fan_ui_override;
-}
-
-/*****************************************************************************************************************
------函数功能    强制开关风扇
------说明(备注)  直接设置风扇为全速或关闭，会覆盖自动温控逻辑
------传入参数    en: true=全速  false=关闭
------输出参数    none
------返回值      none
-******************************************************************************************************************/
-void vFan_ForceOpenFan(bool en)
-{
-    if(en)
-        tHM.usValue = us_fan_set_work_mode(FWM_GEAR_FULL);
-    else
-        tHM.usValue = us_fan_set_work_mode(FWM_OFF);
-    v_fan_pwm_set(0, tHM.usValue);
-    #if(boardFAN2_EN)
-    v_fan_pwm_set(1, tHM.usValue);
-    #endif  //boardFAN2_EN
-}
-
-/*****************************************************************************************************************
------函数功能    查询风扇功能是否使能
------说明(备注)  none
------传入参数    none
------输出参数    none
------返回值      true: 风扇功能已开启  false: 风扇功能未开启
-******************************************************************************************************************/
-bool bFan_IsEnable(void)
-{
-    return tHM.bFanEnable;
-}
-
-/*****************************************************************************************************************
------函数功能    设置风扇PWM上限（推荐接口）
------说明(备注)  用于限制自动和档位模式下的最大风扇PWM
------传入参数    pwm: PWM上限值（0~hmPWM_MAX_VALUE）
------输出参数    none
------返回值      none
-******************************************************************************************************************/
-void vFan_SetMaxPwm(u16 pwm)
-{
-    if(pwm > hmPWM_MAX_VALUE)
-        pwm = hmPWM_MAX_VALUE;
-    tHM.usFanTargetVolt = pwm;
-}
-
-/*****************************************************************************************************************
------函数功能    获取风扇PWM上限（推荐接口）
------说明(备注)  none
------传入参数    none
------输出参数    none
------返回值      当前设置的风扇PWM上限值
-******************************************************************************************************************/
-u16 usFan_GetMaxPwm(void)
-{
-    return tHM.usFanTargetVolt;
+    return 1;
 }
 
 /*****************************************************************************************************************
@@ -778,7 +724,7 @@ u16 usFan_GetMaxPwm(void)
 -----输出参数    none
 -----返回值      none
 ******************************************************************************************************************/
-void vFan_SetTargetTempRange(s16 temp_start, s16 temp_full)
+void vHM_FanSetTargetTemp(s16 temp_start, s16 temp_full)
 {
     if(temp_full <= temp_start)
         return;
@@ -788,122 +734,28 @@ void vFan_SetTargetTempRange(s16 temp_start, s16 temp_full)
 }
 
 /*****************************************************************************************************************
------函数功能    获取风扇无级调速温度区间
------说明(备注)  none
------传入参数    p_temp_start/p_temp_full: 输出指针，可为NULL
------输出参数    none
------返回值      none
-******************************************************************************************************************/
-void vFan_GetTargetTempRange(s16 *p_temp_start, s16 *p_temp_full)
-{
-    if(p_temp_start)
-        *p_temp_start = tHM.sFanTempStart;
-    if(p_temp_full)
-        *p_temp_full = tHM.sFanTempFull;
-}
-
-/*****************************************************************************************************************
------函数功能    设置加热棒UI强制开关
------说明(备注)  在设备工作状态下立即生效
------传入参数    en: true=强制开启  false=关闭强制
------输出参数    none
------返回值      true: 操作成功
-******************************************************************************************************************/
-bool bHeat_SetUiForce(bool en)
-{
-    b_heat_ui_force_on = en;
-
-    if(bSys_IsWorkState() == true || tSysInfo.eDevState == DS_ERR)
-    {
-        if(tHM.bHeatEnable)
-        {
-            us_heat_pwm = (b_heat_ui_force_on == true) ? hmPWM_MAX_VALUE : 0;
-            v_heat_pwm_set(us_heat_pwm);
-        }
-    }
-
-    return true;
-}
-
-/*****************************************************************************************************************
------函数功能    切换加热棒UI强制开关状态
------说明(备注)  对当前强制状态取反
------传入参数    none
------输出参数    none
------返回值      true: 操作成功
-******************************************************************************************************************/
-bool bHeat_ToggleUiForce(void)
-{
-    return bHeat_SetUiForce(!b_heat_ui_force_on);
-}
-
-/*****************************************************************************************************************
------函数功能    查询加热棒是否被UI强制开启
------说明(备注)  none
------传入参数    none
------输出参数    none
------返回值      true: UI强制开启  false: 自动模式
-******************************************************************************************************************/
-bool bHeat_IsUiForceOn(void)
-{
-    return b_heat_ui_force_on;
-}
-
-/*****************************************************************************************************************
------函数功能    设置加热功能使能（预留开启接口）
------说明(备注)  默认关闭，调用此接口开启后加热才会工作
------传入参数    en: true=开启加热功能  false=关闭加热功能
------输出参数    none
------返回值      none
-******************************************************************************************************************/
-void vHeat_SetEnable(bool en)
-{
-    tHM.bHeatEnable = en;
-    if(en == false)
-    {
-        us_heat_pwm = 0;
-        v_heat_pwm_set(0);
-        // 重置PID积分项，避免下次开启时积分饱和
-        tHeatPid.integral = 0.0f;
-        tHeatPid.prev_error = 0.0f;
-    }
-}
-
-/*****************************************************************************************************************
------函数功能    查询加热功能是否使能
------说明(备注)  none
------传入参数    none
------输出参数    none
------返回值      true: 加热功能已开启  false: 加热功能未开启
-******************************************************************************************************************/
-bool bHeat_IsEnable(void)
-{
-    return tHM.bHeatEnable;
-}
-
-/*****************************************************************************************************************
 -----函数功能    设置加热目标温度（预留接口）
 -----说明(备注)  设置PID控制的目标水温
 -----传入参数    temp: 目标温度(°C)
 -----输出参数    none
 -----返回值      none
 ******************************************************************************************************************/
-void vHeat_SetTargetTemp(s16 temp)
+void vHM_HeatSetTargetTemp(s16 temp)
 {
     tHM.sHeatTargetTemp = temp;
     tHeatPid.setpoint = (float)temp;
 }
 
 /*****************************************************************************************************************
------函数功能    获取加热目标温度
+-----函数功能    查询是否强制开启
 -----说明(备注)  none
 -----传入参数    none
 -----输出参数    none
------返回值      当前设置的目标温度(°C)
+-----返回值      true: UI强制开启  false: 自动模式
 ******************************************************************************************************************/
-s16 sHeat_GetTargetTemp(void)
+bool bHM_IsForceOn(void)
 {
-    return tHM.sHeatTargetTemp;
+    return b_hm_force_on;
 }
 
 #if(boardLOW_POWER)

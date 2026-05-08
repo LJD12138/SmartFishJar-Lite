@@ -782,14 +782,12 @@ static bool b_disp_adjust_detail_current(bool add)
 			#if(boardHEAT_MANAGE_EN)
 			if(tDispPageCtx.ucFieldIndex == 1U)
 			{
-				bHeat_ToggleUiForce();
+				if(bHM_IsForceOn() == true)
+					cHm_Switch(HM_OBJ_HEAT, ST_OFF, true);
+				else
+					cHm_Switch(HM_OBJ_HEAT, ST_ON, true);
+
 				v_disp_page_set_hint("HEAT MODE");
-				return true;
-			}
-			if(tDispPageCtx.ucFieldIndex == 2U)
-			{
-				bFan_CycleUiMode(add);
-				v_disp_page_set_hint(add ? "FAN MODE+" : "FAN MODE-");
 				return true;
 			}
 			#endif
