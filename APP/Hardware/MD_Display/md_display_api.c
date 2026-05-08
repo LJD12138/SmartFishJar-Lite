@@ -224,10 +224,6 @@ static void v_disp_collect_snapshot(void)
     #if(boardWATER_PUMP_EN)
     s_tDispUiSnapshot.usPumpSpeed = tPump.usSpeed;
     #endif
-
-    #if(boardHEAT_MANAGE_EN)
-    s_tDispUiSnapshot.usFanMode = tHM.usValue;
-    #endif
 }
 
 /***********************************************************************************************************************
@@ -397,13 +393,14 @@ static const char *pc_disp_heat_mode(void)
 static const char *pc_disp_fan_mode(void)
 {
     const char *pc_mode = "OFF";
+    u16 us_fan_pwm = usHM_GetDevPwm(HM_OBJ_FAN);
 
-#if(boardHEAT_MANAGE_EN)
-    if(tHM.usValue == 0)
+    #if(boardHEAT_MANAGE_EN)
+    if(us_fan_pwm == 0)
         pc_mode = "OFF";
     else
-        pc_mode = (tHM.usValue >= hmPWM_MAX_VALUE) ? "FULL" : "AUTO";
-#endif
+        pc_mode = (us_fan_pwm >= hmPWM_MAX_VALUE) ? "FULL" : "AUTO";
+    #endif
 
     return pc_mode;
 }

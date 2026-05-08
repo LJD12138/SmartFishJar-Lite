@@ -1298,7 +1298,24 @@ void vDisp_Task(void *pvParameters)
 			   g_bDispPageDirty == true &&
 			   tDisp.bLight == true &&
 			   (tDisp.eDevState == DS_WORK || tDisp.eDevState == DS_ERR))
-				bDisp_RenderUi();
+			{
+				if(!bDisp_RenderUi())
+				{
+					/* U8G2模式下 bDisp_RenderUi 对 WORK/ERR 返回 false，
+					   页面渲染已下沉到队列任务，需重新装载对应任务刷新 */
+					switch(tDisp.eDevState)
+					{
+						case DS_WORK:
+							cQueue_AddQueueTask(tp_task, DTI_WORK, 0, false);
+							break;
+						case DS_ERR:
+							cQueue_AddQueueTask(tp_task, DTI_ERR, 0, false);
+							break;
+						default:
+							break;
+					}
+				}
+			}
 		}
 	}
 }

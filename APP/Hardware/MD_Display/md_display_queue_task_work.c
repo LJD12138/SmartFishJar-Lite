@@ -33,7 +33,7 @@ static const char *pc_disp_work_light_white_state(void);
 static const char *pc_disp_work_light_rgb_state(void);
 static void v_disp_work_format_curr_ma(char *dst, u16 ma);
 static void v_disp_work_draw_field_row(u8 index, u8 y, const char *label, const char *value, bool edit_mark);
-static const char *pc_disp_work_home_module_label(DispHomeModule_E module);
+static void v_disp_work_home_module_power(char *dst, const DispUiSnapshot_T *tp_ui, DispHomeModule_E module);
 static const unsigned char *pc_disp_work_home_module_icon(DispHomeModule_E module);
 static void v_disp_work_draw_home_module_block(const DispUiSnapshot_T *tp_ui, u8 x, u8 y, DispHomeModule_E module, bool selected);
 static void v_disp_work_draw_home_page(const DispUiSnapshot_T *tp_ui);
@@ -259,8 +259,8 @@ static void v_disp_work_draw_hint_line(void)
 
 /***********************************************************************************************************************
 -----函数功能    获取风扇/散热模式文本
------说明(备注)  根据热管理模块 tHM.usValue 的值返回简短文本描述:
-                - "OFF": 无输出
+-----说明(备注)  根据风扇当前 PWM 值返回简短文本描述:
+                - "OFF": PWM 为 0
                 - "AUTO": PWM 未达到最大
                 - "FULL": PWM 达到最大值
 -----传入参数    none
@@ -272,10 +272,11 @@ static const char *pc_disp_work_fan_mode(void)
     const char *pc_mode = "OFF";
 
 #if(boardHEAT_MANAGE_EN)
-    if(tHM.usValue == 0)
+    u16 us_fan_pwm = (u16)usHM_GetDevPwm(HM_OBJ_FAN);
+    if(us_fan_pwm == 0)
         pc_mode = "OFF";
     else
-        pc_mode = (tHM.usValue >= hmPWM_MAX_VALUE) ? "FULL" : "AUTO";
+        pc_mode = (us_fan_pwm >= hmPWM_MAX_VALUE) ? "FULL" : "AUTO";
 #endif
 
     return pc_mode;
@@ -369,24 +370,24 @@ static void v_disp_work_draw_field_row(u8 index, u8 y, const char *label, const 
 }
 
 /***********************************************************************************************************************
------函数功能    获取首页模块标签文本
------说明(备注)  根据模块类型返回对应的短标签（HEAT/WPUMP/O2PUMP/LIGHT）
+-----函数功能    获取首页模块功率文本
+-----说明(备注)  根据模块类型将对应功率格式化为字符串写入 dst（如 "10W"）
+-----传入参数    dst:  目标字符串缓冲区
+-----传入参数    tp_ui: UI 快照指针
 -----传入参数    module: 模块枚举
 -----输出参数    none
------返回值      const char*: 模块标签字符串
+-----返回值      none
 ************************************************************************************************************************/
-static const char *pc_disp_work_home_module_label(DispHomeModule_E module)
+static void v_disp_work_home_module_power(char *dst, const DispUiSnapshot_T *tp_ui, DispHomeModule_E module)
 {
     switch(module)
     {
-        case DHM_HEAT: return "HEAT";
-        case DHM_WPUMP: return "WPUMP";
-        case DHM_O2PUMP: return "O2PUMP";
+        case DHM_HEAT:   sprintf(dst, "%uW", tp_ui->usHeatPowerW); break;
+        case DHM_WPUMP:  sprintf(dst, "%uW", tp_ui->usPumpPowerW); break;
+        case DHM_O2PUMP: sprintf(dst, "%uW", tp_ui->usO2PowerW);   break;
         case DHM_LIGHT:
-        default: break;
+        default:         sprintf(dst, "%uW", tp_ui->usLightPowerW); break;
     }
-
-    return "LIGHT";
 }
 
 /***********************************************************************************************************************
@@ -424,12 +425,15 @@ static const unsigned char *pc_disp_work_home_module_icon(DispHomeModule_E modul
 static void v_disp_work_draw_home_module_block(const DispUiSnapshot_T *tp_ui, u8 x, u8 y, DispHomeModule_E module, bool selected)
 {
     char line1[18];
+    char label[8];
 
     switch(module)
     {
         case DHM_HEAT:
-            sprintf(line1, "%dC %s", tp_ui->sWaterTemp, tp_ui->pcHeatMode);
+        {
+            sprintf(line1, "F:%u H:%u", usHM_GetDevPwm(HM_OBJ_FAN), usHM_GetDevPwm(HM_OBJ_HEAT));
             break;
+        }
 
         case DHM_WPUMP:
             sprintf(line1, "%s %u%%", tp_ui->pcPumpMode, tp_ui->usPumpSpeed / 10U);
@@ -455,7 +459,8 @@ static void v_disp_work_draw_home_module_block(const DispUiSnapshot_T *tp_ui, u8
 
     u8g2_DrawXBMP(&u8g2, x + 2U, y + 2U, 16, 16, pc_disp_work_home_module_icon(module));
     u8g2_SetFont(&u8g2, u8g2_font_5x8_tr);
-    u8g2_DrawStr(&u8g2, x + 20U, y + 8U, pc_disp_work_home_module_label(module));
+    v_disp_work_home_module_power(label, tp_ui, module);
+    u8g2_DrawStr(&u8g2, x + 20U, y + 8U, label);
     u8g2_DrawStr(&u8g2, x + 20U, y + 15U, line1);
 }
 
@@ -473,7 +478,7 @@ static void v_disp_work_draw_home_page(const DispUiSnapshot_T *tp_ui)
     vDisp_ClearRegion(0, 0, OLED_WIDTH_PIXELS, OLED_HEIGHT_PIXELS);
     v_disp_work_draw_full_top_bar("HOME 1/3", "WORK");
     u8g2_SetFont(&u8g2, u8g2_font_5x8_tr);
-    sprintf(line, "VIN%u.%u I%u.%02u P%uW", tp_ui->usVinVolt / 10U,
+    sprintf(line, "%u.%uV %u.%02uA %uW", tp_ui->usVinVolt / 10U,
             tp_ui->usVinVolt % 10U, tp_ui->usVinCurrMa / 1000U,
             (tp_ui->usVinCurrMa % 1000U) / 10U, tp_ui->usVinPowerW);
     u8g2_DrawStr(&u8g2, 1, 16, line);

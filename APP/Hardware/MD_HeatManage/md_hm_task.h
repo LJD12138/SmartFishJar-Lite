@@ -52,6 +52,7 @@ s8 cHm_Switch(HM_Object_E obj, SwitchType_E type, bool fore_en);
 void vHM_FanSetTargetTemp(s16 temp_start, s16 temp_full);
 void vHM_HeatSetTargetTemp(s16 temp);
 bool bHM_IsForceOn(void);
+vs16 usHM_GetDevPwm(HM_Object_E obj);
 
 
 #if(boardLOW_POWER)
