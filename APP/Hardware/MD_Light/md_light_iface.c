@@ -71,6 +71,8 @@ void vLight_IfaceInit(void)
     tLight.usBlue = 0;
     tLight.usGreen = 0;
     tLight.usRed = 0;
+    tLight.usPower = 0;
+    tLight.eDevState = DS_SHUT_DOWN;
 }
 
 #endif  //boardLIGHT_EN

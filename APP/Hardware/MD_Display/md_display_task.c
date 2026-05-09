@@ -567,10 +567,12 @@ static u8 uc_disp_page_field_count(DispPageId_E page_id)
 	{
 		case DPI_HOME: return (u8)DHM_COUNT;
 		case DPI_LIGHT:
-		case DPI_HEAT:
+			return 8U;
 		case DPI_WPUMP:
 		case DPI_O2PUMP:
 			return 4U;
+		case DPI_HEAT:
+			return 6U;
 		case DPI_SETTING:
 		case DPI_ADC:
 			return 5U;
@@ -780,15 +782,54 @@ static bool b_disp_adjust_detail_current(bool add)
 
 		case DPI_HEAT:
 			#if(boardHEAT_MANAGE_EN)
-			if(tDispPageCtx.ucFieldIndex == 1U)
 			{
-				if(bHM_IsForceOn() == true)
-					cHm_Switch(HM_OBJ_HEAT, ST_OFF, true);
-				else
-					cHm_Switch(HM_OBJ_HEAT, ST_ON, true);
-
-				v_disp_page_set_hint("HEAT MODE");
-				return true;
+				s16 temp;
+				switch(tDispPageCtx.ucFieldIndex)
+				{
+					case 1U: /* HEAT开关 */
+						if(bHM_IsForceOn() == true)
+							cHm_Switch(HM_OBJ_HEAT, ST_OFF, true);
+						else
+							cHm_Switch(HM_OBJ_HEAT, ST_ON, true);
+						v_disp_page_set_hint("HEAT MODE");
+						return true;
+					case 2U: /* HeatTargetTemp */
+						temp = tHM.sHeatTargetTemp;
+						if(add == true) { if(temp < 50) temp++; }
+						else { if(temp > 10) temp--; }
+						vHM_HeatSetTargetTemp(temp);
+						v_disp_page_set_hint("HT TARGET");
+						return true;
+					case 3U: /* FAN开关 */
+						if(tHM.bFanEnable == true)
+						{
+							tHM.bFanEnable = false;
+							cHm_Switch(HM_OBJ_FAN, ST_OFF, true);
+						}
+						else
+						{
+							tHM.bFanEnable = true;
+							cHm_Switch(HM_OBJ_FAN, ST_ON, true);
+						}
+						v_disp_page_set_hint("FAN MODE");
+						return true;
+					case 4U: /* FanTempStart */
+						temp = tHM.sFanTempStart;
+						if(add == true) { if(temp < tHM.sFanTempFull - 1) temp++; }
+						else { if(temp > 10) temp--; }
+						vHM_FanSetTargetTemp(temp, tHM.sFanTempFull);
+						v_disp_page_set_hint("FAN START");
+						return true;
+					case 5U: /* FanTempFull */
+						temp = tHM.sFanTempFull;
+						if(add == true) { if(temp < 60) temp++; }
+						else { if(temp > tHM.sFanTempStart + 1) temp--; }
+						vHM_FanSetTargetTemp(tHM.sFanTempStart, temp);
+						v_disp_page_set_hint("FAN FULL");
+						return true;
+					default:
+						break;
+				}
 			}
 			#endif
 			v_disp_page_set_hint("HEAT VIEW");
@@ -1492,4 +1533,5 @@ void vLcd_ExitLowPower(void)
 #endif //boardLOW_POWER
 
 #endif //boardDISPLAY_EN
+
 

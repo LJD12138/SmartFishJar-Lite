@@ -83,7 +83,7 @@ void v_disp_queue_task_init(Task_T *tp_task)
 ************************************************************************************************************************/
 bool b_disp_render_init_page(void)
 {
-    #define INIT_ANIM_STEP     2U
+    #define INIT_ANIM_STEP     5U
     #define INIT_ANIM_MAX      100U
     static u8 s_ucAnimProgress = 0U;
 

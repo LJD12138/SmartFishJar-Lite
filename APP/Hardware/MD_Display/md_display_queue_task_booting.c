@@ -123,7 +123,7 @@ static bool b_disp_render_booting_page(void)
     v_boot_draw_bubbles(s_ucBootAnimCnt);
     v_boot_draw_progress(frame);
 
-    s_ucBootAnimFrame++;
+    s_ucBootAnimFrame += 2;
     if(s_ucBootAnimFrame >= BOOT_SWIM_FRAME_MAX)
         s_ucBootAnimFrame = 0U;
 

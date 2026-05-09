@@ -29,9 +29,13 @@ static bool b_disp_render_work_page(void);
 static void v_disp_work_draw_full_top_bar(const char *title, const char *tag);
 static void v_disp_work_draw_hint_line(void);
 static const char *pc_disp_work_fan_mode(void);
-static const char *pc_disp_work_light_white_state(void);
-static const char *pc_disp_work_light_rgb_state(void);
+static const char *pc_disp_work_light_mode(u8 mode);
+static const char *pc_disp_work_rgb_mode(u8 mode);
+static const char *pc_disp_work_dev_state(u8 state);
+static const char *pc_disp_work_light_white_state(const DispUiSnapshot_T *tp_ui);
+static const char *pc_disp_work_light_rgb_state(const DispUiSnapshot_T *tp_ui);
 static void v_disp_work_format_curr_ma(char *dst, u16 ma);
+static void v_disp_work_format_light_pwm(char *dst, u16 pwm);
 static void v_disp_work_draw_field_row(u8 index, u8 y, const char *label, const char *value, bool edit_mark);
 static void v_disp_work_home_module_power(char *dst, const DispUiSnapshot_T *tp_ui, DispHomeModule_E module);
 static const unsigned char *pc_disp_work_home_module_icon(DispHomeModule_E module);
@@ -79,7 +83,6 @@ void v_disp_queue_task_work(Task_T *tp_task)
                 bDisp_SetDevState(DS_WORK);
 
             bDisp_Switch(ST_ON, true); // 打开显示
-            vDisp_PageSyncByState(DS_WORK); // 同步页面状态
             tDispPageCtx.usDirtyMask = DDM_FULL; // 标记页面需要完全刷新
             g_bDispPageDirty = true;
             b_disp_render_work_page(); // 渲染工作页面
@@ -145,8 +148,8 @@ void v_disp_queue_task_work(Task_T *tp_task)
             }
 
             // 如果页面需要刷新，则重新渲染
-            if(g_bDispPageDirty)
-                b_disp_render_work_page();
+            // if(g_bDispPageDirty)
+            b_disp_render_work_page();
             cQueue_GotoStep(tp_task, STEP_END); // 结束当前步骤
         }
         break;
@@ -283,45 +286,123 @@ static const char *pc_disp_work_fan_mode(void)
 }
 
 /***********************************************************************************************************************
------函数功能    获取白光灯状态文本
------说明(备注)  根据 tLight.eWordMode 返回短文本（如 DIM/ FUL/ SOS/ TWK），若不支持则返回 "OFF"
------传入参数    none
+-----函数功能    获取白光模式文本
+-----说明(备注)  将白光模式枚举值转换成简短显示文本
+-----传入参数    mode: 白光模式值
+-----输出参数    none
+-----返回值      const char*: 模式字符串
+************************************************************************************************************************/
+static const char *pc_disp_work_light_mode(u8 mode)
+{
+    switch((LightWorkMode_E)mode)
+    {
+        case LWM_LOW: return "LOW";
+        case LWM_HALF: return "HALF";
+        case LWM_FULL: return "FULL";
+        case LWM_AUTO: return "AUTO";
+        case LWM_SOS: return "SOS";
+        case LWM_TWINKLE: return "TWKL";
+        default: break;
+    }
+
+    return "OFF";
+}
+
+/***********************************************************************************************************************
+-----函数功能    获取 RGB 模式文本
+-----说明(备注)  将 RGB 模式枚举值转换成简短显示文本
+-----传入参数    mode: RGB 模式值
+-----输出参数    none
+-----返回值      const char*: 模式字符串
+************************************************************************************************************************/
+static const char *pc_disp_work_rgb_mode(u8 mode)
+{
+    switch((RGBWorkMode_E)mode)
+    {
+        case RWM_LOW: return "LOW";
+        case RWM_HALF: return "HALF";
+        case RWM_FULL: return "FULL";
+        case RWM_AUTO: return "AUTO";
+        default: break;
+    }
+
+    return "OFF";
+}
+
+/***********************************************************************************************************************
+-----函数功能    获取设备状态文本
+-----说明(备注)  将设备状态枚举值转换成简短显示文本
+-----传入参数    state: 设备状态值
 -----输出参数    none
 -----返回值      const char*: 状态字符串
 ************************************************************************************************************************/
-static const char *pc_disp_work_light_white_state(void)
+static const char *pc_disp_work_dev_state(u8 state)
 {
-    #if(boardLIGHT_EN)
-    switch(tLight.eWordMode)
+    switch((DevState_E)state)
     {
+        case DS_INIT: return "INIT";
+        case DS_CLOSING: return "CLOSE";
+        case DS_SHUT_DOWN: return "OFF";
+        case DS_ERR: return "ERR";
+        case DS_BOOTING: return "BOOT";
+        case DS_WORK: return "WORK";
+        case DS_UPDATA_MODE: return "UP";
+        case DS_ENG_MODE: return "ENG";
+        default: break;
+    }
+
+    return "LOST";
+}
+
+/***********************************************************************************************************************
+-----函数功能    获取白光灯状态文本
+-----说明(备注)  根据白光模式值返回短文本，用于概览和详情页摘要
+-----传入参数    tp_ui: UI 快照指针
+-----输出参数    none
+-----返回值      const char*: 状态字符串
+************************************************************************************************************************/
+static const char *pc_disp_work_light_white_state(const DispUiSnapshot_T *tp_ui)
+{
+    if(tp_ui == NULL)
+        return "OFF";
+
+    switch((LightWorkMode_E)tp_ui->ucLightMode)
+    {
+        case LWM_LOW: return "LOW";
         case LWM_HALF: return "DIM";
         case LWM_FULL: return "FUL";
+        case LWM_AUTO: return "AUT";
         case LWM_SOS: return "SOS";
         case LWM_TWINKLE: return "TWK";
         default: break;
     }
-    #endif
 
     return "OFF";
 }
 
 /***********************************************************************************************************************
 -----函数功能    获取 RGB 灯状态文本
------说明(备注)  优先返回特殊模式 SOS/TWK，其次检测 RGB 分量是否非零返回 "ON"，否则返回 "OFF"
------传入参数    none
+-----说明(备注)  优先返回 RGB 模式，其次依据 RGB 通道输出判断开关状态
+-----传入参数    tp_ui: UI 快照指针
 -----输出参数    none
 -----返回值      const char*: 状态字符串
 ************************************************************************************************************************/
-static const char *pc_disp_work_light_rgb_state(void)
+static const char *pc_disp_work_light_rgb_state(const DispUiSnapshot_T *tp_ui)
 {
-    #if(boardLIGHT_EN)
-    if(tLight.eWordMode == LWM_SOS)
-        return "SOS";
-    if(tLight.eWordMode == LWM_TWINKLE)
-        return "TWK";
-    if(tLight.usBlue > 0U || tLight.usGreen > 0U || tLight.usRed > 0U)
+    if(tp_ui == NULL)
+        return "OFF";
+
+    switch((RGBWorkMode_E)tp_ui->ucLightRgbMode)
+    {
+        case RWM_LOW: return "LOW";
+        case RWM_HALF: return "DIM";
+        case RWM_FULL: return "FUL";
+        case RWM_AUTO: return "AUT";
+        default: break;
+    }
+
+    if(tp_ui->usLightBlue > 0U || tp_ui->usLightGreen > 0U || tp_ui->usLightRed > 0U)
         return "ON";
-    #endif
 
     return "OFF";
 }
@@ -337,6 +418,19 @@ static const char *pc_disp_work_light_rgb_state(void)
 static void v_disp_work_format_curr_ma(char *dst, u16 ma)
 {
     sprintf(dst, "%u.%02uA", ma / 1000U, (ma % 1000U) / 10U);
+}
+
+/***********************************************************************************************************************
+-----函数功能    格式化灯光 PWM 值
+-----说明(备注)  同时显示占空比百分比与原始 PWM 值，便于对照调试
+-----传入参数    dst: 目标字符串缓冲区
+-----传入参数    pwm: PWM 原始值
+-----输出参数    none
+-----返回值      none
+************************************************************************************************************************/
+static void v_disp_work_format_light_pwm(char *dst, u16 pwm)
+{
+    sprintf(dst, "%u%%/%u", pwm / 10U, pwm);
 }
 
 /***********************************************************************************************************************
@@ -445,7 +539,7 @@ static void v_disp_work_draw_home_module_block(const DispUiSnapshot_T *tp_ui, u8
 
         case DHM_LIGHT:
         default:
-            sprintf(line1, "W:%s R:%s", pc_disp_work_light_white_state(), pc_disp_work_light_rgb_state());
+            sprintf(line1, "W:%s R:%s", pc_disp_work_light_white_state(tp_ui), pc_disp_work_light_rgb_state(tp_ui));
             break;
     }
 
@@ -492,7 +586,7 @@ static void v_disp_work_draw_home_page(const DispUiSnapshot_T *tp_ui)
 
 /***********************************************************************************************************************
 -----函数功能    绘制 LIGHT 页面（灯光详细信息）
------说明(备注)  显示灯光功率、电流、白光与 RGB 状态、亮度与电流等字段
+-----说明(备注)  参照 tLight 结构体显示白光模式、RGB 模式、设备状态与各通道 PWM
 -----传入参数    tp_ui: UI 快照指针
 -----输出参数    none
 -----返回值      none
@@ -500,21 +594,66 @@ static void v_disp_work_draw_home_page(const DispUiSnapshot_T *tp_ui)
 static void v_disp_work_draw_light_page(const DispUiSnapshot_T *tp_ui)
 {
     char line1[24];
-    char value[20];
+    char value[24];
+    u8 i;
+    u8 visible_start;
+    u8 draw_count;
+    const char *labels[8] = {"W MODE", "RGB MD", "STATE", "POWER", "WARM", "BLUE", "GREEN", "RED"};
+
+    visible_start = (tDispPageCtx.ucFieldIndex > 3U) ? (u8)(tDispPageCtx.ucFieldIndex - 3U) : 0U;
+    if(visible_start > 4U)
+        visible_start = 4U;
 
     sprintf(line1, "P%uW I%umA", tp_ui->usLightPowerW, tp_ui->usLightCurrMa);
     vDisp_ClearRegion(0, 0, OLED_WIDTH_PIXELS, OLED_HEIGHT_PIXELS);
     v_disp_work_draw_full_top_bar("LIGHT", "1/4");
     u8g2_DrawXBMP(&u8g2, 0, 10, 16, 16, icon_light_16x16);
     u8g2_SetFont(&u8g2, u8g2_font_5x8_tr);
-    u8g2_DrawStr(&u8g2, 20, 16, line1);
+    u8g2_DrawStr(&u8g2, 20, 22, line1);
 
-    v_disp_work_draw_field_row(0U, 32, "WHITE", pc_disp_work_light_white_state(), false);
-    v_disp_work_draw_field_row(1U, 40, "RGB", pc_disp_work_light_rgb_state(), false);
-    sprintf(value, "%u%%", tp_ui->usLightWarm / 10U);
-    v_disp_work_draw_field_row(2U, 48, "WARM", value, false);
-    sprintf(value, "%umA", tp_ui->usLightCurrMa);
-    v_disp_work_draw_field_row(3U, 56, "CURR", value, false);
+    draw_count = (u8)(8U - visible_start);
+    if(draw_count > 4U)
+        draw_count = 4U;
+
+    for(i = 0U; i < draw_count; i++)
+    {
+        u8 field_idx = (u8)(visible_start + i);
+        u8 y = (u8)(32U + (i * 8U));
+
+        switch(field_idx)
+        {
+            case 0U:
+                sprintf(value, "%s", pc_disp_work_light_mode(tp_ui->ucLightMode));
+                break;
+            case 1U:
+                sprintf(value, "%s", pc_disp_work_rgb_mode(tp_ui->ucLightRgbMode));
+                break;
+            case 2U:
+                sprintf(value, "%s", pc_disp_work_dev_state(tp_ui->ucLightDevState));
+                break;
+            case 3U:
+                sprintf(value, "%uW/%uW", tp_ui->usLightPowerW, tp_ui->usLightCtrlPower);
+                break;
+            case 4U:
+                v_disp_work_format_light_pwm(value, tp_ui->usLightWarm);
+                break;
+            case 5U:
+                v_disp_work_format_light_pwm(value, tp_ui->usLightBlue);
+                break;
+            case 6U:
+                v_disp_work_format_light_pwm(value, tp_ui->usLightGreen);
+                break;
+            case 7U:
+                v_disp_work_format_light_pwm(value, tp_ui->usLightRed);
+                break;
+            default:
+                value[0] = '\0';
+                break;
+        }
+
+        v_disp_work_draw_field_row(field_idx, y, labels[field_idx], value, false);
+    }
+
     v_disp_work_draw_hint_line();
 }
 
@@ -527,25 +666,69 @@ static void v_disp_work_draw_light_page(const DispUiSnapshot_T *tp_ui)
 ************************************************************************************************************************/
 static void v_disp_work_draw_heat_page(const DispUiSnapshot_T *tp_ui)
 {
-    char line1[24];
-    char value[20];
+    char value[24];
+    u8 i;
+    u8 visible_start;
+    u8 draw_count;
+    const char *labels[6] = {"WATER", "HEAT", "HT TMP", "FAN", "FN ST", "FN FL"};
 
-    sprintf(line1, "WATER %dC", tp_ui->sWaterTemp);
+    /* 计算字段可见窗口起始索引 (最多显示4行字段, 共6个字段需滚动) */
+    visible_start = (tDispPageCtx.ucFieldIndex > 3U) ? (u8)(tDispPageCtx.ucFieldIndex - 3U) : 0U;
+    if(visible_start > 2U)
+        visible_start = 2U;
+
     vDisp_ClearRegion(0, 0, OLED_WIDTH_PIXELS, OLED_HEIGHT_PIXELS);
-    v_disp_work_draw_full_top_bar("HEAT", "1/4");
-    u8g2_DrawXBMP(&u8g2, 0, 10, 16, 16, icon_heat_16x16);
-    u8g2_SetFont(&u8g2, u8g2_font_5x8_tr);
-    u8g2_DrawStr(&u8g2, 20, 16, line1);
+    v_disp_work_draw_full_top_bar("HM", "1/4");
 
-    sprintf(value, "%d/%dC", tp_ui->sWaterTemp1, tp_ui->sWaterTemp2);
-    v_disp_work_draw_field_row(0U, 32, "WATER", value, false);
-    v_disp_work_draw_field_row(1U, 40, "HEAT", tp_ui->pcHeatMode, false);
-    v_disp_work_draw_field_row(2U, 48, "FAN", pc_disp_work_fan_mode(), false);
-    sprintf(value, "%dC", DISP_HEAT_TARGET_TEMP_C);
-    v_disp_work_draw_field_row(3U, 56, "TARGET", value, false);
+    /* 摘要行: icon + VIN / IIN / PWR */
+    u8g2_DrawXBMP(&u8g2, 0, 10, 16, 16, icon_heat_16x16);
+    u8g2_SetFont(&u8g2, u8g2_font_6x10_tr);
+    sprintf(value, "%u.%uV %u.%02uA %uW",
+            tp_ui->usVinVolt / 10U, tp_ui->usVinVolt % 10U,
+            tp_ui->usVinCurrMa / 1000U, (tp_ui->usVinCurrMa % 1000U) / 10U,
+            tp_ui->usVinPowerW);
+    u8g2_DrawStr(&u8g2, 20, 22, value);
+
+    /* 绘制可见范围内的字段行 */
+    draw_count = (u8)(6U - visible_start);
+    if(draw_count > 4U)
+        draw_count = 4U;
+
+    for(i = 0U; i < draw_count; i++)
+    {
+        u8 field_idx = (u8)(visible_start + i);
+        u8 y = (u8)(36U + (i * 8U));
+
+        switch(field_idx)
+        {
+            case 0U:
+                sprintf(value, "%d/%dC", tp_ui->sWaterTemp1, tp_ui->sWaterTemp2);
+                break;
+            case 1U:
+                sprintf(value, "%s/%u", tp_ui->ucHeatEnable ? "ON" : "OFF", tp_ui->usHeatPwm);
+                break;
+            case 2U:
+                sprintf(value, "%dC", tp_ui->sHeatTargetTemp);
+                break;
+            case 3U:
+                sprintf(value, "%s/%u", tp_ui->ucFanEnable ? "ON" : "OFF", tp_ui->usFanPwm);
+                break;
+            case 4U:
+                sprintf(value, "%dC", tp_ui->sFanTempStart);
+                break;
+            case 5U:
+                sprintf(value, "%dC", tp_ui->sFanTempFull);
+                break;
+            default:
+                value[0] = '\0';
+                break;
+        }
+
+        v_disp_work_draw_field_row(field_idx, y, labels[field_idx], value, false);
+    }
+
     v_disp_work_draw_hint_line();
 }
-
 /***********************************************************************************************************************
 -----函数功能    绘制 WPUMP 页面（水泵信息）
 -----说明(备注)  显示泵的模式、速度百分比/原始值、运行状态及电流
@@ -685,7 +868,7 @@ static void v_disp_work_draw_adc_page(const DispUiSnapshot_T *tp_ui)
             v_disp_work_draw_field_row(1U, 26, "LCURR", value, false);
             sprintf(value, "%u%%", tp_ui->usLightWarm / 10U);
             v_disp_work_draw_field_row(2U, 35, "WARM", value, false);
-            sprintf(value, "%s", pc_disp_work_light_rgb_state());
+            sprintf(value, "%s", pc_disp_work_light_rgb_state(tp_ui));
             v_disp_work_draw_field_row(3U, 44, "RGB", value, false);
             sprintf(value, "%d/%dC", tp_ui->sBoardTemp5V, tp_ui->sBoardTemp12V);
             v_disp_work_draw_field_row(4U, 53, "BOARD", value, false);
@@ -694,3 +877,6 @@ static void v_disp_work_draw_adc_page(const DispUiSnapshot_T *tp_ui)
 
     v_disp_work_draw_hint_line();
 }
+
+
+

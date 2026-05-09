@@ -1,42 +1,51 @@
-#ifndef MD_LIGHT_TASK_H_
+ï»¿#ifndef MD_LIGHT_TASK_H_
 #define MD_LIGHT_TASK_H_
 
 #include "board_config.h"
 
 #if(boardLIGHT_EN)
 
-#define   		lightSIMPLE_MODE      					1   //0:¼òµ¥Ä£Ê½   1:È«¹¦ÄÜ
 
-//¹¤×÷Ä£Ê½
+//å·¥ä½œæ¨¡å¼
 typedef enum 
 {   
     LWM_OFF = 0,
+    LWM_LOW,
     LWM_HALF,
     LWM_FULL,
-	#if(lightSIMPLE_MODE)
-	LWM_SOS,
-	LWM_TWINKLE,
-	#endif  //lightSIMPLE_MODE
+    LWM_AUTO,      // æ ¹æ® usLightRes è‡ªåŠ¨è°ƒèŠ‚ç™½å…‰äº®åº¦
+    LWM_SOS,
+    LWM_TWINKLE,
 }LightWorkMode_E;
+
+typedef enum 
+{   
+    RWM_OFF = 0,
+    RWM_LOW,
+    RWM_HALF,
+    RWM_FULL,
+    RWM_AUTO,//æ ¹æ®usLightResæ¥è°ƒèŠ‚äº®åº¦
+}RGBWorkMode_E;
 
 
 typedef struct
 {
-    vu16              	usValue;
-    vu16              	usLastValue;
     vu16                usPower;
-    vu16                usWarm;     // Å¯°×¹âÍ¨µÀ PWM£¨0~lightPWM_MAX_VALUE£©
-    vu16                usBlue;     // À¶¹âÍ¨µÀ PWM
-    vu16                usGreen;    // ÂÌ¹âÍ¨µÀ PWM
-    vu16                usRed;      // ºì¹âÍ¨µÀ PWM
-    LightWorkMode_E  	eWordMode;
-    DevState_E  		eDevState;
+    vu16                usWarm;     // æš–ç™½å…‰é€šé“ PWMï¼ˆ0~lightPWM_MAX_VALUEï¼‰
+    vu16                usBlue;     // è“å…‰é€šé“ PWM
+    vu16                usGreen;    // ç»¿å…‰é€šé“ PWM
+    vu16                usRed;      // çº¢å…‰é€šé“ PWM
+    LightWorkMode_E     eLightMode;
+    RGBWorkMode_E  		eRGBMode;
+    DevState_E          eDevState;
 }Light_T;              
 extern Light_T   		tLight;
 
 
 void vLight_TaskInit(void);
 bool bLight_Switch(SwitchType_E type);
+bool bLight_SetMode(LightWorkMode_E mode);
+bool bLight_SetRGBMode(RGBWorkMode_E mode);
 void vLight_CircSelectMode(void); 
 
 #if(boardLOW_POWER)

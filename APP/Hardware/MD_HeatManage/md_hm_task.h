@@ -29,6 +29,11 @@ typedef enum
 /*======================================== 热管理全局结构 ========================================*/
 typedef struct
 {
+    vu16                usPower;
+    // 温度
+    s16                 sMaxTemp;              // 最高温度
+    s16                 sMinTemp;              // 最低温度
+
     // 风扇控制参数
     bool                bFanEnable;         // 风扇功能使能（默认关闭）
     s16                 sFanTempStart;      // 风扇起转温度(>=该温度开始调速)

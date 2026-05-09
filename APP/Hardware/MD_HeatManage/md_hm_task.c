@@ -36,9 +36,6 @@ static bool b_fan_stop_to_run_flag = 0;
 static bool b_hm_force_on = 0;
 static bool b_hm_ot_protect = 0;
 
-static u8   uc_updata_delay = 0;
-
-static s16  s_water_temp = 0;    // 水温（取NTC1/NTC2均值）
 static u16  us_fan_pwm  = 0;     // 风扇PWM当前值
 static u16  us_heat_pwm  = 0;    // 加热棒PWM当前值
 
@@ -309,15 +306,12 @@ static bool b_hm_is_active_state(void)
 ******************************************************************************************************************/
 static void v_hm_param_update(void)
 {
-    if(++uc_updata_delay < 3)
-        return;
-
-    uc_updata_delay = 0;
-
     #if(boardADC_EN && boardWATER_TEMP_EN)
-    s_water_temp = (tAdcSamp.sWaterTemp1 + tAdcSamp.sWaterTemp2) / 2;
+    tHM.sMaxTemp = MAX2(tAdcSamp.sWaterTemp1, tAdcSamp.sWaterTemp2);
+    tHM.sMinTemp = MIN2(tAdcSamp.sWaterTemp1, tAdcSamp.sWaterTemp2);
     #else
-    s_water_temp = tSysInfo.sMaxTemp;
+    tHM.sMaxTemp = tSysInfo.sMaxTemp;
+    tHM.sMinTemp = tSysInfo.sMinTemp;
     #endif
 }
 
@@ -347,7 +341,7 @@ static void v_hm_check_prote(void)
         return;
     }
 
-    if(s_water_temp >= (s16)(tHM.sHeatTargetTemp + HM_OT_SET_DELTA))
+    if(tHM.sMaxTemp >= (s16)(tHM.sHeatTargetTemp + HM_OT_SET_DELTA))
     {
         uc_ot_clr_cnt = 0;
         if(b_hm_ot_protect == false)
@@ -360,7 +354,7 @@ static void v_hm_check_prote(void)
             }
         }
     }
-    else if(s_water_temp <= (s16)(tHM.sHeatTargetTemp + HM_OT_CLR_DELTA))
+    else if(tHM.sMaxTemp <= (s16)(tHM.sHeatTargetTemp + HM_OT_CLR_DELTA))
     {
         uc_ot_set_cnt = 0;
         if(b_hm_ot_protect == true)
@@ -437,7 +431,7 @@ static void v_hm_run_fan_control(void)
     if(b_hm_force_on == true)
         us_fan_pwm = hmPWM_MAX_VALUE;
     else
-        us_fan_pwm = us_fan_calc_stepless_pwm(s_water_temp);
+        us_fan_pwm = us_fan_calc_stepless_pwm(tHM.sMaxTemp);
 
     // 风扇从停止到启动时先给中高转速防止启动困难
     if(us_fan_pwm > 0 && b_fan_stop_to_run_flag == 0)
@@ -498,7 +492,7 @@ static void v_hm_run_heat_control(void)
     else
     {
         tHeatPid.setpoint = (float)tHM.sHeatTargetTemp;
-        target_heat = (u16)f_pid_compute(&tHeatPid, (float)s_water_temp);
+        target_heat = (u16)f_pid_compute(&tHeatPid, (float)tHM.sMaxTemp);
     }
 
     if(us_heat_pwm != target_heat)

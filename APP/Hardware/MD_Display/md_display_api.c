@@ -215,6 +215,23 @@ static void v_disp_collect_snapshot(void)
 
     #if(boardLIGHT_EN)
     s_tDispUiSnapshot.usLightWarm = tLight.usWarm;
+    s_tDispUiSnapshot.usLightCtrlPower = tLight.usPower;
+    s_tDispUiSnapshot.usLightBlue = tLight.usBlue;
+    s_tDispUiSnapshot.usLightGreen = tLight.usGreen;
+    s_tDispUiSnapshot.usLightRed = tLight.usRed;
+    s_tDispUiSnapshot.ucLightMode = (u8)tLight.eLightMode;
+    s_tDispUiSnapshot.ucLightRgbMode = (u8)tLight.eRGBMode;
+    s_tDispUiSnapshot.ucLightDevState = (u8)tLight.eDevState;
+    #endif
+
+    #if(boardHEAT_MANAGE_EN)
+    s_tDispUiSnapshot.sHeatTargetTemp = tHM.sHeatTargetTemp;
+    s_tDispUiSnapshot.sFanTempStart = tHM.sFanTempStart;
+    s_tDispUiSnapshot.sFanTempFull = tHM.sFanTempFull;
+    s_tDispUiSnapshot.usHeatPwm = (u16)usHM_GetDevPwm(HM_OBJ_HEAT);
+    s_tDispUiSnapshot.usFanPwm = (u16)usHM_GetDevPwm(HM_OBJ_FAN);
+    s_tDispUiSnapshot.ucHeatEnable = tHM.bHeatEnable ? 1U : 0U;
+    s_tDispUiSnapshot.ucFanEnable = tHM.bFanEnable ? 1U : 0U;
     #endif
 
     #if(boardO2PUMP_EN)
@@ -303,7 +320,7 @@ static u8 uc_disp_get_updata_percent(void)
 static const char *pc_disp_light_mode(void)
 {
     #if(boardLIGHT_EN)
-    switch(tLight.eWordMode)
+    switch(tLight.eLightMode)
     {
         case LWM_HALF: return "HALF";
         case LWM_FULL: return "FULL";
@@ -415,7 +432,7 @@ static const char *pc_disp_fan_mode(void)
 static const char *pc_disp_light_white_state(void)
 {
     #if(boardLIGHT_EN)
-    switch(tLight.eWordMode)
+    switch(tLight.eLightMode)
     {
         case LWM_HALF: return "DIM";
         case LWM_FULL: return "FUL";
@@ -438,9 +455,9 @@ static const char *pc_disp_light_white_state(void)
 static const char *pc_disp_light_rgb_state(void)
 {
     #if(boardLIGHT_EN)
-    if(tLight.eWordMode == LWM_SOS)
+    if(tLight.eLightMode == LWM_SOS)
         return "SOS";
-    if(tLight.eWordMode == LWM_TWINKLE)
+    if(tLight.eLightMode == LWM_TWINKLE)
         return "TWK";
     if(tLight.usBlue > 0U || tLight.usGreen > 0U || tLight.usRed > 0U)
         return "ON";
@@ -1674,6 +1691,7 @@ bool bDisp_RenderUi(void)
 }
 
 #endif  // boardDISPLAY_EN
+
 
 
 
