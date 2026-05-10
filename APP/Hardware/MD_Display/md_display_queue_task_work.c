@@ -294,7 +294,7 @@ static const char *pc_disp_work_fan_mode(void)
 ************************************************************************************************************************/
 static const char *pc_disp_work_light_mode(u8 mode)
 {
-    switch((LightWorkMode_E)mode)
+    switch((LampWorkMode_E)mode)
     {
         case LWM_LOW: return "LOW";
         case LWM_HALF: return "HALF";
@@ -366,7 +366,7 @@ static const char *pc_disp_work_light_white_state(const DispUiSnapshot_T *tp_ui)
     if(tp_ui == NULL)
         return "OFF";
 
-    switch((LightWorkMode_E)tp_ui->ucLightMode)
+    switch((LampWorkMode_E)tp_ui->ucLightMode)
     {
         case LWM_LOW: return "LOW";
         case LWM_HALF: return "DIM";

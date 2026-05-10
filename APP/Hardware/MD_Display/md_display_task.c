@@ -776,8 +776,14 @@ static bool b_disp_adjust_detail_current(bool add)
 				v_disp_page_set_hint("WHITE MODE");
 				return true;
 			}
+			else if(tDispPageCtx.ucFieldIndex == 1U)
+			{
+				vLight_CircSelectRGBMode();
+				v_disp_page_set_hint("RGB MODE");
+				return true;
+			}
 			#endif
-			v_disp_page_set_hint(tDispPageCtx.ucFieldIndex == 1U ? "RGB VIEW" : "LIGHT VIEW");
+			v_disp_page_set_hint("LIGHT VIEW");
 			return true;
 
 		case DPI_HEAT:

@@ -1,10 +1,10 @@
-Ôªø#include "MD_Light/md_light_iface.h"
+#include "MD_Light/md_light_iface.h"
 
 #if(boardLIGHT_EN)
 #include "MD_Light/md_light_task.h"
 
 /*****************************************************************************************************************
------ÂáΩÊï∞ÂäüËÉΩ    RGBWÁÖßÊòéGPIO+ÂÆöÊó∂Âô®ÂàùÂßãÂåñÔºàTIMER3 PB6/PB7/PB8/PB9Ôºâ
+-----∫Ø ˝π¶ƒ‹    RGBW’’√˜GPIO+∂® ±∆˜≥ı ºªØ£®TIMER3 PB6/PB7/PB8/PB9£©
 ******************************************************************************************************************/
 void vLight_IfaceInit(void)
 {
@@ -12,7 +12,7 @@ void vLight_IfaceInit(void)
     timer_parameter_struct timer_initpara;
 
     rcu_periph_clock_enable(lightW_GPIO_RCU);  // GPIOB
-    /* PB6=CH0ÊöñÁôΩ, PB7=CH1Ëìù, PB8=CH2Áªø, PB9=CH3Á∫¢ */
+    /* PB6=CH0≈Ø∞◊, PB7=CH1¿∂, PB8=CH2¬Ã, PB9=CH3∫Ï */
     gpio_init(lightW_GPIO_PORT, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, lightW_PIN);
     gpio_init(lightB_GPIO_PORT, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, lightB_PIN);
     gpio_init(lightG_GPIO_PORT, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, lightG_PIN);
@@ -34,25 +34,25 @@ void vLight_IfaceInit(void)
     timer_ocinitpara.ocpolarity   = TIMER_OC_POLARITY_HIGH;
     timer_ocinitpara.ocidlestate  = TIMER_OC_IDLE_STATE_LOW;
 
-    /* CH0 - ÊöñÁôΩÂÖâ */
+    /* CH0 - ≈Ø∞◊π‚ */
     timer_channel_output_config(lightTIMER, lightW_TIMER_CH, &timer_ocinitpara);
     timer_channel_output_pulse_value_config(lightTIMER, lightW_TIMER_CH, 0);
     timer_channel_output_mode_config(lightTIMER, lightW_TIMER_CH, TIMER_OC_MODE_PWM0);
     timer_channel_output_shadow_config(lightTIMER, lightW_TIMER_CH, TIMER_OC_SHADOW_DISABLE);
 
-    /* CH1 - ËìùÂÖâ */
+    /* CH1 - ¿∂π‚ */
     timer_channel_output_config(lightTIMER, lightB_TIMER_CH, &timer_ocinitpara);
     timer_channel_output_pulse_value_config(lightTIMER, lightB_TIMER_CH, 0);
     timer_channel_output_mode_config(lightTIMER, lightB_TIMER_CH, TIMER_OC_MODE_PWM0);
     timer_channel_output_shadow_config(lightTIMER, lightB_TIMER_CH, TIMER_OC_SHADOW_DISABLE);
 
-    /* CH2 - ÁªøÂÖâ */
+    /* CH2 - ¬Ãπ‚ */
     timer_channel_output_config(lightTIMER, lightG_TIMER_CH, &timer_ocinitpara);
     timer_channel_output_pulse_value_config(lightTIMER, lightG_TIMER_CH, 0);
     timer_channel_output_mode_config(lightTIMER, lightG_TIMER_CH, TIMER_OC_MODE_PWM0);
     timer_channel_output_shadow_config(lightTIMER, lightG_TIMER_CH, TIMER_OC_SHADOW_DISABLE);
 
-    /* CH3 - Á∫¢ÂÖâ */
+    /* CH3 - ∫Ïπ‚ */
     timer_channel_output_config(lightTIMER, lightR_TIMER_CH, &timer_ocinitpara);
     timer_channel_output_pulse_value_config(lightTIMER, lightR_TIMER_CH, 0);
     timer_channel_output_mode_config(lightTIMER, lightR_TIMER_CH, TIMER_OC_MODE_PWM0);
@@ -61,7 +61,7 @@ void vLight_IfaceInit(void)
     timer_auto_reload_shadow_enable(lightTIMER);
     timer_enable(lightTIMER);
 
-    /* ÈªòËÆ§ÂÖ®ÂÖ≥ */
+    /* ƒ¨»œ»´πÿ */
     lightW_PWM_SET(0);
     lightB_PWM_SET(0);
     lightG_PWM_SET(0);
@@ -76,3 +76,4 @@ void vLight_IfaceInit(void)
 }
 
 #endif  //boardLIGHT_EN
+

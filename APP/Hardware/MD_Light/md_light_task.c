@@ -44,7 +44,7 @@ static bool b_light_is_active_state(void);
 static void v_light_shutdown_output(void);
 static void v_light_set_rgbw(u16 warm, u16 blue, u16 green, u16 red);
 static u16 us_light_get_auto_pwm(void);
-static u16 us_light_get_mode_pwm(LightWorkMode_E mode);
+static u16 us_light_get_mode_pwm(LampWorkMode_E mode);
 static u16 us_light_get_rgb_pwm(RGBWorkMode_E mode);
 static void v_light_apply_mode(void);
 static void v_light_refresh_power(void);
@@ -60,7 +60,7 @@ static void v_light_param_init(void)
     tLight.usBlue     = 0;
     tLight.usGreen    = 0;
     tLight.usRed      = 0;
-    tLight.eLightMode = LWM_OFF;
+    tLight.eLampMode = LWM_OFF;
     tLight.eRGBMode   = RWM_OFF;
     tLight.eDevState  = DS_SHUT_DOWN;
 }
@@ -97,16 +97,16 @@ static u16 us_light_get_auto_pwm(void)
 /*****************************************************************************************************************
 ----- function      translate white mode to warm channel PWM
 ******************************************************************************************************************/
-static u16 us_light_get_mode_pwm(LightWorkMode_E mode)
+static u16 us_light_get_mode_pwm(LampWorkMode_E mode)
 {
     switch(mode)
     {
         case LWM_LOW:
-            return 250U;
+            return 150U;
         case LWM_HALF:
-            return 500U;
+            return 400U;
         case LWM_FULL:
-            return lightPWM_MAX_VALUE;
+            return 700U;
         case LWM_AUTO:
             return us_light_get_auto_pwm();
         default:
@@ -123,12 +123,12 @@ static u16 us_light_get_rgb_pwm(RGBWorkMode_E mode)
     switch(mode)
     {
         case RWM_LOW:
-            return 250U;
+            return 30U;
         case RWM_HALF:
             return 500U;
         case RWM_FULL:
         case RWM_AUTO:
-            return lightPWM_MAX_VALUE;
+            return 700U;
         default:
             return 0U;
     }
@@ -196,13 +196,13 @@ static void v_light_apply_mode(void)
     static u8 uc_sos_step = 0U;
     static bool b_twinkle_on = false;
 
-    switch(tLight.eLightMode)
+    switch(tLight.eLampMode)
     {
         case LWM_LOW:
         case LWM_HALF:
         case LWM_FULL:
         case LWM_AUTO:
-            warm_pwm = us_light_get_mode_pwm(tLight.eLightMode);
+            warm_pwm = us_light_get_mode_pwm(tLight.eLampMode);
             v_light_set_rgbw(warm_pwm, rgb_pwm, rgb_pwm, rgb_pwm);
             break;
 
@@ -213,7 +213,7 @@ static void v_light_apply_mode(void)
 
             if((uc_sos_step == 0U) || (uc_sos_step == 2U) || (uc_sos_step == 4U)
             || (uc_sos_step == 6U) || (uc_sos_step == 7U) || (uc_sos_step == 8U))
-                v_light_set_rgbw(lightPWM_MAX_VALUE, 0U, 0U, lightPWM_MAX_VALUE);
+                v_light_set_rgbw(lightPWM_MAX_VALUE, 0U, 0U, 0U);
             else
                 v_light_set_rgbw(0U, 0U, 0U, 0U);
             break;
@@ -228,7 +228,16 @@ static void v_light_apply_mode(void)
 
         case LWM_OFF:
         default:
-            v_light_shutdown_output();
+            if(tLight.eRGBMode != RWM_OFF)
+            {
+                /* W mode OFF but RGB mode active, output RGB only */
+                rgb_pwm = us_light_get_rgb_pwm(tLight.eRGBMode);
+                v_light_set_rgbw(0U, rgb_pwm, rgb_pwm, rgb_pwm);
+            }
+            else
+            {
+                v_light_shutdown_output();
+            }
             break;
     }
 }
@@ -268,7 +277,7 @@ void vLight_Task(void *pvParameters)
         #if(boardADC_EN)
         if(tAdcSamp.fLightCurr > LIGHT_OC_CURRENT)
         {
-            tLight.eLightMode = LWM_OFF;
+            tLight.eLampMode = LWM_OFF;
             tLight.eRGBMode = RWM_OFF;
             v_light_shutdown_output();
 
@@ -283,7 +292,7 @@ void vLight_Task(void *pvParameters)
             v_light_apply_mode();
         else
         {
-            tLight.eLightMode = LWM_OFF;
+            tLight.eLampMode = LWM_OFF;
             tLight.eRGBMode = RWM_OFF;
             v_light_shutdown_output();
         }
@@ -298,9 +307,9 @@ void vLight_Task(void *pvParameters)
 /*****************************************************************************************************************
 ----- function      set white light mode
 ******************************************************************************************************************/
-bool bLight_SetMode(LightWorkMode_E mode)
+bool bLight_SetMode(LampWorkMode_E mode)
 {
-    tLight.eLightMode = mode;
+    tLight.eLampMode = mode;
 
     if(mode == LWM_OFF && tLight.eRGBMode == RWM_OFF)
         tLight.eDevState = DS_SHUT_DOWN;
@@ -327,27 +336,27 @@ bool bLight_Switch(SwitchType_E type)
     switch(type)
     {
         case ST_ON:
-            if(tLight.eLightMode == LWM_OFF)
-                tLight.eLightMode = LWM_FULL;
+            if(tLight.eLampMode == LWM_OFF)
+                tLight.eLampMode = LWM_FULL;
             if(tLight.eRGBMode == RWM_OFF)
                 tLight.eRGBMode = RWM_LOW;
             break;
 
         case ST_OFF:
-            tLight.eLightMode = LWM_OFF;
+            tLight.eLampMode = LWM_OFF;
             tLight.eRGBMode = RWM_OFF;
             v_light_shutdown_output();
             break;
 
         case ST_NULL:
-            if((tLight.eLightMode == LWM_OFF) && (tLight.eRGBMode == RWM_OFF))
+            if((tLight.eLampMode == LWM_OFF) && (tLight.eRGBMode == RWM_OFF))
             {
-                tLight.eLightMode = LWM_FULL;
+                tLight.eLampMode = LWM_FULL;
                 tLight.eRGBMode = RWM_LOW;
             }
             else
             {
-                tLight.eLightMode = LWM_OFF;
+                tLight.eLampMode = LWM_OFF;
                 tLight.eRGBMode = RWM_OFF;
                 v_light_shutdown_output();
             }
@@ -366,35 +375,58 @@ bool bLight_Switch(SwitchType_E type)
 ******************************************************************************************************************/
 void vLight_CircSelectMode(void)
 {
-    switch(tLight.eLightMode)
+    switch(tLight.eLampMode)
     {
         case LWM_OFF:
-            tLight.eLightMode = LWM_LOW;
+            tLight.eLampMode = LWM_LOW;
             break;
 
         case LWM_LOW:
-            tLight.eLightMode = LWM_HALF;
+            tLight.eLampMode = LWM_HALF;
             break;
 
         case LWM_HALF:
-            tLight.eLightMode = LWM_FULL;
+            tLight.eLampMode = LWM_FULL;
             break;
 
         case LWM_FULL:
-            tLight.eLightMode = LWM_AUTO;
+            tLight.eLampMode = LWM_AUTO;
             break;
 
         case LWM_AUTO:
-            tLight.eLightMode = LWM_SOS;
-            break;
-
-        case LWM_SOS:
-            tLight.eLightMode = LWM_TWINKLE;
-            break;
-
-        case LWM_TWINKLE:
         default:
-            tLight.eLightMode = LWM_OFF;
+            tLight.eLampMode = LWM_OFF;
+            break;
+    }
+}
+
+
+/*****************************************************************************************************************
+----- function      cycle through preset RGB light modes
+******************************************************************************************************************/
+void vLight_CircSelectRGBMode(void)
+{
+    switch(tLight.eRGBMode)
+    {
+        case RWM_OFF:
+            tLight.eRGBMode = RWM_LOW;
+            break;
+
+        case RWM_LOW:
+            tLight.eRGBMode = RWM_HALF;
+            break;
+
+        case RWM_HALF:
+            tLight.eRGBMode = RWM_FULL;
+            break;
+
+        case RWM_FULL:
+            tLight.eRGBMode = RWM_AUTO;
+            break;
+
+        case RWM_AUTO:
+        default:
+            tLight.eRGBMode = RWM_OFF;
             break;
     }
 }

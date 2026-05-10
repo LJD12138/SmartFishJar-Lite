@@ -16,7 +16,7 @@ typedef enum
     LWM_AUTO,      // 根据 usLightRes 自动调节白光亮度
     LWM_SOS,
     LWM_TWINKLE,
-}LightWorkMode_E;
+}LampWorkMode_E;
 
 typedef enum 
 {   
@@ -35,7 +35,7 @@ typedef struct
     vu16                usBlue;     // 蓝光通道 PWM
     vu16                usGreen;    // 绿光通道 PWM
     vu16                usRed;      // 红光通道 PWM
-    LightWorkMode_E     eLightMode;
+    LampWorkMode_E      eLampMode;
     RGBWorkMode_E  		eRGBMode;
     DevState_E          eDevState;
 }Light_T;              
@@ -44,9 +44,10 @@ extern Light_T   		tLight;
 
 void vLight_TaskInit(void);
 bool bLight_Switch(SwitchType_E type);
-bool bLight_SetMode(LightWorkMode_E mode);
+bool bLight_SetMode(LampWorkMode_E mode);
 bool bLight_SetRGBMode(RGBWorkMode_E mode);
-void vLight_CircSelectMode(void); 
+void vLight_CircSelectMode(void);
+void vLight_CircSelectRGBMode(void);
 
 #if(boardLOW_POWER)
 void vLight_EnterLowPower(void);

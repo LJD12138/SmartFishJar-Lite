@@ -219,7 +219,7 @@ static void v_disp_collect_snapshot(void)
     s_tDispUiSnapshot.usLightBlue = tLight.usBlue;
     s_tDispUiSnapshot.usLightGreen = tLight.usGreen;
     s_tDispUiSnapshot.usLightRed = tLight.usRed;
-    s_tDispUiSnapshot.ucLightMode = (u8)tLight.eLightMode;
+    s_tDispUiSnapshot.ucLightMode = (u8)tLight.eLampMode;
     s_tDispUiSnapshot.ucLightRgbMode = (u8)tLight.eRGBMode;
     s_tDispUiSnapshot.ucLightDevState = (u8)tLight.eDevState;
     #endif
@@ -320,10 +320,12 @@ static u8 uc_disp_get_updata_percent(void)
 static const char *pc_disp_light_mode(void)
 {
     #if(boardLIGHT_EN)
-    switch(tLight.eLightMode)
+    switch(tLight.eLampMode)
     {
+        case LWM_LOW: return "LOW";
         case LWM_HALF: return "HALF";
         case LWM_FULL: return "FULL";
+        case LWM_AUTO: return "AUTO";
         case LWM_SOS: return "SOS";
         case LWM_TWINKLE: return "TWKL";
         default: break;
@@ -432,10 +434,12 @@ static const char *pc_disp_fan_mode(void)
 static const char *pc_disp_light_white_state(void)
 {
     #if(boardLIGHT_EN)
-    switch(tLight.eLightMode)
+    switch(tLight.eLampMode)
     {
+        case LWM_LOW: return "LOW";
         case LWM_HALF: return "DIM";
         case LWM_FULL: return "FUL";
+        case LWM_AUTO: return "AUT";
         case LWM_SOS: return "SOS";
         case LWM_TWINKLE: return "TWK";
         default: break;
@@ -455,9 +459,9 @@ static const char *pc_disp_light_white_state(void)
 static const char *pc_disp_light_rgb_state(void)
 {
     #if(boardLIGHT_EN)
-    if(tLight.eLightMode == LWM_SOS)
+    if(tLight.eLampMode == LWM_SOS)
         return "SOS";
-    if(tLight.eLightMode == LWM_TWINKLE)
+    if(tLight.eLampMode == LWM_TWINKLE)
         return "TWK";
     if(tLight.usBlue > 0U || tLight.usGreen > 0U || tLight.usRed > 0U)
         return "ON";
@@ -1691,6 +1695,7 @@ bool bDisp_RenderUi(void)
 }
 
 #endif  // boardDISPLAY_EN
+
 
 
 

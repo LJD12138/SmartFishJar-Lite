@@ -48,3 +48,4 @@ void vLight_IoEnterLowPower(void);
 #endif  //boardLIGHT_EN
 
 #endif  //MD_LIGHT_IFACE_H_
+
